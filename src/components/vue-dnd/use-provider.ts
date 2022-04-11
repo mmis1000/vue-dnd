@@ -23,7 +23,8 @@ class Provider implements DND_PROVIDER {
     return {
       ...node,
       props: {
-        ...node.props, draggable: 'true',
+        ...node.props,
+        draggable: 'true',
         onDragstart: (ev:DragEvent) => {
           const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
           this.dataMap.set(id, data)
@@ -52,7 +53,7 @@ class Provider implements DND_PROVIDER {
       return {
         ...node,
         props: {
-          ...node.props, draggable: 'true',
+          ...node.props,
           onDrop: (ev: DragEvent) => {
             const id = getId(ev)
             if (id === null) {
@@ -68,7 +69,6 @@ class Provider implements DND_PROVIDER {
           onDragover: (ev: DragEvent) => {
             const id = getId(ev)
             if (id === null) {
-              debugger
               return
             }
             const data = this.dataMap.get(id)
