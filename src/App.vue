@@ -1,12 +1,17 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import MyDrag from './components/MyDrag.vue';
+import MyDrop from './components/MyDrop.vue';
+import { useProvider } from './components/vue-dnd/use-provider';
+useProvider()
+
 </script>
 
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <MyDrag :index="1"></MyDrag>
+  <MyDrop :index="0"></MyDrop>
+  <MyDrop :index="1"></MyDrop>
+  <MyDrop :index="2"></MyDrop>
 </template>
 
 <style>
