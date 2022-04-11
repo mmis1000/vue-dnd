@@ -24,11 +24,9 @@ export const useDroppable = <T = never>(options: {
           options.onDrop?.(ev, data)
         },
         onDragEnter: (ev) => {
-          console.log(ev)
           hovering.value = true
         },
         onDragLeave: (ev) => {
-          console.log(ev)
           hovering.value = false
         },
         onDragOver: (ev, data) => {

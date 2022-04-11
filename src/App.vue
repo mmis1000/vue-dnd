@@ -5,25 +5,21 @@ import MyDrop from './components/MyDrop.vue';
 import { useProvider } from './components/vue-dnd/use-provider';
 useProvider()
 
-let all = ref(10)
-let current = ref(1)
+let all = 8
+let current = ref('1-1')
 
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <MyDrop v-for="i of all" :index="i" :key="i" @drop="current = i">
-    <MyDrag v-if="i === current" :index="current">{{i}}</MyDrag>
-  </MyDrop>
+  <div class="row" v-for="i of all" :key="i">
+    <MyDrop class="drop" :dark="(i + j) % 2 === 0" v-for="j of all" :index="i+'-'+j" :key="j" @drop="current = i+'-'+j">
+      <MyDrag v-if="i+'-'+j === current" :index="current">{{i}}</MyDrag>
+    </MyDrop>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+.row {
+  display: flex;
 }
 </style>

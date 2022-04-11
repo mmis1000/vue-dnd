@@ -3,7 +3,7 @@ import { defineComponent } from "vue"
 import { useDraggable } from "./vue-dnd/use-draggable"
 export default defineComponent({
   props: {
-    index: Number
+    index: String
   },
   setup (props, ctx) {
     const { wrap } = useDraggable(props.index, {
@@ -20,8 +20,8 @@ export default defineComponent({
 
 <style scoped>
 .a {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background-color: #2c3e50;
 }
 </style>

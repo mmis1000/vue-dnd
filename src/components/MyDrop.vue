@@ -3,26 +3,25 @@ import { defineComponent } from "vue"
 import { useDroppable } from "./vue-dnd/use-droppable"
 export default defineComponent({
   props: {
-    index: Number
+    index: String,
+    dark: Boolean
   },
   emits: ["drop"],
   setup (props, ctx) {
     const { wrap, computedState } = useDroppable<Record<string, any>>({
       getComputedState(state) {
-        return state.hover ? { background: 'red'} : { background: 'blue' }
+        return state.hover ? { background: 'red'} : {}
       },
       onDrop: (ev, data) => {
         ctx.emit('drop', { index: props.index })
       },
       onDragOver(ev, data) {
-        console.log('umm', ev, data, props.index)
         if (data !== props.index) {
-          console.log(ev)
           ev.preventDefault()
         }
       }
     })
-    return () => wrap(<div class="a" style={computedState.value}>
+    return () => wrap(<div class={props.dark ? 'a' : 'a dark'} style={computedState.value}>
       {ctx.slots.default?.()}
     </div>)
   }
@@ -31,8 +30,11 @@ export default defineComponent({
 
 <style scoped>
 .a {
-  width: 200px;
-  height: 200px;
-  background-color: #2c3e50;
+  width: 80px;
+  height: 80px;
+  background-color: white;
+}
+.a.dark {
+  background-color: black;
 }
 </style>
