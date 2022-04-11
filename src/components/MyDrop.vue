@@ -1,21 +1,18 @@
 <script lang="tsx">
+import { defineComponent } from "vue"
 import { useDroppable } from "./vue-dnd/use-droppable"
-export default {
+export default defineComponent({
   props: {
     index: Number
   },
-  setup (props: {index: number}) {
+  emits: ["drop"],
+  setup (props, ctx) {
     const { wrap, computedState } = useDroppable<Record<string, any>>({
       getComputedState(state) {
         return state.hover ? { background: 'red'} : { background: 'blue' }
       },
-      onDrop(ev, data) {
-        console.log(
-          ev,
-          data,
-          ev.dataTransfer?.getData("text"),
-          ev.dataTransfer?.getData("application/vue-dnd")
-        )
+      onDrop: (ev, data) => {
+        ctx.emit('drop', { index: props.index })
       },
       onDragOver(ev, data) {
         console.log('umm', ev, data, props.index)
@@ -25,9 +22,11 @@ export default {
         }
       }
     })
-    return () => wrap(<div class="a" style={computedState.value}/>)
+    return () => wrap(<div class="a" style={computedState.value}>
+      {ctx.slots.default?.()}
+    </div>)
   }
-}
+})
 </script>
 
 <style scoped>

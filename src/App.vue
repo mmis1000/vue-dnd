@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import MyDrag from './components/MyDrag.vue';
 import MyDrop from './components/MyDrop.vue';
 import { useProvider } from './components/vue-dnd/use-provider';
 useProvider()
 
+let all = ref(10)
+let current = ref(1)
+
 </script>
 
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
-  <MyDrag :index="1"></MyDrag>
-  <MyDrop :index="0"></MyDrop>
-  <MyDrop :index="1"></MyDrop>
-  <MyDrop :index="2"></MyDrop>
+  <MyDrop v-for="i of all" :index="i" :key="i" @drop="current = i">
+    <MyDrag v-if="i === current" :index="current">{{i}}</MyDrag>
+  </MyDrop>
 </template>
 
 <style>

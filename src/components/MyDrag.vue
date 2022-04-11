@@ -1,18 +1,21 @@
 <script lang="tsx">
+import { defineComponent } from "vue"
 import { useDraggable } from "./vue-dnd/use-draggable"
-export default {
+export default defineComponent({
   props: {
     index: Number
   },
-  setup (props: {index: number}) {
+  setup (props, ctx) {
     const { wrap } = useDraggable(props.index, {
       onDragStart (ev) {
         console.log(ev)
       }
     })
-    return () => wrap(<div class="a"/>)
+    return () => wrap(<div class="a">
+      {ctx.slots.default?.()}
+    </div>)
   }
-}
+})
 </script>
 
 <style scoped>
