@@ -65,7 +65,6 @@ class Provider<IData> implements DndProvider<IData> {
       onDrop: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
-          ev.preventDefault()
           return
         }
 
@@ -73,10 +72,10 @@ class Provider<IData> implements DndProvider<IData> {
 
         if (execution == null) {
           console.warn('valid id but null data, potentially event from another provider')
-          ev.preventDefault()
           return
         }
 
+        ev.preventDefault()
         findAndRemove(this.executions, item => item.id === id)
         events.onDrop?.(ev, execution.data)
       },

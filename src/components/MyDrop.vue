@@ -45,7 +45,7 @@ export default defineComponent({
       onDragOver(ev, data) {
       }
     })
-    return () => wrap(<div class={props.dark ? 'a' : 'a dark'} style={computedState.value}>
+    return () => wrap(<div class={props.dark ? 'a dark' : 'a'} style={computedState.value}>
       {ctx.slots.default?.()}
     </div>)
   }
