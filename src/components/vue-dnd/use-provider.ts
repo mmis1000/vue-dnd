@@ -1,5 +1,5 @@
-import { DeepReadonly, provide, reactive, readonly, RendererElement, RendererNode, shallowReactive, shallowReadonly, VNode } from "vue";
-import { DndProvider, DragHandlerWithData, DragTargetIdentifier, Execution } from "./interfaces";
+import { provide, shallowReactive, shallowReadonly, VNode } from "vue";
+import { DndProvider, DragHandlerWithData, DragDropTargetIdentifier } from "./interfaces";
 import { ExecutionImpl, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
@@ -23,33 +23,39 @@ class Provider<IData> implements DndProvider<IData> {
   private currentInstanceId = instanceId++
   private dragEventIndex = 0
   private dropTargetId = 0
+  private dragTargetId = 0
   // private dataMap = new Map<string, any>()
   private executions: ExecutionImpl<IData>[] = shallowReactive<ExecutionImpl<IData>[]>([])
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
 
-  decorateDraggable<T, U, V>(
-    node: VNode<T, U, V>,
+  getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DragHandlerWithData<IData>; },
     data: any
-  ): VNode<T, U, V> {
-    return {
-      ...node,
-      props: {
-        ...node.props,
-        draggable: 'true',
-        onDragstart: (ev: DragEvent) => {
-          const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
-          this.executions.push(new ExecutionImpl(id, data, ev.target as HTMLElement))
-          ev.dataTransfer!.setData('text/plain', id)
-          ev.dataTransfer!.setData(prefix + '-' + id, '')
-          events.onDragStart?.(ev, data)
-        },
-        onDragend: (ev: DragEvent) => {
-          findAndRemove(this.executions, item => item.movingElement === ev.target)
+  ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+    const dragTargetId = this.dragTargetId++
+
+    return [
+      dragTargetId,
+      (node: VNode<T, U, V>) => ({
+        ...node,
+        props: {
+          ...node.props,
+          draggable: 'true',
+          onDragstart: (ev: DragEvent) => {
+            const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
+            this.executions.push(new ExecutionImpl(id, data, dragTargetId, ev.target as HTMLElement))
+            ev.dataTransfer?.setDragImage(ev.target as any, 0, 0)
+            ev.dataTransfer!.setData('text/plain', id)
+            ev.dataTransfer!.setData(prefix + '-' + id, '')
+            events.onDragStart?.(ev, data)
+          },
+          onDragend: (ev: DragEvent) => {
+            findAndRemove(this.executions, item => item.movingElement === ev.target)
+          }
         }
-      }
-    } as any
+      }) as any
+    ]
   }
   getDroppableDecorator<T, U, V>(
     events: {
@@ -58,7 +64,7 @@ class Provider<IData> implements DndProvider<IData> {
       onDragLeave?: DragHandlerWithData<IData>;
       onDrop?: DragHandlerWithData<IData>;
     }
-  ): [DragTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+  ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {
 
@@ -130,12 +136,12 @@ class Provider<IData> implements DndProvider<IData> {
       }
     }
     return [dropTargetId, (node: VNode<T, U, V>) => ({
-        ...node,
-        props: {
-          ...node.props,
-          ...mixinProps
-        }
-      }) as unknown as VNode<T, U, V>]
+      ...node,
+      props: {
+        ...node.props,
+        ...mixinProps
+      }
+    }) as unknown as VNode<T, U, V>]
   }
 }
 

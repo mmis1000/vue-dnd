@@ -1,4 +1,4 @@
-import { computed, inject, reactive, ref, shallowReactive, VNode } from "vue"
+import { computed, inject, VNode } from "vue"
 import { PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDroppable = <IData, T>(options: {

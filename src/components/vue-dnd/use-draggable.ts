@@ -1,5 +1,5 @@
-import { inject, VNode } from "vue"
-import { nuzz, PROVIDER_INJECTOR_KEY } from "./internal"
+import { computed, inject, reactive, VNode } from "vue"
+import { PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggable = (
   data: any,
@@ -13,11 +13,16 @@ export const useDraggable = (
     throw new Error('missing provider')
   }
 
+  const [id, wrap] = provider.getDraggableDecorator({
+    onDragStart: options.onDragStart
+  }, data)
+
   return {
-    wrap (node: VNode) {
-      return provider.decorateDraggable(node, {
-        onDragStart: options.onDragStart
-      }, data)
-    }
+    wrap(node: VNode) {
+      return wrap(node)
+    },
+    state: reactive({
+      isDragging: computed(() => provider.readonlyExecutions.find(exe => exe.source === id))
+    })
   }
 }

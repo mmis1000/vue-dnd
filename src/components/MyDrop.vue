@@ -25,15 +25,15 @@ export default defineComponent({
       getComputedState (state) {
         if (state.hover) {
           if (state.draggingItems.find( i => i.accepted) != null) {
-            return { background: 'green' }
+            return { background: 'green', 'user-select': 'none' }
           } else {
-            return { background: 'red' }
+            return { background: 'red', 'user-select': 'none' }
           }
         } else if (state.draggingItems.length > 0) {
           if (state.draggingItems.find( i => i.accepted) != null) {
-            return { background: 'blue' }
+            return { background: 'blue', 'user-select': 'none' }
           } else {
-            return {}
+            return { 'user-select': 'none' }
           }
         } else {
           return {}
@@ -60,5 +60,6 @@ export default defineComponent({
 }
 .a.dark {
   background-color: black;
+  color: white;
 }
 </style>

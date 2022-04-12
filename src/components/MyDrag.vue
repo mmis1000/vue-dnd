@@ -10,12 +10,12 @@ export default defineComponent({
     dark: Boolean
   },
   setup (props, ctx) {
-    const { wrap } = useDraggable(props.index, {
+    const { wrap, state } = useDraggable(props.index, {
       onDragStart (ev) {
       }
     })
-    return () => wrap(<div class={props.dark ? 'a dark' : 'a'}>
-      {ctx.slots.default?.()}
+    return () => wrap(<div class={{a: true, dark: props.dark, dragging: state.isDragging}}>
+      {state.isDragging ? 'moving...' : ctx.slots.default?.()}
     </div>)
   }
 })
@@ -30,5 +30,9 @@ export default defineComponent({
 }
 .a.dark {
   background: #31502c;
+}
+.a.dragging {
+  user-select: none;
+  opacity: 0.5;
 }
 </style>
