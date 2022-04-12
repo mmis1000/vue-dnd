@@ -46,7 +46,7 @@ class Provider<IData> implements DndProvider<IData> {
             const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
             this.executions.push(new ExecutionImpl(id, data, dragTargetId, ev.target as HTMLElement))
             ev.dataTransfer?.setDragImage(ev.target as any, 0, 0)
-            ev.dataTransfer!.setData('text/plain', id)
+            ev.dataTransfer!.setData('text/plain', '')
             ev.dataTransfer!.setData(prefix + '-' + id, '')
             events.onDragStart?.(ev, data)
           },
