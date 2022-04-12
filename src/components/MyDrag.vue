@@ -1,14 +1,16 @@
 <script lang="tsx">
-import { defineComponent } from "vue"
+import { defineComponent, PropType } from "vue"
 import { useDraggable } from "./vue-dnd/use-draggable"
 export default defineComponent({
   props: {
-    index: String
+    index: {
+      type: Array as unknown as PropType<[number, number]>,
+      required: true
+    }
   },
   setup (props, ctx) {
     const { wrap } = useDraggable(props.index, {
       onDragStart (ev) {
-        console.log(ev)
       }
     })
     return () => wrap(<div class="a">

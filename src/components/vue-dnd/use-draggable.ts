@@ -15,7 +15,7 @@ export const useDraggable = (
 
   return {
     wrap (node: VNode) {
-      return provider.argumentDraggable(node, {
+      return provider.decorateDraggable(node, {
         onDragStart: options.onDragStart
       }, data)
     }

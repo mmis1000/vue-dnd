@@ -1,23 +1,36 @@
-import { provide, RendererElement, RendererNode, VNode } from "vue";
-import { DND_PROVIDER } from "./interfaces";
-import { PROVIDER_INJECTOR_KEY } from "./internal";
+import { DeepReadonly, provide, reactive, readonly, RendererElement, RendererNode, shallowReactive, shallowReadonly, VNode } from "vue";
+import { DndProvider, DragHandlerWithData, DragTargetIdentifier, Execution } from "./interfaces";
+import { ExecutionImpl, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
 const prefix = 'application/vue-dnd'
 
 const getId = (ev: DragEvent) => {
-  const target = ev.dataTransfer?.types.find(i =>  i.startsWith(prefix))
+  const target = ev.dataTransfer?.types.find(i => i.startsWith(prefix))
   return target ? target.slice(prefix.length + 1) : null
 }
 
-class Provider implements DND_PROVIDER {
+const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const hit = predicate(arr[i])
+    if (hit) {
+      arr.splice(i, 1)
+    }
+  }
+}
+class Provider<IData> implements DndProvider<IData> {
   private currentInstanceId = instanceId++
   private dragEventIndex = 0
-  private dataMap = new Map<string, any>()
-  argumentDraggable<T, U, V>(
+  private dropTargetId = 0
+  // private dataMap = new Map<string, any>()
+  private executions: ExecutionImpl<IData>[] = shallowReactive<ExecutionImpl<IData>[]>([])
+
+  readonly readonlyExecutions = shallowReadonly(this.executions)
+
+  decorateDraggable<T, U, V>(
     node: VNode<T, U, V>,
-    events: { onDragStart?: ((ev: DragEvent) => void) | undefined; },
+    events: { onDragStart?: DragHandlerWithData<IData>; },
     data: any
   ): VNode<T, U, V> {
     return {
@@ -25,57 +38,105 @@ class Provider implements DND_PROVIDER {
       props: {
         ...node.props,
         draggable: 'true',
-        onDragstart: (ev:DragEvent) => {
+        onDragstart: (ev: DragEvent) => {
           const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
-          this.dataMap.set(id, data)
-          ev.dataTransfer!.setData('text/plain', '')
+          this.executions.push(new ExecutionImpl(id, data, ev.target as HTMLElement))
+          ev.dataTransfer!.setData('text/plain', id)
           ev.dataTransfer!.setData(prefix + '-' + id, '')
-          events.onDragStart?.(ev)
+          events.onDragStart?.(ev, data)
         },
-        onDragend: (ev:DragEvent) => {
-          const id = getId(ev)
-          if (id != null) {
-            this.dataMap.delete(id)
-          }
+        onDragend: (ev: DragEvent) => {
+          findAndRemove(this.executions, item => item.movingElement === ev.target)
         }
       }
     } as any
   }
-  argumentDroppable<T, U, V>(
-    node: VNode<T, U, V>,
+  getDroppableDecorator<T, U, V>(
     events: {
-      onDragOver?: ((ev: DragEvent, data: any) => void) | undefined;
-      onDragEnter?: ((ev:DragEvent) => void) | undefined;
-      onDragLeave?: ((ev:DragEvent) => void) | undefined;
-      onDrop?: ((ev:DragEvent, data: any) => void) | undefined;
+      onDragOver?: DragHandlerWithData<IData>;
+      onDragEnter?: DragHandlerWithData<IData>;
+      onDragLeave?: DragHandlerWithData<IData>;
+      onDrop?: DragHandlerWithData<IData>;
     }
-  ): VNode<T, U, V> {
-      return {
+  ): [DragTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+    const dropTargetId = this.dropTargetId++
+    const mixinProps = {
+
+      onDrop: (ev: DragEvent) => {
+        const id = getId(ev)
+        if (id === null) {
+          ev.preventDefault()
+          return
+        }
+
+        const execution = this.executions.find(i => i.id === id)
+
+        if (execution == null) {
+          console.warn('valid id but null data, potentially event from another provider')
+          ev.preventDefault()
+          return
+        }
+
+        findAndRemove(this.executions, item => item.id === id)
+        events.onDrop?.(ev, execution.data)
+      },
+      onDragenter: (ev: DragEvent) => {
+        const id = getId(ev)
+        if (id === null) {
+          return
+        }
+
+        const execution = this.executions.find(i => i.id === id)
+
+        if (execution == null) {
+          console.warn('valid id but null data, potentially event from another provider')
+          return
+        }
+        if (execution.targets.indexOf(dropTargetId) < 0) {
+          execution.targets.push(dropTargetId)
+        }
+        events.onDragEnter?.(ev, execution?.data)
+      },
+      onDragleave: (ev: DragEvent) => {
+        const id = getId(ev)
+        if (id === null) {
+          return
+        }
+
+        const execution = this.executions.find(i => i.id === id)
+
+        if (execution == null) {
+          console.warn('valid id but null data, potentially event from another provider')
+          return
+        }
+
+        findAndRemove(execution.targets, i => i === dropTargetId)
+
+        events.onDragLeave?.(ev, execution?.data)
+      },
+      onDragover: (ev: DragEvent) => {
+        const id = getId(ev)
+        if (id === null) {
+          return
+        }
+
+        const execution = this.executions.find(i => i.id === id)
+
+        if (execution == null) {
+          console.warn('valid id but null data, potentially event from another provider')
+          return
+        }
+
+        events.onDragOver?.(ev, execution?.data)
+      }
+    }
+    return [dropTargetId, (node: VNode<T, U, V>) => ({
         ...node,
         props: {
           ...node.props,
-          onDrop: (ev: DragEvent) => {
-            const id = getId(ev)
-            if (id === null) {
-              ev.preventDefault()
-              return
-            }
-            const data = this.dataMap.get(id)
-            this.dataMap.delete(id)
-            events.onDrop?.(ev, data)
-          },
-          onDragenter: events.onDragEnter,
-          onDragleave: events.onDragLeave,
-          onDragover: (ev: DragEvent) => {
-            const id = getId(ev)
-            if (id === null) {
-              return
-            }
-            const data = this.dataMap.get(id)
-            events.onDragOver?.(ev, data)
-          }
+          ...mixinProps
         }
-      } as any
+      }) as unknown as VNode<T, U, V>]
   }
 }
 

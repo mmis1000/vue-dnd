@@ -1,20 +1,32 @@
-import { VNode } from "vue"
+import { reactive, UnwrapNestedRefs, VNode } from "vue"
 
-export interface DND_PROVIDER {
-  argumentDraggable<T, U, V> (
-    node: VNode<T, U, V>,
+export type DragHandlerWithData<IData> = (ev: DragEvent, data: IData) => void
+
+export type DragTargetIdentifier = number
+
+export interface Execution<T> {
+  readonly id: string,
+  readonly data: T,
+  readonly targets:  DragTargetIdentifier[]
+}
+
+export interface DndProvider<IData> {
+  readonly readonlyExecutions: Readonly<Execution<IData>[]>
+  
+  decorateDraggable<RendererNode, RendererElement, ExtraProps> (
+    node: VNode<RendererNode, RendererElement, ExtraProps>,
     events: {
-      onDragStart?: (ev: DragEvent) => void
+      onDragStart?: DragHandlerWithData<IData>
     },
-    data: any
-  ): VNode<T, U, V>
-  argumentDroppable<T, U, V> (
-    node: VNode<T, U, V>,
+    data: IData
+  ): VNode<RendererNode, RendererElement, ExtraProps>
+
+  getDroppableDecorator<RendererNode, RendererElement, ExtraProps> (
     events: {
-      onDragOver?: ((ev: DragEvent, data: any) => void) | undefined;
-      onDragEnter?: ((ev: DragEvent) => void) | undefined;
-      onDragLeave?: ((ev: DragEvent) => void) | undefined;
-      onDrop?: ((ev: DragEvent, data: any) => void) | undefined;
+      onDragOver?: DragHandlerWithData<IData>;
+      onDragEnter?: DragHandlerWithData<IData>;
+      onDragLeave?: DragHandlerWithData<IData>;
+      onDrop?: DragHandlerWithData<IData>;
     }
-  ): VNode<T, U, V>
+  ): [DragTargetIdentifier, (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>]
 }
