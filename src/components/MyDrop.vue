@@ -13,7 +13,10 @@ export default defineComponent({
   setup (props, ctx) {
     const { wrap, computedState } = useDroppable<[number, number], Record<string, any>>({
       accept: (d) => {
-        if ((d[0] - props.index[0]) ** 2 + (d[1] - props.index[1]) ** 2 < 4 ** 2) {
+        if (
+          Math.abs(d[0] - props.index[0]) === 1 && Math.abs(d[1] - props.index[1]) === 2 ||
+          Math.abs(d[0] - props.index[0]) === 2 && Math.abs(d[1] - props.index[1]) === 1 
+        ) {
           return true
         } else {
           return false
@@ -28,9 +31,9 @@ export default defineComponent({
           }
         } else if (state.draggingItems.length > 0) {
           if (state.draggingItems.find( i => i.accepted) != null) {
-            return { background: 'white' }
+            return { background: 'blue' }
           } else {
-            return { background: 'grey' }
+            return {}
           }
         } else {
           return {}
