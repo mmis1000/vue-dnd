@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, PropType } from "vue"
+import { computed, defineComponent, PropType } from "vue"
 import { useDraggable } from "../packages/vue-dnd/use-draggable"
 export default defineComponent({
   props: {
@@ -10,7 +10,7 @@ export default defineComponent({
     dark: Boolean
   },
   setup (props, ctx) {
-    const { wrap, state } = useDraggable(props.index, {
+    const { wrap, state } = useDraggable(computed(() => props.index), {
       onDragStart (ev) {
         console.log('start', ev)
       }

@@ -1,5 +1,5 @@
 import { computed, ComputedRef, inject, reactive, Ref, VNode } from "vue"
-import { DndDragHandlerWithData } from "./interfaces"
+import { DndDragHandlerWithData, DndProvider } from "./interfaces"
 import { PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggable = <IData = unknown>(
@@ -8,7 +8,7 @@ export const useDraggable = <IData = unknown>(
     onDragStart?: DndDragHandlerWithData<IData>
   }
 ) => {
-  const provider = inject(PROVIDER_INJECTOR_KEY)
+  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
   if (provider == null) {
     throw new Error('missing provider')

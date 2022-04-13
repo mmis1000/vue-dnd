@@ -1,5 +1,5 @@
-import { computed, inject, VNode } from "vue"
-import { DndDragHandlerWithData } from "./interfaces"
+import { computed, inject, reactive, unref, VNode } from "vue"
+import { DndDragHandlerWithData, DndProvider } from "./interfaces"
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDroppable = <IData = unknown>(options: {
@@ -9,7 +9,7 @@ export const useDroppable = <IData = unknown>(options: {
   onDragEnter?: DndDragHandlerWithData<IData>
   onDragLeave?: DndDragHandlerWithData<IData>
 }) => {
-  const provider = inject(PROVIDER_INJECTOR_KEY)
+  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
   if (provider == null) {
     throw new Error('missing provider')
@@ -26,11 +26,11 @@ export const useDroppable = <IData = unknown>(options: {
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
-        return matchAccept(options.accept, execution.data)
+        return matchAccept(options.accept, unref<IData>(execution.data))
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,
-        data: execution.data,
+        data: unref<IData>(execution.data),
         get accepted() {
           return accepted.value
         }
@@ -43,13 +43,9 @@ export const useDroppable = <IData = unknown>(options: {
     wrap(node: VNode) {
       return decorateElement(node)
     },
-    hoverState: {
-      get hover() {
-        return hoverComputed.value
-      },
-      get draggingItems() {
-        return draggingItems.value
-      }
-    }
+    hoverState: reactive({
+      hover: hoverComputed,
+      draggingItems: draggingItems
+    })
   }
 }

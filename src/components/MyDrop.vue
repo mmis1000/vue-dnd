@@ -1,6 +1,5 @@
 <script lang="tsx">
-import { computed } from "@vue/reactivity"
-import { defineComponent, PropType } from "vue"
+import { defineComponent, PropType, computed } from "vue"
 import { useDroppable } from "../packages/vue-dnd/use-droppable"
 export default defineComponent({
   props: {

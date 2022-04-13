@@ -11,8 +11,7 @@ All it does is sending the message from draggable to drop zone for you.
 Usage
 
 ```ts
-import { computed } from '@vue/reactivity';
-import { defineComponent, PropType, reactive } from 'vue';
+import { defineComponent, PropType, reactive, computed } from 'vue';
 import { useDraggable, useDroppable, useHtmlProvider /* or usePointerEventProvider */ } from '@mmis1000/vue-dnd';
 
 type Message = [currentBucket: number, id: number]
