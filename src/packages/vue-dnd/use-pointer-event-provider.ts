@@ -1,4 +1,4 @@
-import { ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, UnwrapRef, VNode } from "vue";
+import { ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
