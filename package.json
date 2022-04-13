@@ -2,10 +2,13 @@
   "name": "vue-dnd",
   "private": true,
   "version": "0.0.0",
-  "main": "dist/vue-dnd.umd.js",
+  "main": "./dist/vue-dnd.umd.js",
+  "module": "./dist/vue-dnd.es.js",
   "exports": {
-    "import": "./dist/vue-dnd.es.js",
-    "require": "./dist/vue-dnd.umd.js"
+    ".": {
+      "import": "./dist/vue-dnd.es.js",
+      "require": "./dist/vue-dnd.umd.js"
+    }
   },
   "types": "./dist/index.d.ts",
   "scripts": {
