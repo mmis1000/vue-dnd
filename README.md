@@ -1,16 +1,101 @@
-# Vue 3 + Typescript + Vite
+# Vue Dnd
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Status: WIP
 
-## Recommended IDE Setup
+A un-opinionated drag and drop help utility.  
+It doesn't care about how you store the data or how you update the data.  
+All it does is sending the message from draggable to drop zone fro you.
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+## API
 
-## Type Support For `.vue` Imports in TS
+Usage
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+```ts
+import { computed } from '@vue/reactivity';
+import { defineComponent, PropType, reactive } from 'vue';
+import { useDraggable, useDroppable, useHtmlProvider /* or usePointerEventProvider */ } from 'vue-dnd';
 
-1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+type Message = [currentBucket: number, id: number]
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+const Ball = defineComponent({
+  props: {
+    currentBucket: {
+      type: Number,
+      required: true
+    },
+    id: {
+      type: Number,
+      required: true
+    }
+  },
+  setup (props) {
+    const { wrap } = useDraggable<Message>(
+      // Specify what did you want to send to the drop zone, can either be ref or raw value
+      computed(() => [props.currentBucket, props.id]), 
+      {
+        // optional handlers
+        onDragStart: (ev, data) => {}
+      }
+    )
+    return () => wrap(<div class="ball" >{ props.id }</div>)
+  }
+})
+
+const Bucket = defineComponent({
+  props: {
+    id: {
+      type: Number,
+      required: true
+    },
+    onDrop: {
+      type: Function as PropType<(item: number, oldBucket: number, newBucket: number) => void>,
+      required: true
+    }
+  },
+  setup (props, ctx) {
+    const { wrap } = useDroppable<Message>({
+      // Declare whether you want to receive the draggable item or not
+      // A predicate function or raw value
+      accept: (msg) => msg[0] !== props.id,
+      // The drop zone receives message from draggable item
+      onDrop: (ev, data) => {
+        // Tell the parent that something dropped
+        props.onDrop(data[1], data[0], props.id)
+      },
+      // optional handlers
+      onDragOver: (ev, data) => {},
+      onDragEnter: (ev, data) => {},
+      onDragLeave: (ev, data) => {}
+    })
+    return () => wrap(<div class="bucket">{ ctx.slots.default?.() }</div>)
+  }
+})
+
+export default {
+  setup () {
+    // init the context and html5 drag implementation
+    useHtmlProvider()
+    // or
+    // usePointerEventProvider()
+    const buckets = reactive(new Array(5).fill(null).map(() => [] as number[]))
+    buckets[0].push(1, 2, 3, 4, 5)
+
+    // update the data when received message
+    const onDrop = (id: number, oldBucket: number, newBucket: number) => {
+      console.log(id, oldBucket, newBucket)
+      buckets[oldBucket] = buckets[oldBucket].filter(i => i !== id)
+      buckets[newBucket] = buckets[newBucket].concat([id])
+    }
+
+    return () => <div class="board">
+      {
+        buckets.map((b, index) => <Bucket id={index} key={index} onDrop={onDrop}>
+          {
+            b.map((i, index2) => <Ball id={i} currentBucket={index} key={index2} />)
+          }
+        </Bucket>)
+      }
+    </div>
+  }
+}
+```
