@@ -39,7 +39,7 @@ const Bucket = defineComponent({
     }
   },
   setup (props, ctx) {
-    const { wrap } = useDroppable<Message>({
+    const { wrap, hoverState } = useDroppable<Message>({
       // Declare whether you want to receive the draggable item or not
       // A predicate function or raw value
       accept: (msg) => msg[0] !== props.id,
@@ -48,7 +48,7 @@ const Bucket = defineComponent({
         props.onDrop(data[1], data[0], props.id)
       }
     })
-    return () => wrap(<div class="bucket">{ ctx.slots.default?.() }</div>)
+    return () => wrap(<div class={ hoverState.hover ? 'bucket hover' : 'bucket'}>{ ctx.slots.default?.() }</div>)
   }
 })
 
@@ -85,6 +85,10 @@ export default {
 .bucket {
   width: 200px;
   border: 4px solid blue;
+}
+
+.hover {
+  background: #ccc;
 }
 
 .ball {

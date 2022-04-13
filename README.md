@@ -29,6 +29,7 @@ const Ball = defineComponent({
     }
   },
   setup (props) {
+    // the `wrap` function alter the VNode to inject ref/handler/styles
     const { wrap } = useDraggable<Message>(
       // Specify what did you want to send to the drop zone, can either be ref or raw value
       computed(() => [props.currentBucket, props.id]), 
@@ -53,7 +54,9 @@ const Bucket = defineComponent({
     }
   },
   setup (props, ctx) {
-    const { wrap } = useDroppable<Message>({
+    // the `wrap` function alter the VNode to inject ref/handler/styles
+    // the `hoverState` is a reactive object that reflect the ongoing dragging actions
+    const { wrap, hoverState } = useDroppable<Message>({
       // Declare whether you want to receive the draggable item or not
       // A predicate function or raw value
       accept: (msg) => msg[0] !== props.id,
@@ -67,7 +70,7 @@ const Bucket = defineComponent({
       onDragEnter: (ev, data) => {},
       onDragLeave: (ev, data) => {}
     })
-    return () => wrap(<div class="bucket">{ ctx.slots.default?.() }</div>)
+    return () => wrap(<div class={ hoverState.hover ? 'bucket hover' : 'bucket'}>{ ctx.slots.default?.() }</div>)
   }
 })
 
