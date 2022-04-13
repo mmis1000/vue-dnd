@@ -78,7 +78,7 @@ export default {
   setup () {
     // init the context and html5 drag implementation
     useHtmlProvider()
-    // or
+    // or the mobile compatible pointer event based implementation
     // usePointerEventProvider()
     const buckets = reactive(new Array(5).fill(null).map(() => [] as number[]))
     buckets[0].push(1, 2, 3, 4, 5)
