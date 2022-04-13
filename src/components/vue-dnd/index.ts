@@ -1,4 +1,5 @@
 export * from './use-draggable'
 export * from './use-droppable'
-export * from './use-provider'
+export * from './use-html-provider'
+export * from './use-pointer-event-provider'
 export * from './interfaces'
