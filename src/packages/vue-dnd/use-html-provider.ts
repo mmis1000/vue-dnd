@@ -89,7 +89,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          console.warn('valid id but null data, potentially event from another provider')
+          // return, not a event from this provider
           return
         }
 
@@ -106,7 +106,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          console.warn('valid id but null data, potentially event from another provider')
+          // return, not a event from this provider
           return
         }
         if (execution.targets.indexOf(dropTargetId) < 0) {
@@ -123,7 +123,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          console.warn('valid id but null data, potentially event from another provider')
+          // return, not a event from this provider
           return
         }
 
@@ -140,7 +140,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          console.warn('valid id but null data, potentially event from another provider')
+          // return, not a event from this provider
           return
         }
 
