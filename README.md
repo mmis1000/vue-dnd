@@ -13,7 +13,7 @@ Usage
 ```ts
 import { computed } from '@vue/reactivity';
 import { defineComponent, PropType, reactive } from 'vue';
-import { useDraggable, useDroppable, useHtmlProvider /* or usePointerEventProvider */ } from 'vue-dnd';
+import { useDraggable, useDroppable, useHtmlProvider /* or usePointerEventProvider */ } from '@mmis1000/vue-dnd';
 
 type Message = [currentBucket: number, id: number]
 

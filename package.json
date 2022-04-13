@@ -1,5 +1,5 @@
 {
-  "name": "vue-dnd",
+  "name": "@mmis1000/vue-dnd",
   "version": "0.0.0",
   "files": [
     "dist"
