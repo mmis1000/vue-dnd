@@ -1,4 +1,4 @@
-import { provide, reactive, shallowReactive, shallowReadonly, VNode } from "vue";
+import { ComputedRef, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, UnwrapRef, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
@@ -24,7 +24,7 @@ class HtmlExecutionImpl<T> implements Execution<T> {
   readonly targets: DragDropTargetIdentifier[] = reactive([])
   constructor(
     readonly id: string,
-    readonly data: T,
+    readonly data: T | Ref<T> | ComputedRef<T>,
     readonly source: DragDropTargetIdentifier,
     readonly movingElement: HTMLElement
   ) {
@@ -44,7 +44,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
-    data: any
+    dataOrRef: IData | Ref<IData>
   ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dragTargetId = this.dragTargetId++
 
@@ -57,11 +57,11 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           draggable: 'true',
           onDragstart: (ev: DragEvent) => {
             const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
-            this.executions.push(new HtmlExecutionImpl(id, data, dragTargetId, ev.target as HTMLElement))
+            this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, ev.target as HTMLElement))
             ev.dataTransfer?.setDragImage(ev.target as any, 0, 0)
             ev.dataTransfer!.setData('text/plain', '')
             ev.dataTransfer!.setData(prefix + '-' + id, '')
-            events.onDragStart?.(ev, data)
+            events.onDragStart?.(ev, unref(dataOrRef))
           },
           onDragend: (ev: DragEvent) => {
             findAndRemove(this.executions, item => item.movingElement === ev.target)
@@ -71,7 +71,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     ]
   }
   getDroppableDecorator<T, U, V>(
-    accept: IData | ((arg: IData) => boolean) | undefined,
+    accept:  IData | ((arg: IData) => boolean) | undefined,
     events: {
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
@@ -81,7 +81,6 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {
-
       onDrop: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
@@ -97,7 +96,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
         ev.preventDefault()
         findAndRemove(this.executions, item => item.id === id)
-        events.onDrop?.(ev, execution.data)
+        events.onDrop?.(ev, unref(execution.data as IData | Ref<IData>))
       },
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
@@ -114,7 +113,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         if (execution.targets.indexOf(dropTargetId) < 0) {
           execution.targets.push(dropTargetId)
         }
-        events.onDragEnter?.(ev, execution?.data)
+        events.onDragEnter?.(ev, unref(execution.data as IData | Ref<IData>))
       },
       onDragleave: (ev: DragEvent) => {
         const id = getId(ev)
@@ -131,7 +130,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
         findAndRemove(execution.targets, i => i === dropTargetId)
 
-        events.onDragLeave?.(ev, execution?.data)
+        events.onDragLeave?.(ev, unref(execution.data as IData | Ref<IData>))
       },
       onDragover: (ev: DragEvent) => {
         const id = getId(ev)
@@ -152,7 +151,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           }
         }
 
-        events.onDragOver?.(ev, execution?.data)
+        events.onDragOver?.(ev, unref(execution.data as IData | Ref<IData>))
       }
     }
     return [dropTargetId, (node: VNode<T, U, V>) => ({

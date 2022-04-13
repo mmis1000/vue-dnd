@@ -1,4 +1,4 @@
-import { VNode } from "vue"
+import { ComputedRef, Ref, UnwrapRef, VNode } from "vue"
 
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 
@@ -6,7 +6,7 @@ export type DragDropTargetIdentifier = number
 
 export interface Execution<T> {
   readonly id: string,
-  readonly data: T,
+  readonly data: T | Ref<T> | ComputedRef<T>,
   readonly source: DragDropTargetIdentifier,
   readonly targets:  DragDropTargetIdentifier[]
 }
@@ -18,7 +18,7 @@ export interface DndProvider<IData> {
     events: {
       onDragStart?: DndDragHandlerWithData<IData>
     },
-    data: IData
+    dataOrRef: IData
   ): [DragDropTargetIdentifier, (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>]
 
   getDroppableDecorator<RendererNode, RendererElement, ExtraProps> (

@@ -1,9 +1,9 @@
-import { computed, inject, reactive, VNode } from "vue"
+import { computed, inject, reactive, Ref, UnwrapRef, VNode } from "vue"
 import { DndDragHandlerWithData } from "./interfaces"
 import { PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggable = <IData = unknown>(
-  data: IData,
+  data: IData | Ref<UnwrapRef<IData>>,
   options: {
     onDragStart?: DndDragHandlerWithData<IData>
   }
