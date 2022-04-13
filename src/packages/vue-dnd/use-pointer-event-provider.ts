@@ -1,4 +1,3 @@
-import { NormalizedStyle } from "@vue/shared";
 import { ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, UnwrapRef, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
@@ -196,7 +195,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     return [
       dragTargetId,
       (node: VNode<T, U, V>) => {
-        const originalStyle: NormalizedStyle | string = normalizeStyle((node.props as any).style ?? {}) ?? {}
+        const originalStyle = normalizeStyle((node.props as any).style ?? {}) ?? {}
         const execution = this.executions.find(i => i.source === dragTargetId)
         const dragging = execution != null
 

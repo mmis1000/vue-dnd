@@ -1,6 +1,5 @@
 <script lang="tsx">
-import { computed } from '@vue/reactivity';
-import { defineComponent, PropType, reactive } from 'vue';
+import { defineComponent, PropType, reactive, computed} from 'vue';
 import { useDraggable, useDroppable } from '../packages/vue-dnd';
 import { useHtmlProvider } from '../packages/vue-dnd/use-html-provider';
 
@@ -20,7 +19,7 @@ const Ball = defineComponent({
   setup (props) {
     const { wrap } = useDraggable<Message>(
       // Specify what did you want to send to the dropzone, can either be ref or raw value
-      computed(() => [props.currentBucket, props.id]), 
+      computed(() => [props.currentBucket, props.id] as Message), 
       {}
     )
     return () => wrap(<div class="ball" >{ props.id }</div>)

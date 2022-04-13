@@ -32,7 +32,7 @@ const Ball = defineComponent({
     // the `wrap` function alter the VNode to inject ref/handler/styles
     const { wrap } = useDraggable<Message>(
       // Specify what did you want to send to the drop zone, can either be ref or raw value
-      computed(() => [props.currentBucket, props.id]), 
+      computed(() => [props.currentBucket, props.id] as Message), 
       {
         // optional handlers
         onDragStart: (ev, data) => {}
