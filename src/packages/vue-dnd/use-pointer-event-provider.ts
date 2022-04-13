@@ -55,8 +55,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dragTargetId = this.dragTargetId++
 
-    const elementRef = ref<Element | null>(null)
-
+    const elementRef: Ref<Element | null> = ref(null)
+  
     onMounted(() => {
       if (!elementRef.value) return
       this.draggableElements.set(dragTargetId, elementRef.value)
@@ -243,7 +243,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dropTargetId = this.dropTargetId++
 
-    const elementRef = ref<Element | null>(null)
+    const elementRef: Ref<Element | null> = ref(null)
 
     onMounted(() => {
       if (!elementRef.value) return
