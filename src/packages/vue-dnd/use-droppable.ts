@@ -2,12 +2,8 @@ import { computed, inject, VNode } from "vue"
 import { DndDragHandlerWithData } from "./interfaces"
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal"
 
-export const useDroppable = <IData = unknown, ComputedState = unknown>(options: {
+export const useDroppable = <IData = unknown>(options: {
   accept: IData | ((arg: IData) => boolean)
-  getComputedState?: (state: {
-    hover: boolean,
-    draggingItems: { hover: boolean, accepted: boolean, data: any }[]
-  }) => ComputedState
   onDrop?: DndDragHandlerWithData<IData>
   onDragOver?: DndDragHandlerWithData<IData>
   onDragEnter?: DndDragHandlerWithData<IData>
@@ -47,18 +43,13 @@ export const useDroppable = <IData = unknown, ComputedState = unknown>(options: 
     wrap(node: VNode) {
       return decorateElement(node)
     },
-    computedState: computed(() => {
-      if (options.getComputedState == null) {
-        throw new Error('no computed state')
+    hoverState: {
+      get hover() {
+        return hoverComputed.value
+      },
+      get draggingItems() {
+        return draggingItems.value
       }
-      return options.getComputedState({
-        get hover() {
-          return hoverComputed.value
-        },
-        get draggingItems() {
-          return draggingItems.value
-        }
-      })
-    })
+    }
   }
 }

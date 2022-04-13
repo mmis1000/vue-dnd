@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { computed } from "@vue/reactivity"
 import { defineComponent, PropType } from "vue"
 import { useDroppable } from "../packages/vue-dnd/use-droppable"
 export default defineComponent({
@@ -11,7 +12,7 @@ export default defineComponent({
   },
   emits: ["drop"],
   setup (props, ctx) {
-    const { wrap, computedState } = useDroppable<[number, number], Record<string, any>>({
+    const { wrap, hoverState } = useDroppable<[number, number]>({
       accept: (d) => {
         if (
           Math.abs(d[0] - props.index[0]) === 1 && Math.abs(d[1] - props.index[1]) === 2 ||
@@ -22,27 +23,28 @@ export default defineComponent({
           return false
         }
       },
-      getComputedState (state) {
-        if (state.hover) {
-          if (state.draggingItems.find( i => i.accepted) != null) {
-            return { background: 'green', 'user-select': 'none' }
-          } else {
-            return { background: 'red', 'user-select': 'none' }
-          }
-        } else if (state.draggingItems.length > 0) {
-          if (state.draggingItems.find( i => i.accepted) != null) {
-            return { background: 'blue', 'user-select': 'none' }
-          } else {
-            return { 'user-select': 'none' }
-          }
-        } else {
-          return {}
-        }
-      },
       onDrop: (ev, data) => {
         ctx.emit('drop', { index: props.index })
       },
       onDragOver(ev, data) {
+      }
+    })
+    const computedState = computed((): Record<string, string> => {
+      const state = hoverState
+      if (state.hover) {
+        if (state.draggingItems.find( i => i.accepted) != null) {
+          return { background: 'green', 'user-select': 'none' }
+        } else {
+          return { background: 'red', 'user-select': 'none' }
+        }
+      } else if (state.draggingItems.length > 0) {
+        if (state.draggingItems.find( i => i.accepted) != null) {
+          return { background: 'blue', 'user-select': 'none' }
+        } else {
+          return { 'user-select': 'none' }
+        }
+      } else {
+        return {}
       }
     })
     return () => wrap(<div class={props.dark ? 'a dark' : 'a'} style={computedState.value}>
