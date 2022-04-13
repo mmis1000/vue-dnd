@@ -1,5 +1,5 @@
-import { InjectionKey, reactive, shallowReactive } from "vue";
-import { DndProvider, DragDropTargetIdentifier, Execution } from "./interfaces";
+import { InjectionKey } from "vue";
+import { DndProvider } from "./interfaces";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider<any>>
 export const nuzz = () => {}

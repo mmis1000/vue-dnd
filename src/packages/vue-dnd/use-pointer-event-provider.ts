@@ -1,4 +1,4 @@
-import { ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { computed, ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
@@ -50,12 +50,12 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
 
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
-    dataOrRef: IData | Ref<IData>
+    dataOrRef: IData | Ref<IData> | ComputedRef<IData>
   ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
     const dragTargetId = this.dragTargetId++
 
     const elementRef: Ref<Element | null> = ref(null)
-  
+
     onMounted(() => {
       if (!elementRef.value) return
       this.draggableElements.set(dragTargetId, elementRef.value)
@@ -76,10 +76,10 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         const offset = [0, 0] as [number, number]
         this.executions.push(new PointerExecutionImpl(id, dataOrRef, dragTargetId, ev, ev, rect, offset));
         (ev.target as Element).setPointerCapture(ev.pointerId)
-        events.onDragStart?.(ev, unref(dataOrRef))
+        events.onDragStart?.(ev, unref<IData>(dataOrRef))
       },
       onContextmenu: (ev: Event) => {
-        const exe = this.executions.find(exe => exe.source === dragTargetId) 
+        const exe = this.executions.find(exe => exe.source === dragTargetId)
         if (exe) {
           ev.preventDefault()
         }
@@ -88,7 +88,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         const exe = this.executions.find(exe => exe.initialEvent.pointerId === ev.pointerId)
         if (exe) {
           exe.lastEvent = ev
-          
+
           const rect = (ev.target as Element).getBoundingClientRect()
           const correctedLastRect = [rect.left - exe.offset[0], rect.top - exe.offset[1]]
 
@@ -96,7 +96,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             correctedLastRect[0] - exe.initialRect.left,
             correctedLastRect[1] - exe.initialRect.top
           ] as [number, number]
-          
+
 
           const fullOffset = [
             -rectOffset[0] + ev.clientX - exe.initialEvent.clientX,
@@ -114,14 +114,14 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           const oldTargets = exe.targets
           const newTargets = reactive(
             [...targetAreas]
-            .filter(
-              ([_, box]) => 
-              box.left < ev.clientX
-              && box.right > ev.clientX
-              && box.top < ev.clientY
-              && box.bottom > ev.clientY
-            )
-            .map(i => i[0])
+              .filter(
+                ([_, box]) =>
+                  box.left < ev.clientX
+                  && box.right > ev.clientX
+                  && box.top < ev.clientY
+                  && box.bottom > ev.clientY
+              )
+              .map(i => i[0])
           )
 
 
@@ -138,7 +138,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id)
 
             if (decl) {
-              decl.events.onDragLeave?.(ev, unref(exe.data as IData | Ref<IData>))
+              decl.events.onDragLeave?.(ev, unref<IData>(exe.data))
             }
           }
 
@@ -146,7 +146,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id)
 
             if (decl) {
-              decl.events.onDragEnter?.(ev, unref(exe.data as IData | Ref<IData>))
+              decl.events.onDragEnter?.(ev, unref<IData>(exe.data))
             }
           }
         }
@@ -174,14 +174,14 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           const validTargets = targets.filter(id => {
             const decl = this.droppableDeclarations.get(id)
             if (decl === undefined) return false
-            return matchAccept(decl.accept, unref(dataOrRef))
+            return matchAccept(decl.accept, unref<IData>(dataOrRef))
           })
 
           if (validTargets.length > 0) {
             // fire on the last one
             const targetId = validTargets[targets.length - 1]
             const decl = this.droppableDeclarations.get(targetId)
-            decl?.events.onDrop?.(ev, unref(dataOrRef))
+            decl?.events.onDrop?.(ev, unref<IData>(dataOrRef))
           }
         }
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))
@@ -206,11 +206,9 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         // rect + offset = mouse
         const styleOverride: Record<string, string> = dragging ? {
           'touch-action': 'none',
-          transform: `translate(${
-            execution.offset[0]
-          }px, ${
-            execution.offset[1]
-          }px)`
+          transform: `translate(${execution.offset[0]
+            }px, ${execution.offset[1]
+            }px)`
         } : {
           'touch-action': 'none'
         }
@@ -247,7 +245,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     onMounted(() => {
       if (!elementRef.value) return
       this.droppableElements.set(dropTargetId, elementRef.value)
-      this.droppableDeclarations.set(dropTargetId, {accept, events})
+      this.droppableDeclarations.set(dropTargetId, { accept, events })
     })
 
     onUnmounted(() => {
