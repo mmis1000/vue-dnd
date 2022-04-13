@@ -4,7 +4,7 @@ Status: WIP
 
 A un-opinionated drag and drop help utility.  
 It doesn't care about how you store the data or how you update the data.  
-All it does is sending the message from draggable to drop zone fro you.
+All it does is sending the message from draggable to drop zone for you.
 
 ## API
 
