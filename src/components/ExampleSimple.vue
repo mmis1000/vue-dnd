@@ -18,7 +18,11 @@ const Ball = defineComponent({
     }
   },
   setup (props) {
-    const { wrap } = useDraggable<Message>(computed(() => [props.currentBucket, props.id]), {})
+    const { wrap } = useDraggable<Message>(
+      // Specify what did you want to send to the dropzone, can either be ref or raw value
+      computed(() => [props.currentBucket, props.id]), 
+      {}
+    )
     return () => wrap(<div class="ball" >{ props.id }</div>)
   }
 })
@@ -36,8 +40,13 @@ const Bucket = defineComponent({
   },
   setup (props, ctx) {
     const { wrap } = useDroppable<Message>({
+      // Declare whether you want to receive the draggable item or not
+      // A predicate function or raw value
       accept: (msg) => msg[0] !== props.id,
-      onDrop: (ev, data) => props.onDrop(data[1], data[0], props.id)
+      // The drop zone receives message from draggable item
+      onDrop: (ev, data) => {
+        props.onDrop(data[1], data[0], props.id)
+      }
     })
     return () => wrap(<div class="bucket">{ ctx.slots.default?.() }</div>)
   }

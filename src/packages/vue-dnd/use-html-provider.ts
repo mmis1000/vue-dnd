@@ -37,7 +37,6 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   private dragEventIndex = 0
   private dropTargetId = 0
   private dragTargetId = 0
-  // private dataMap = new Map<string, any>()
   private executions: HtmlExecutionImpl<IData>[] = shallowReactive<HtmlExecutionImpl<IData>[]>([])
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
@@ -58,7 +57,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           onDragstart: (ev: DragEvent) => {
             const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
             this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, ev.target as HTMLElement))
-            ev.dataTransfer?.setDragImage(ev.target as any, 0, 0)
+            ev.dataTransfer?.setDragImage(ev.target as Element, 0, 0)
             ev.dataTransfer!.setData('text/plain', '')
             ev.dataTransfer!.setData(prefix + '-' + id, '')
             events.onDragStart?.(ev, unref(dataOrRef))
@@ -146,7 +145,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
 
         if (accept != null) {
-          if (matchAccept(accept, execution.data)) {
+          if (matchAccept(accept, unref(execution.data as IData | Ref<IData>))) {
             ev.preventDefault()
           }
         }

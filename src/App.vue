@@ -5,11 +5,11 @@ import BoardPointerEvent from './components/BoardPointerEvent.vue';
 </script>
 
 <template>
-  Simple Example
+  <div>Simple Example</div>
   <ExampleSimple />
-  Native Provider
+  <div>Native Provider</div>
   <BoardNative />
-  Pointer Event Provider
+  <div>Pointer Event Provider</div>
   <BoardPointerEvent />
 </template>
 

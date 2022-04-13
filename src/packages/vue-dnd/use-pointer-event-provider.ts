@@ -33,7 +33,6 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   private dragEventIndex = 0
   private dropTargetId = 0
   private dragTargetId = 0
-  // private dataMap = new Map<string, any>()
   private executions: PointerExecutionImpl<IData>[] = shallowReactive<PointerExecutionImpl<IData>[]>([])
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
