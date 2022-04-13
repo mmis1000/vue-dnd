@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import MyDrag from './MyDrag.vue';
 import MyDrop from './MyDrop.vue';
-import { usePointerEventProvider } from './vue-dnd/use-pointer-event-provider';
+import { usePointerEventProvider } from '../packages/vue-dnd/use-pointer-event-provider';
 usePointerEventProvider()
 
 let all = 8

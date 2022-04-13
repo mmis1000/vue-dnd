@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [vue(), vueJSx()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/components/vue-dnd/index.ts'),
+      entry: path.resolve(__dirname, 'src/packages/vue-dnd/index.ts'),
       name: 'VueDnd',
       fileName: (format) => `vue-dnd.${format}.js`
     },
@@ -29,7 +29,7 @@ export default defineConfig({
       plugins: [
         typescript({
           'target': 'es2020',
-          'rootDir': resolvePath('./src/components/vue-dnd'),
+          'rootDir': resolvePath('./src/packages/vue-dnd'),
           'declaration': true,
           'declarationDir': resolvePath('./dist'),
           exclude: resolvePath('./node_modules/**'),

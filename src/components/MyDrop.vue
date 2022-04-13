@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, PropType } from "vue"
-import { useDroppable } from "./vue-dnd/use-droppable"
+import { useDroppable } from "../packages/vue-dnd/use-droppable"
 export default defineComponent({
   props: {
     index: {

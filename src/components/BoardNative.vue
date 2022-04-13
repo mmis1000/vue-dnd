@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import MyDrag from './MyDrag.vue';
 import MyDrop from './MyDrop.vue';
-import { useHtmlProvider } from './vue-dnd/use-html-provider';
+import { useHtmlProvider } from '../packages/vue-dnd/use-html-provider';
 useHtmlProvider()
 
 let all = 8

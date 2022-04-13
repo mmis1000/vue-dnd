@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, PropType } from "vue"
-import { useDraggable } from "./vue-dnd/use-draggable"
+import { useDraggable } from "../packages/vue-dnd/use-draggable"
 export default defineComponent({
   props: {
     index: {
