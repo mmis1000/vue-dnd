@@ -12,9 +12,10 @@ export default defineComponent({
   setup (props, ctx) {
     const { wrap, state } = useDraggable(props.index, {
       onDragStart (ev) {
+        console.log('start', ev)
       }
     })
-    return () => wrap(<div class={{a: true, dark: props.dark, dragging: state.isDragging}}>
+    return () => wrap(<div style="color: red" class={{a: true, dark: props.dark, dragging: state.isDragging}}>
       {state.isDragging ? 'moving...' : ctx.slots.default?.()}
     </div>)
   }

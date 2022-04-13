@@ -1,14 +1,17 @@
 import { computed, inject, VNode } from "vue"
-import { PROVIDER_INJECTOR_KEY } from "./internal"
+import { DndDragHandlerWithData } from "./interfaces"
+import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal"
 
-export const useDroppable = <IData, T>(options: {
-  accept?: IData | ((arg: IData) => boolean)
+export const useDroppable = <IData = unknown, ComputedState = unknown>(options: {
+  accept: IData | ((arg: IData) => boolean)
   getComputedState?: (state: {
     hover: boolean,
     draggingItems: { hover: boolean, accepted: boolean, data: any }[]
-  }) => T
-  onDrop?: (ev: DragEvent, data: any) => void
-  onDragOver?: (ev: DragEvent, data: any) => void
+  }) => ComputedState
+  onDrop?: DndDragHandlerWithData<IData>
+  onDragOver?: DndDragHandlerWithData<IData>
+  onDragEnter?: DndDragHandlerWithData<IData>
+  onDragLeave?: DndDragHandlerWithData<IData>
 }) => {
   const provider = inject(PROVIDER_INJECTOR_KEY)
 
@@ -16,35 +19,11 @@ export const useDroppable = <IData, T>(options: {
     throw new Error('missing provider')
   }
 
-  const matchAccept = (accept: any, data: any) => {
-    if (typeof accept === 'function') {
-      if (accept(data)) {
-        return true
-      }
-    } else {
-      if (accept === data) {
-        return true
-      }
-    }
-    return false
-  }
-
-  const [id, decorateElement] = provider.getDroppableDecorator({
-    onDrop: (ev, data) => {
-      options.onDrop?.(ev, data)
-    },
-    onDragEnter: (ev) => {
-    },
-    onDragLeave: (ev) => {
-    },
-    onDragOver: (ev, data) => {
-      if (options.accept != null) {
-        if (matchAccept(options.accept, data)) {
-          ev.preventDefault()
-        }
-      }
-      options.onDragOver?.(ev, data)
-    }
+  const [id, decorateElement] = provider.getDroppableDecorator(options.accept, {
+    onDrop: options.onDrop,
+    onDragEnter: options.onDragEnter,
+    onDragLeave: options.onDragLeave,
+    onDragOver: options.onDragOver
   })
 
   const hoverComputed = computed(() => provider.readonlyExecutions.find(execution => execution.targets.indexOf(id) >= 0) != null)
@@ -56,7 +35,7 @@ export const useDroppable = <IData, T>(options: {
       return {
         hover: execution.targets.indexOf(id) >= 0,
         data: execution.data,
-        get accepted () {
+        get accepted() {
           return accepted.value
         }
       }
@@ -65,7 +44,7 @@ export const useDroppable = <IData, T>(options: {
   })
 
   return {
-    wrap (node: VNode) {
+    wrap(node: VNode) {
       return decorateElement(node)
     },
     computedState: computed(() => {
@@ -73,10 +52,10 @@ export const useDroppable = <IData, T>(options: {
         throw new Error('no computed state')
       }
       return options.getComputedState({
-        get hover () {
+        get hover() {
           return hoverComputed.value
         },
-        get draggingItems () {
+        get draggingItems() {
           return draggingItems.value
         }
       })

@@ -1,6 +1,6 @@
 import { VNode } from "vue"
 
-export type DragHandlerWithData<IData> = (ev: DragEvent, data: IData) => void
+export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 
 export type DragDropTargetIdentifier = number
 
@@ -16,17 +16,18 @@ export interface DndProvider<IData> {
   
   getDraggableDecorator<RendererNode, RendererElement, ExtraProps> (
     events: {
-      onDragStart?: DragHandlerWithData<IData>
+      onDragStart?: DndDragHandlerWithData<IData>
     },
     data: IData
   ): [DragDropTargetIdentifier, (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>]
 
   getDroppableDecorator<RendererNode, RendererElement, ExtraProps> (
+    accept: IData | ((arg: IData) => boolean),
     events: {
-      onDragOver?: DragHandlerWithData<IData>;
-      onDragEnter?: DragHandlerWithData<IData>;
-      onDragLeave?: DragHandlerWithData<IData>;
-      onDrop?: DragHandlerWithData<IData>;
+      onDragOver?: DndDragHandlerWithData<IData>;
+      onDragEnter?: DndDragHandlerWithData<IData>;
+      onDragLeave?: DndDragHandlerWithData<IData>;
+      onDrop?: DndDragHandlerWithData<IData>;
     }
   ): [DragDropTargetIdentifier, (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>]
 }

@@ -1,10 +1,11 @@
 import { computed, inject, reactive, VNode } from "vue"
+import { DndDragHandlerWithData } from "./interfaces"
 import { PROVIDER_INJECTOR_KEY } from "./internal"
 
-export const useDraggable = (
-  data: any,
+export const useDraggable = <IData = unknown>(
+  data: IData,
   options: {
-    onDragStart?: (ev: DragEvent) => void
+    onDragStart?: DndDragHandlerWithData<IData>
   }
 ) => {
   const provider = inject(PROVIDER_INJECTOR_KEY)
