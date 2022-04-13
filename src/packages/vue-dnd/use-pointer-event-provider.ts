@@ -199,6 +199,18 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         const execution = this.executions.find(i => i.source === dragTargetId)
         const dragging = execution != null
 
+        let accepted = false
+
+        if (execution != null && execution.targets.length > 0) {
+          for (let target of execution.targets) {
+            const def = this.droppableDeclarations.get(target)
+
+            if (def) {
+              accepted = matchAccept(def.accept, unref<IData>(execution.data))
+            }
+          }
+        }
+
         const serializeStyle = (style: Record<string, string>) => {
           return Object.entries(style).map(i => i[0] + ': ' + i[1]).join('; ')
         }
@@ -208,7 +220,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           'touch-action': 'none',
           transform: `translate(${execution.offset[0]
             }px, ${execution.offset[1]
-            }px)`
+            }px)`,
+          cursor: accepted ? 'move' : 'no-drop'
         } : {
           'touch-action': 'none'
         }
