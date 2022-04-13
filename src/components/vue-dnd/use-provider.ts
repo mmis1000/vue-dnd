@@ -233,6 +233,12 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         (ev.target as Element).setPointerCapture(ev.pointerId)
         events.onDragStart?.(ev, data)
       },
+      onContextmenu: (ev: Event) => {
+        const exe = this.executions.find(exe => exe.source === dragTargetId) 
+        if (exe) {
+          ev.preventDefault()
+        }
+      },
       onPointermove: (ev: PointerEvent) => {
         const exe = this.executions.find(exe => exe.initialEvent.pointerId === ev.pointerId)
         if (exe) {
@@ -354,13 +360,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
 
         // rect + offset = mouse
         const styleOverride: Record<string, string> = dragging ? {
-          'touch-actions': 'none',
+          'touch-action': 'none',
           transform: `translate(${
             execution.offset[0]
           }px, ${
             execution.offset[1]
           }px)`
-        } : {}
+        } : {
+          'touch-action': 'none'
+        }
 
         const style = typeof originalStyle === 'string'
           ? originalStyle + '; ' + serializeStyle(styleOverride)
