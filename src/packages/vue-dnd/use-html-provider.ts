@@ -56,8 +56,10 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           draggable: 'true',
           onDragstart: (ev: DragEvent) => {
             const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
+            const pos = [ev.clientX, ev.clientY] as const
+            const elPos = (ev.target as HTMLElement).getBoundingClientRect()
             this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, ev.target as HTMLElement))
-            ev.dataTransfer?.setDragImage(ev.target as Element, 0, 0)
+            ev.dataTransfer?.setDragImage(ev.target as Element, pos[0] - elPos.left, pos[1] - elPos.top)
             ev.dataTransfer!.setData('text/plain', '')
             ev.dataTransfer!.setData(prefix + '-' + id, '')
             events.onDragStart?.(ev, unref<IData>(dataOrRef))
