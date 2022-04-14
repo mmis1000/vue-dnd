@@ -9,6 +9,7 @@ const resolvePath = (str: string) => path.resolve(__dirname, str)
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), vueJSx()],
+  base: './',
   build: {
     outDir: './dist-example'
   }
