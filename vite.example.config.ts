@@ -11,6 +11,7 @@ export default defineConfig({
   plugins: [vue(), vueJSx()],
   base: './',
   build: {
+    sourcemap: true,
     outDir: './dist-example'
   }
 })

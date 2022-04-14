@@ -10,6 +10,7 @@ const resolvePath = (str: string) => path.resolve(__dirname, str)
 export default defineConfig({
   plugins: [vue(), vueJSx()],
   build: {
+    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, 'src/packages/vue-dnd/index.ts'),
       name: 'VueDnd',
@@ -31,6 +32,9 @@ export default defineConfig({
           'target': 'es2020',
           'rootDir': resolvePath('./src/packages/vue-dnd'),
           'declaration': true,
+          'compilerOptions': {
+            declarationMap: true
+          },
           'declarationDir': resolvePath('./dist'),
           exclude: resolvePath('./node_modules/**'),
           allowSyntheticDefaultImports: true
