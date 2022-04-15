@@ -1,6 +1,6 @@
-import { ComputedRef, provide, reactive, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { ComputedRef, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
-import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
+import { matchAccept, mixinProps, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
@@ -26,6 +26,8 @@ class HtmlExecutionImpl<T> implements Execution<T> {
     readonly id: string,
     readonly data: T | Ref<T> | ComputedRef<T>,
     readonly source: DragDropTargetIdentifier,
+    readonly mouseOffset: readonly [number, number],
+    // implementation specified properties
     readonly movingElement: HTMLElement
   ) {
     return shallowReactive(this)
@@ -44,31 +46,41 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
     dataOrRef: IData | Ref<IData> | ComputedRef<IData>
-  ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+  ): [
+      DragDropTargetIdentifier,
+      (node: VNode<T, U, V>) => VNode<T, U, V>,
+      (node: VNode<T, U, V>) => VNode<T, U, V>
+    ] {
     const dragTargetId = this.dragTargetId++
+
+    const elementRef: Ref<Element | null> = ref(null)
+
+    const itemMixin = {
+      ref: elementRef
+    }
+
+    const handleMixin = {
+      draggable: 'true',
+      onDragstart: (ev: DragEvent) => {
+        const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
+        const pos = [ev.clientX, ev.clientY] as const
+        const elPos = elementRef.value!.getBoundingClientRect()
+        const mouseOffset = [pos[0] - elPos.left, pos[1] - elPos.top] as const
+        this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, mouseOffset, ev.target as HTMLElement))
+        ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
+        ev.dataTransfer!.setData('text/plain', '')
+        ev.dataTransfer!.setData(prefix + '-' + id, '')
+        events.onDragStart?.(ev, unref<IData>(dataOrRef))
+      },
+      onDragend: (ev: DragEvent) => {
+        findAndRemove(this.executions, item => item.movingElement === ev.target)
+      }
+    }
 
     return [
       dragTargetId,
-      (node: VNode<T, U, V>) => ({
-        ...node,
-        props: {
-          ...node.props,
-          draggable: 'true',
-          onDragstart: (ev: DragEvent) => {
-            const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
-            const pos = [ev.clientX, ev.clientY] as const
-            const elPos = (ev.target as HTMLElement).getBoundingClientRect()
-            this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, ev.target as HTMLElement))
-            ev.dataTransfer?.setDragImage(ev.target as Element, pos[0] - elPos.left, pos[1] - elPos.top)
-            ev.dataTransfer!.setData('text/plain', '')
-            ev.dataTransfer!.setData(prefix + '-' + id, '')
-            events.onDragStart?.(ev, unref<IData>(dataOrRef))
-          },
-          onDragend: (ev: DragEvent) => {
-            findAndRemove(this.executions, item => item.movingElement === ev.target)
-          }
-        }
-      }) as any
+      (node: VNode<T, U, V>) => mixinProps(node, itemMixin),
+      (node: VNode<T, U, V>) => mixinProps(node, handleMixin)
     ]
   }
   getDroppableDecorator<T, U, V>(

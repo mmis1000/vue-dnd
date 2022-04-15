@@ -1,6 +1,6 @@
-import { computed, ComputedRef, h, normalizeStyle, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { ComputedRef, h, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
-import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
+import { extendStyle, matchAccept, mixinProps, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
@@ -14,15 +14,18 @@ const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
 }
 class PointerExecutionImpl<T> implements Execution<T> {
   targets: DragDropTargetIdentifier[] = reactive([])
+  public lastEvent: PointerEvent
   constructor(
     readonly id: string,
     readonly data: T | Ref<T> | ComputedRef<T>,
     readonly source: DragDropTargetIdentifier,
+    readonly mouseOffset: readonly [number, number],
+    // implementation specified properties
     readonly initialEvent: PointerEvent,
-    public lastEvent: PointerEvent,
     readonly initialRect: DOMRect,
-    public offset: [number, number]
+    public elementOffset: [number, number]
   ) {
+    this.lastEvent = initialEvent
     return shallowReactive(this)
   }
 }
@@ -51,7 +54,11 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
     dataOrRef: IData | Ref<IData> | ComputedRef<IData>
-  ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+  ): [
+    DragDropTargetIdentifier,
+    (node: VNode<T, U, V>) => VNode<T, U, V>,
+    (node: VNode<T, U, V>) => VNode<T, U, V>
+  ] {
     const dragTargetId = this.dragTargetId++
 
     const elementRef: Ref<Element | null> = ref(null)
@@ -66,15 +73,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     })
 
     const targetAreas = new Map<DragDropTargetIdentifier, DOMRect>()
-
-    const propMixin = {
-      ref: elementRef,
+    const handleMixin = {
       onPointerdown: (ev: PointerEvent) => {
+        const pos = [ev.clientX, ev.clientY] as const
         const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
         const rect = (ev.target as Element).getBoundingClientRect()
+        const mouseOffset = [pos[0] - rect.left, pos[1] - rect.top] as const
         // rect + offset = mouse
         const offset = [0, 0] as [number, number]
-        this.executions.push(new PointerExecutionImpl(id, dataOrRef, dragTargetId, ev, ev, rect, offset));
+        this.executions.push(new PointerExecutionImpl(id, dataOrRef, dragTargetId, mouseOffset, ev, rect, offset));
         (ev.target as Element).setPointerCapture(ev.pointerId)
         events.onDragStart?.(ev, unref<IData>(dataOrRef))
       },
@@ -90,7 +97,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           exe.lastEvent = ev
 
           const rect = (ev.target as Element).getBoundingClientRect()
-          const correctedLastRect = [rect.left - exe.offset[0], rect.top - exe.offset[1]]
+          const correctedLastRect = [rect.left - exe.elementOffset[0], rect.top - exe.elementOffset[1]]
 
           const rectOffset = [
             correctedLastRect[0] - exe.initialRect.left,
@@ -103,7 +110,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             -rectOffset[1] + ev.clientY - exe.initialEvent.clientY,
           ] as [number, number]
 
-          exe.offset = fullOffset
+          exe.elementOffset = fullOffset
 
           // if (targetAreas.size === 0) {
           for (let [id, element] of this.droppableElements) {
@@ -186,19 +193,38 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         }
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))
         // events.onDragStart?.(ev, data)
-      },
-      onDragend: () => {
-        // findAndRemove(this.executions, item => item.movingElement === ev.target)
       }
+    }
+    const propMixin = {
+      ref: elementRef
     }
 
     return [
       dragTargetId,
       (node: VNode<T, U, V>) => {
-        const originalStyle = normalizeStyle((node.props as any).style ?? {}) ?? {}
         const execution = this.executions.find(i => i.source === dragTargetId)
         const dragging = execution != null
 
+        // rect + offset = mouse
+        const styleOverride: Record<string, string> = dragging ? {
+          transform: `translate(${execution.elementOffset[0]
+            }px, ${execution.elementOffset[1]
+            }px)`
+        } : {}
+
+        return h(
+          node.type as any,
+          {
+            ...node.props,
+            ...propMixin,
+            style: extendStyle((node.props as any).style, styleOverride)
+          },
+          node.children as any
+        ) as any
+      },
+      (node: VNode<T, U, V>) => {
+        const execution = this.executions.find(i => i.source === dragTargetId)
+        const dragging = execution != null
         let accepted = false
 
         if (execution != null && execution.targets.length > 0) {
@@ -211,34 +237,17 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           }
         }
 
-        const serializeStyle = (style: Record<string, string>) => {
-          return Object.entries(style).map(i => i[0] + ': ' + i[1]).join('; ')
-        }
-
-        // rect + offset = mouse
         const styleOverride: Record<string, string> = dragging ? {
           'touch-action': 'none',
-          transform: `translate(${execution.offset[0]
-            }px, ${execution.offset[1]
-            }px)`,
           cursor: accepted ? 'move' : 'no-drop'
         } : {
           'touch-action': 'none'
         }
-
-        const style = typeof originalStyle === 'string'
-          ? originalStyle + '; ' + serializeStyle(styleOverride)
-          : { ...originalStyle, ...styleOverride }
-
-        return h(
-          node.type as any,
-          {
-            ...node.props,
-            ...propMixin,
-            style
-          },
-          node.children as any
-        ) as any
+        const finalMixin = {
+          ...handleMixin,
+          style: extendStyle((node.props as any).style, styleOverride)
+        }
+        return mixinProps(node, finalMixin)
       }
     ]
   }
