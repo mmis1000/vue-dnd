@@ -2,6 +2,7 @@
 import { defineComponent, PropType, reactive, computed } from "vue";
 import { useDraggableWithHandle, useDroppable } from "../packages/vue-dnd";
 import { useHtmlProvider } from "../packages/vue-dnd/use-html-provider";
+import { usePointerEventProvider } from '../packages/vue-dnd/use-pointer-event-provider';
 
 type Message = [currentBucket: number, id: number];
 
@@ -66,8 +67,18 @@ const Bucket = defineComponent({
 });
 
 export default {
-  setup() {
-    useHtmlProvider();
+  props: {
+    usePointerEvent: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup (props) {
+    if (props.usePointerEvent) {
+      usePointerEventProvider()
+    } else {
+      useHtmlProvider()
+    }
 
     const buckets = reactive(new Array(5).fill(null).map(() => [] as number[]));
     buckets[0].push(1, 2, 3, 4, 5);

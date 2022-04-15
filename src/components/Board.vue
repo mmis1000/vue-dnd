@@ -2,8 +2,18 @@
 import { ref } from 'vue';
 import MyDrag from './MyDrag.vue';
 import MyDrop from './MyDrop.vue';
+import { useHtmlProvider } from '../packages/vue-dnd/use-html-provider';
 import { usePointerEventProvider } from '../packages/vue-dnd/use-pointer-event-provider';
-usePointerEventProvider()
+
+const props = defineProps({
+  usePointerEvent: Boolean
+})
+
+if (props.usePointerEvent) {
+  usePointerEventProvider()
+} else {
+  useHtmlProvider()
+}
 
 let all = 8
 let current = ref<[number, number]>([1, 1])

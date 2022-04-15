@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import ExampleSimple from './components/ExampleSimple.vue';
 import ExampleHandle from './components/ExampleHandle.vue';
-import BoardNative from './components/BoardNative.vue';
-import BoardPointerEvent from './components/BoardPointerEvent.vue';
+import Board from './components/Board.vue';
 </script>
 
 <template>
   <div>Simple Example</div>
   <ExampleSimple />
+  <div>Simple Example (use pointer event)</div>
+  <ExampleSimple :usePointerEvent="true"/>
+  <div>Simple Example with handle (use pointer event)</div>
+  <ExampleHandle/>
   <div>Simple Example with handle</div>
-  <ExampleHandle />
+  <ExampleHandle :usePointerEvent="true" />
   <div>Native Provider</div>
-  <BoardNative />
+  <Board />
   <div>Pointer Event Provider</div>
-  <BoardPointerEvent />
+  <Board :usePointerEvent="true"/>
 </template>
 
 <style scoped>
