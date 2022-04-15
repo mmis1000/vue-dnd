@@ -1,6 +1,6 @@
 # Vue Dnd
 
-Status: WIP
+Status: WIP, DON'T USE
 
 A un-opinionated drag and drop help utility.  
 It doesn't care about how you store the data or how you update the data.  
