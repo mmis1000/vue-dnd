@@ -1,75 +1,14 @@
 <script lang="tsx">
-import { defineComponent, PropType, reactive, computed } from "vue";
-import { useDraggableWithHandle, useDroppable } from "../packages/vue-dnd";
+import { defineComponent, reactive } from "vue";
 import { useHtmlProvider } from "../packages/vue-dnd/use-html-provider";
 import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
+import ExampleItemWithHandleVue from "./example/ExampleItemWithHandle.vue";
+import ExampleBucketVue from "./example/ExampleBucket.vue";
+import ExampleBoardVue from "./example/ExampleBoard.vue";
 
-type Message = [currentBucket: number, id: number];
-
-const Ball = defineComponent({
-  props: {
-    currentBucket: {
-      type: Number,
-      required: true,
-    },
-    id: {
-      type: Number,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { propsItem, propsHandle } = useDraggableWithHandle<Message>(
-      // Specify what did you want to send to the dropzone, can either be ref or raw value
-      computed(() => [props.currentBucket, props.id] as Message),
-      {}
-    );
-
-    return () => {
-      return (
-        <div class="box" {...propsItem()}>
-          <div class="box-content" {...propsHandle({})}>
-            Handle
-          </div>
-          {props.id}
-        </div>
-      );
-    };
-  },
-});
-
-const Bucket = defineComponent({
-  props: {
-    id: {
-      type: Number,
-      required: true,
-    },
-    onDrop: {
-      type: Function as PropType<
-        (item: number, oldBucket: number, newBucket: number) => void
-      >,
-      required: true,
-    },
-  },
-  setup(props, ctx) {
-    const { propsItem, hoverState } = useDroppable<Message>({
-      // Declare whether you want to receive the draggable item or not
-      // A predicate function or raw value
-      accept: (msg) => msg[0] !== props.id,
-      // The drop zone receives message from draggable item
-      onDrop: (ev, data) => {
-        props.onDrop(data[1], data[0], props.id);
-      },
-    });
-
-    return () => (
-      <div
-        {...propsItem({ class: hoverState.hover ? "bucket hover" : "bucket" })}
-      >
-        {ctx.slots.default?.()}
-      </div>
-    );
-  },
-});
+const Ball = ExampleItemWithHandleVue
+const Bucket = ExampleBucketVue
+const Board = ExampleBoardVue
 
 export default defineComponent({
   props: {
@@ -95,7 +34,7 @@ export default defineComponent({
     };
 
     return () => (
-      <div class="board">
+      <Board>
         {buckets.map((b, index) => (
           <Bucket id={index} key={index} onDrop={onDrop}>
             {b.map((i, index2) => (
@@ -103,36 +42,8 @@ export default defineComponent({
             ))}
           </Bucket>
         ))}
-      </div>
+      </Board>
     );
   },
 });
 </script>
-<style scoped>
-.board {
-  display: flex;
-  flex: 0 0 auto;
-}
-.bucket {
-  width: 200px;
-  border: 4px solid blue;
-}
-
-.hover {
-  background: #ccc;
-}
-
-.box {
-  margin: 10px;
-  height: 50px;
-  background: red;
-  border-radius: 10px;
-  overflow: hidden;
-  padding: 10px;
-}
-
-.box::v-deep(.box-content) {
-  background: green;
-  border-radius: 10px;
-}
-</style>

@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import { PropType, computed } from "vue";
-import { useDroppable } from "../packages/vue-dnd/use-droppable";
+import { useDroppable } from "../../packages/vue-dnd/use-droppable";
 
 const emit = defineEmits<{
   (e: "drop", data: { index: [number, number] }): void;

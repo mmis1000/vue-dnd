@@ -11,7 +11,7 @@ export const useDraggableWithHandle = <IData = unknown>(
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
   if (provider == null) {
-    throw new Error('missing provider')
+    throw new Error('[vue-dnd] useDraggableWithHandle must be used with a provider')
   }
 
   const [id, getProps, getHandleProps] = provider.getDraggableDecorator({

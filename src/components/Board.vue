@@ -22,8 +22,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
-import MyDrag from "./MyDrag.vue";
-import MyDrop from "./MyDrop.vue";
+import MyDrag from "./board/MyDrag.vue";
+import MyDrop from "./board/MyDrop.vue";
 import { useHtmlProvider } from "../packages/vue-dnd/use-html-provider";
 import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
 
@@ -49,4 +49,7 @@ let current = ref<[number, number]>([1, 1]);
 .row {
   display: flex;
 }
+</style>
+
+<style scoped>
 </style>

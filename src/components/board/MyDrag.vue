@@ -16,7 +16,7 @@
 </template>
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { useDraggable } from "../packages/vue-dnd/use-draggable";
+import { useDraggable } from "../../packages/vue-dnd/use-draggable";
 
 const props = defineProps({
   index: {
