@@ -1,6 +1,6 @@
-import { ComputedRef, h, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
-import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution } from "./interfaces";
-import { extendStyle, matchAccept, mixinProps, PROVIDER_INJECTOR_KEY } from "./internal";
+import { ComputedRef, onMounted, onUnmounted, provide, reactive, Ref, ref, shallowReactive, shallowReadonly, unref } from "vue";
+import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps } from "./interfaces";
+import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
@@ -56,8 +56,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     dataOrRef: IData | Ref<IData> | ComputedRef<IData>
   ): [
     DragDropTargetIdentifier,
-    (node: VNode<T, U, V>) => VNode<T, U, V>,
-    (node: VNode<T, U, V>) => VNode<T, U, V>
+      GetProps,
+      GetProps
   ] {
     const dragTargetId = this.dragTargetId++
 
@@ -201,7 +201,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
 
     return [
       dragTargetId,
-      (node: VNode<T, U, V>) => {
+      () => {
         const execution = this.executions.find(i => i.source === dragTargetId)
         const dragging = execution != null
 
@@ -212,17 +212,12 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             }px)`
         } : {}
 
-        return h(
-          node.type as any,
-          {
-            ...node.props,
-            ...propMixin,
-            style: extendStyle((node.props as any).style, styleOverride)
-          },
-          node.children as any
-        ) as any
+        return {
+          ...propMixin,
+          style: styleOverride
+        }
       },
-      (node: VNode<T, U, V>) => {
+      () => {
         const execution = this.executions.find(i => i.source === dragTargetId)
         const dragging = execution != null
         let accepted = false
@@ -245,9 +240,9 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         }
         const finalMixin = {
           ...handleMixin,
-          style: extendStyle((node.props as any).style, styleOverride)
+          style: styleOverride
         }
-        return mixinProps(node, finalMixin)
+        return finalMixin
       }
     ]
   }
@@ -259,7 +254,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       onDragLeave?: DndDragHandlerWithData<IData>;
       onDrop?: DndDragHandlerWithData<IData>;
     }
-  ): [DragDropTargetIdentifier, (node: VNode<T, U, V>) => VNode<T, U, V>] {
+  ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++
 
     const elementRef: Ref<Element | null> = ref(null)
@@ -275,10 +270,9 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       this.droppableDeclarations.delete(dropTargetId)
     })
 
-    return [dropTargetId, (node: VNode<T, U, V>) => (h(node.type as any, {
-      ...node.props,
+    return [dropTargetId, () => ({
       ref: elementRef
-    } as any, node.children as any)) as unknown as VNode<T, U, V>]
+    })]
   }
 }
 

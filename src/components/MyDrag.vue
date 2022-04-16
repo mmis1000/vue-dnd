@@ -1,25 +1,39 @@
-<script lang="tsx">
-import { computed, defineComponent, PropType } from "vue"
-import { useDraggable } from "../packages/vue-dnd/use-draggable"
-export default defineComponent({
-  props: {
-    index: {
-      type: Array as unknown as PropType<[number, number]>,
-      required: true
-    },
-    dark: Boolean
+<template>
+  <div
+    style="color: red"
+    :class="{
+      a: true,
+      dark: props.dark,
+      dragging: state.isDragging,
+    }"
+    v-bind="propsItem()"
+  >
+    <template v-if="state.isDragging"> "moving..." </template>
+    <template v-else>
+      <slot></slot>
+    </template>
+  </div>
+</template>
+<script setup lang="ts">
+import { computed, PropType } from "vue";
+import { useDraggable } from "../packages/vue-dnd/use-draggable";
+
+const props = defineProps({
+  index: {
+    type: Array as unknown as PropType<[number, number]>,
+    required: true,
   },
-  setup (props, ctx) {
-    const { wrap, state } = useDraggable(computed(() => props.index), {
-      onDragStart (ev) {
-        console.log('start', ev)
-      }
-    })
-    return () => wrap(<div style="color: red" class={{a: true, dark: props.dark, dragging: state.isDragging}}>
-      {state.isDragging ? 'moving...' : ctx.slots.default?.()}
-    </div>)
+  dark: Boolean,
+});
+
+const { propsItem, state } = useDraggable(
+  computed(() => props.index),
+  {
+    onDragStart(ev) {
+      console.log("start", ev);
+    },
   }
-})
+);
 </script>
 
 <style scoped>

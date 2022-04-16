@@ -1,4 +1,4 @@
-import { computed, inject, reactive, unref, VNode } from "vue"
+import { cloneVNode, computed, inject, mergeProps, reactive, unref, VNode } from "vue"
 import { DndDragHandlerWithData, DndProvider } from "./interfaces"
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal"
 
@@ -15,12 +15,15 @@ export const useDroppable = <IData = unknown>(options: {
     throw new Error('missing provider')
   }
 
-  const [id, decorateElement] = provider.getDroppableDecorator(options.accept, {
+  const [id, getProps] = provider.getDroppableDecorator(options.accept, {
     onDrop: options.onDrop,
     onDragEnter: options.onDragEnter,
     onDragLeave: options.onDragLeave,
     onDragOver: options.onDragOver
   })
+
+  const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
+  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : mergeProps(extra, getProps())
 
   const hoverComputed = computed(() => provider.readonlyExecutions.find(execution => execution.targets.indexOf(id) >= 0) != null)
   const draggingItems = computed(() => {
@@ -40,9 +43,8 @@ export const useDroppable = <IData = unknown>(options: {
   })
 
   return {
-    wrap(node: VNode) {
-      return decorateElement(node)
-    },
+    wrapItem,
+    propsItem,
     hoverState: reactive({
       hover: hoverComputed,
       draggingItems: draggingItems

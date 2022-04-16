@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, VNode } from "vue"
+import { ComputedRef, Ref } from "vue"
 
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 
@@ -12,6 +12,8 @@ export interface Execution<T> {
   readonly mouseOffset: readonly [number, number]
 }
 
+export type GetProps = () => Record<string, any>
+
 export interface DndProvider<IData> {
   readonly readonlyExecutions: Readonly<Execution<IData>[]>
 
@@ -21,10 +23,10 @@ export interface DndProvider<IData> {
     },
     dataOrRef: IData | Ref<IData> | ComputedRef<IData>
   ): [
-    id: DragDropTargetIdentifier,
-    decorateItem: (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>,
-    decorateHandle: (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>
-  ]
+      id: DragDropTargetIdentifier,
+      getItemProps: GetProps,
+      getHandleProps: GetProps
+    ]
 
   getDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
     accept: IData | ((arg: IData) => boolean),
@@ -35,7 +37,7 @@ export interface DndProvider<IData> {
       onDrop?: DndDragHandlerWithData<IData>;
     }
   ): [
-    id: DragDropTargetIdentifier,
-    decorateItem: (node: VNode<RendererNode, RendererElement, ExtraProps>) => VNode<RendererNode, RendererElement, ExtraProps>
-  ]
+      id: DragDropTargetIdentifier,
+      getItemProps: GetProps
+    ]
 }

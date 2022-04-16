@@ -2,7 +2,7 @@
 import { defineComponent, PropType, reactive, computed } from "vue";
 import { useDraggableWithHandle, useDroppable } from "../packages/vue-dnd";
 import { useHtmlProvider } from "../packages/vue-dnd/use-html-provider";
-import { usePointerEventProvider } from '../packages/vue-dnd/use-pointer-event-provider';
+import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
 
 type Message = [currentBucket: number, id: number];
 
@@ -18,15 +18,18 @@ const Ball = defineComponent({
     },
   },
   setup(props) {
-    const { wrap, wrapHandle } = useDraggableWithHandle<Message>(
+    const { propsItem, propsHandle } = useDraggableWithHandle<Message>(
       // Specify what did you want to send to the dropzone, can either be ref or raw value
       computed(() => [props.currentBucket, props.id] as Message),
       {}
     );
+
     return () => {
-      return wrap(
-        <div class="box">
-          {wrapHandle(<div class="box-content">Handle</div>)}
+      return (
+        <div class="box" {...propsItem()}>
+          <div class="box-content" {...propsHandle({})}>
+            Handle
+          </div>
           {props.id}
         </div>
       );
@@ -48,7 +51,7 @@ const Bucket = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { wrap, hoverState } = useDroppable<Message>({
+    const { propsItem, hoverState } = useDroppable<Message>({
       // Declare whether you want to receive the draggable item or not
       // A predicate function or raw value
       accept: (msg) => msg[0] !== props.id,
@@ -57,12 +60,14 @@ const Bucket = defineComponent({
         props.onDrop(data[1], data[0], props.id);
       },
     });
-    return () =>
-      wrap(
-        <div class={hoverState.hover ? "bucket hover" : "bucket"}>
-          {ctx.slots.default?.()}
-        </div>
-      );
+
+    return () => (
+      <div
+        {...propsItem({ class: hoverState.hover ? "bucket hover" : "bucket" })}
+      >
+        {ctx.slots.default?.()}
+      </div>
+    );
   },
 });
 
@@ -70,14 +75,14 @@ export default defineComponent({
   props: {
     usePointerEvent: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  setup (props) {
+  setup(props) {
     if (props.usePointerEvent) {
-      usePointerEventProvider()
+      usePointerEventProvider();
     } else {
-      useHtmlProvider()
+      useHtmlProvider();
     }
 
     const buckets = reactive(new Array(5).fill(null).map(() => [] as number[]));
