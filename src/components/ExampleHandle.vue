@@ -66,7 +66,7 @@ const Bucket = defineComponent({
   },
 });
 
-export default {
+export default defineComponent({
   props: {
     usePointerEvent: {
       type: Boolean,
@@ -101,7 +101,7 @@ export default {
       </div>
     );
   },
-};
+});
 </script>
 <style scoped>
 .board {
