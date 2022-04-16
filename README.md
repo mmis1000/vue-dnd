@@ -80,7 +80,7 @@ const Bucket = defineComponent({
     return () => (
       <div
         class={hoverState.hover ? "bucket hover" : "bucket"}
-      // use the propsItem here
+        // use the propsItem here
         {...propsItem()}
       >
         {ctx.slots.default?.()}
