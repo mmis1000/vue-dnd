@@ -5,6 +5,7 @@ import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-p
 import ExampleBallVue from "./example/ExampleBall.vue";
 import ExampleBucketVue from "./example/ExampleBucket.vue";
 import ExampleBoardVue from "./example/ExampleBoard.vue";
+import { DragLayer } from "../packages/vue-dnd/DragLayer";
 
 const Ball =  ExampleBallVue
 const Bucket = ExampleBucketVue
@@ -37,15 +38,18 @@ export default defineComponent({
     };
 
     return () => (
-      <Board>
-        {buckets.map((b, index) => (
-          <Bucket id={index} key={index} onDrop={onDrop}>
-            {b.map((i, index2) => (
-              <Ball id={i} currentBucket={index} key={index2} />
-            ))}
-          </Bucket>
-        ))}
-      </Board>
+      <>
+        <Board>
+          {buckets.map((b, index) => (
+            <Bucket id={index} key={index} onDrop={onDrop}>
+              {b.map((i) => (
+                <Ball id={i} currentBucket={index} key={i} />
+              ))}
+            </Bucket>
+          ))}
+        </Board>
+        <DragLayer />
+      </>
     );
   },
 });

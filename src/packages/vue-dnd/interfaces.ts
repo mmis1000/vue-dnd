@@ -1,4 +1,4 @@
-import { ComputedRef, Ref } from "vue"
+import { ComputedRef, Ref, VNode } from "vue"
 
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 
@@ -9,7 +9,10 @@ export interface Execution<T> {
   readonly data: T | Ref<T> | ComputedRef<T>,
   readonly source: DragDropTargetIdentifier,
   readonly targets: DragDropTargetIdentifier[],
-  readonly mouseOffset: readonly [number, number]
+  mousePosition: readonly [number, number],
+  readonly mouseOffset: readonly [number, number],
+  readonly preview?: () => VNode<any, any, any>,
+  readonly size?: readonly [number, number]
 }
 
 export type GetProps = () => Record<string, any>
@@ -21,7 +24,8 @@ export interface DndProvider<IData> {
     events: {
       onDragStart?: DndDragHandlerWithData<IData>
     },
-    dataOrRef: IData | Ref<IData> | ComputedRef<IData>
+    dataOrRef: IData | Ref<IData> | ComputedRef<IData>,
+    previewGetter?: () => VNode<any, any, any>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,

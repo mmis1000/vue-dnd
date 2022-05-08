@@ -28,6 +28,7 @@ class HtmlExecutionImpl<T> implements Execution<T> {
     readonly data: T | Ref<T> | ComputedRef<T>,
     readonly source: DragDropTargetIdentifier,
     readonly mouseOffset: readonly [number, number],
+    readonly mousePosition: [number, number],
     // implementation specified properties
     readonly movingElement: HTMLElement
   ) {
@@ -64,11 +65,11 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       draggable: 'true',
       onDragstart: (ev: DragEvent) => {
         const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
-        const pos = [ev.clientX, ev.clientY] as const
+        const pos = [ev.clientX, ev.clientY] as [number, number]
         const elPos = elementRef.value!.getBoundingClientRect()
         const mouseOffset = [pos[0] - elPos.left, pos[1] - elPos.top] as const
         console.log(elementRef.value, pos, elPos, mouseOffset)
-        this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, mouseOffset, ev.target as HTMLElement))
+        this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, mouseOffset, pos, ev.target as HTMLElement))
         ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')

@@ -12,7 +12,7 @@ export const useDroppable = <IData = unknown>(options: {
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
   if (provider == null) {
-    throw new Error('missing provider')
+    throw new Error('[vue-dnd] useDroppable must be used with a provider')
   }
 
   const [id, getProps] = provider.getDroppableDecorator(options.accept, {

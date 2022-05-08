@@ -5,6 +5,7 @@ import { PROVIDER_INJECTOR_KEY } from "./internal"
 export const useDraggableWithHandle = <IData = unknown>(
   data: IData | Ref<IData> | ComputedRef<IData>,
   options: {
+    preview?: () => VNode<any, any, any>
     onDragStart?: DndDragHandlerWithData<IData>
   }
 ) => {
@@ -16,7 +17,7 @@ export const useDraggableWithHandle = <IData = unknown>(
 
   const [id, getProps, getHandleProps] = provider.getDraggableDecorator({
     onDragStart: options.onDragStart
-  }, data)
+  }, data, options.preview)
 
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
   const wrapHandle = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getHandleProps(), true) as any
@@ -37,6 +38,7 @@ export const useDraggableWithHandle = <IData = unknown>(
 export const useDraggable = <IData = unknown>(
   data: IData | Ref<IData> | ComputedRef<IData>,
   options: {
+    preview?: () => VNode<any, any, any>,
     onDragStart?: DndDragHandlerWithData<IData>
   }
 ) => {
