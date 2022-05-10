@@ -19,15 +19,16 @@ const ExampleBall = defineComponent({
   },
   setup(props) {
     // propsItem is a function that return required attribute during the rendering
-    const { propsItem, state } = !props.isPreview ? useDraggable<Message>(
+    const { propsItem, state } = useDraggable<Message>(
       // Specify what did you want to send to the dropzone, can either be ref or raw value
       computed(() => [props.currentBucket, props.id] as Message),
       {
+        disabled: props.isPreview,
         // optional handlers
         onDragStart: (ev, data) => {},
         preview: () => <ExampleBall {...props} isPreview={true} />,
       }
-    ) : { propsItem: () => ({}), state: undefined };
+    );
 
     return () => (
       // use the propsItem here

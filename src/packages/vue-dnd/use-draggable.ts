@@ -1,14 +1,34 @@
 import { cloneVNode, computed, ComputedRef, inject, mergeProps, reactive, Ref, VNode } from "vue"
-import { DndDragHandlerWithData, DndProvider } from "./interfaces"
+import { DndDragHandlerWithData, DndProvider, Execution } from "./interfaces"
 import { PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggableWithHandle = <IData = unknown>(
   data: IData | Ref<IData> | ComputedRef<IData>,
   options: {
+    disabled?: boolean
     preview?: () => VNode<any, any, any>
     onDragStart?: DndDragHandlerWithData<IData>
   }
-) => {
+): {
+  propsItem: (originalProps?: Record<string, any>) => Record<string, any>
+  propsHandle: (originalProps?: Record<string, any>) => Record<string, any>
+  wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
+  wrapHandle: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
+  state: {
+    isDragging: Execution<IData> | undefined
+  }
+} => {
+  if (options.disabled === true) {
+    return {
+      propsItem: () => ({}),
+      propsHandle: () => ({}),
+      wrapItem: node => node,
+      wrapHandle: node => node,
+      state: {
+        isDragging: undefined
+      }
+    }
+  }
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
   if (provider == null) {
@@ -38,15 +58,22 @@ export const useDraggableWithHandle = <IData = unknown>(
 export const useDraggable = <IData = unknown>(
   data: IData | Ref<IData> | ComputedRef<IData>,
   options: {
+    disabled?: boolean
     preview?: () => VNode<any, any, any>,
     onDragStart?: DndDragHandlerWithData<IData>
   }
-) => {
+): {
+  propsItem: (originalProps?: Record<string, any>) => Record<string, any>
+  wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
+  state: {
+    isDragging: Execution<IData> | undefined
+  }
+} => {
   const { wrapItem, wrapHandle, propsItem, propsHandle, state } = useDraggableWithHandle(data, options)
   const mergeProps = <T extends Record<string, any>>(extra?: T) => propsItem(propsHandle(extra))
   return {
     propsItem: mergeProps,
-    wrapItem(node: VNode) {
+    wrapItem<T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> {
       return wrapHandle(wrapItem(node))
     },
     state
