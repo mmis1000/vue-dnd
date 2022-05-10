@@ -25,14 +25,14 @@ const ExampleBall = defineComponent({
       {
         // optional handlers
         onDragStart: (ev, data) => {},
-        preview: () => <ExampleBall {...props} />,
+        preview: () => <ExampleBall {...props} isPreview={true} />,
       }
     ) : { propsItem: () => ({}), state: undefined };
 
     return () => (
       // use the propsItem here
       <div class="ball" style={{ 'opacity': state?.isDragging ? '0.5' : '1' }} {...propsItem()}>
-        {props.id}
+        {props.isPreview ? 'preview' : props.id}
       </div>
     );
   },

@@ -41,11 +41,11 @@ class PointerExecutionImpl<T> implements Execution<T> {
     readonly mouseOffset: readonly [number, number],
     public mousePosition: readonly [number, number],
     readonly preview: undefined | (() => VNode<any, any, any>),
-    readonly size: [number, number],
+    readonly size: readonly [number, number],
     // implementation specified properties
     readonly initialEvent: PointerEvent,
     readonly initialRect: DOMRect,
-    public elementOffset: [number, number]
+    public elementOffset: readonly [number, number]
   ) {
     this.lastEvent = initialEvent;
     return shallowReactive(this);

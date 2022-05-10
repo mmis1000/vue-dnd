@@ -1,8 +1,10 @@
-import { ComputedRef, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref } from "vue";
+import { ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
+
+const transparentImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
 
 const prefix = 'application/vue-dnd'
 
@@ -28,7 +30,9 @@ class HtmlExecutionImpl<T> implements Execution<T> {
     readonly data: T | Ref<T> | ComputedRef<T>,
     readonly source: DragDropTargetIdentifier,
     readonly mouseOffset: readonly [number, number],
-    readonly mousePosition: [number, number],
+    public mousePosition: readonly [number, number],
+    readonly preview: undefined | (() => VNode<any, any, any>),
+    readonly size: readonly [number, number],
     // implementation specified properties
     readonly movingElement: HTMLElement
   ) {
@@ -45,9 +49,29 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
 
+  constructor() {
+    const handler = (ev: DragEvent) => {
+      // console.log(ev)
+      if (this.executions.length !== 0) {
+        const position = [ev.clientX, ev.clientY] as const
+        for (const exe of this.executions) {
+          exe.mousePosition = position
+        }
+      }
+    }
+    onMounted(() => {
+      document.addEventListener('dragover', handler)
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('dragover', handler)
+    })
+  }
+
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
-    dataOrRef: IData | Ref<IData> | ComputedRef<IData>
+    dataOrRef: IData | Ref<IData> | ComputedRef<IData>,
+    previewGetter?: () => VNode<any, any, any>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
@@ -68,9 +92,24 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const pos = [ev.clientX, ev.clientY] as [number, number]
         const elPos = elementRef.value!.getBoundingClientRect()
         const mouseOffset = [pos[0] - elPos.left, pos[1] - elPos.top] as const
-        console.log(elementRef.value, pos, elPos, mouseOffset)
-        this.executions.push(new HtmlExecutionImpl(id, dataOrRef, dragTargetId, mouseOffset, pos, ev.target as HTMLElement))
-        ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
+        // console.log(elementRef.value, pos, elPos, mouseOffset)
+        this.executions.push(new HtmlExecutionImpl(
+          id,
+          dataOrRef,
+          dragTargetId,
+          mouseOffset,
+          pos,
+          previewGetter,
+          [elPos.width, elPos.height],
+          ev.target as HTMLElement
+        ))
+        if (previewGetter == null) {
+          ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
+        } else {
+          const img = new Image()
+          img.src = transparentImage
+          ev.dataTransfer?.setDragImage(img, 0, 0)
+        }
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')
         events.onDragStart?.(ev, unref<IData>(dataOrRef))
