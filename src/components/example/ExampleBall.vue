@@ -32,7 +32,7 @@ const ExampleBall = defineComponent({
 
     return () => (
       // use the propsItem here
-      <div class="ball" style={{ 'opacity': state?.isDragging ? '0.5' : '1' }} {...propsItem()}>
+      <div class="ball" style={{ 'opacity': state.isDragging ? '0.5' : '1' }} {...propsItem()}>
         {props.isPreview ? 'preview' : props.id}
       </div>
     );
