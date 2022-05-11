@@ -17,6 +17,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    useCustomPreview: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     if (props.usePointerEvent) {
@@ -43,7 +47,7 @@ export default defineComponent({
           {buckets.map((b, index) => (
             <Bucket id={index} key={index} onDrop={onDrop}>
               {b.map((i) => (
-                <Ball id={i} currentBucket={index} key={i} />
+                <Ball id={i} currentBucket={index} key={i} useCustomPreview={props.useCustomPreview} />
               ))}
             </Bucket>
           ))}

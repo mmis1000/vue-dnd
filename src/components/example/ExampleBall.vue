@@ -12,6 +12,10 @@ const ExampleBall = defineComponent({
       type: Number,
       required: true,
     },
+    useCustomPreview: {
+      type: Boolean,
+      default: false,
+    },
     isPreview: {
       type: Boolean,
       required: false,
@@ -26,7 +30,7 @@ const ExampleBall = defineComponent({
         disabled: props.isPreview,
         // optional handlers
         onDragStart: (ev, data) => {},
-        preview: () => <ExampleBall {...props} isPreview={true} />,
+        preview: props.useCustomPreview ? (() => <ExampleBall {...props} isPreview={true} />) : undefined,
       }
     );
 
