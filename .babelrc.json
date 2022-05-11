@@ -1,0 +1,10 @@
+{
+  "sourceType": "unambiguous",
+  "presets": [
+    "@babel/preset-typescript",
+    "@vue/babel-preset-app"
+  ],
+  "plugins": [
+    "babel-plugin-transform-vite-meta-env"
+  ]
+}
