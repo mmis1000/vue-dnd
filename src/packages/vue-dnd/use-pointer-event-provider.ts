@@ -23,6 +23,14 @@ import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0;
 
+export interface PointerEventProviderOptions {
+  minDragDistance: number
+}
+
+const DEFAULT_OPTIONS: PointerEventProviderOptions = Object.freeze({
+  minDragDistance: 10
+})
+
 const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
   for (let i = arr.length - 1; i >= 0; i--) {
     const hit = predicate(arr[i]);
@@ -31,6 +39,7 @@ const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
     }
   }
 };
+
 class PointerExecutionImpl<T> implements Execution<T> {
   targets: DragDropTargetIdentifier[] = reactive([]);
   public lastEvent: PointerEvent;
@@ -45,6 +54,7 @@ class PointerExecutionImpl<T> implements Execution<T> {
     // implementation specified properties
     readonly initialEvent: PointerEvent,
     readonly initialRect: DOMRect,
+    readonly initialMouse: [number, number],
     public elementOffset: readonly [number, number]
   ) {
     this.lastEvent = initialEvent;
@@ -57,6 +67,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   private dragEventIndex = 0;
   private dropTargetId = 0;
   private dragTargetId = 0;
+  private stagedExecutions: PointerExecutionImpl<IData>[] = []
   private executions: PointerExecutionImpl<IData>[] = shallowReactive<
     PointerExecutionImpl<IData>[]
   >([]);
@@ -77,6 +88,12 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       };
     }
     >();
+
+  private options: PointerEventProviderOptions
+
+  constructor(opts?: Partial<PointerEventProviderOptions>) {
+    this.options = Object.assign({}, DEFAULT_OPTIONS, opts ?? {})
+  }
 
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData> },
@@ -106,7 +123,10 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         // rect + offset = mouse
         const offset = [0, 0] as [number, number];
 
-        this.executions.push(
+        // clear staled execution if any
+        findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
+        findAndRemove(this.executions, i => i.initialEvent.pointerId === ev.pointerId)
+        this.stagedExecutions.push(
           new PointerExecutionImpl(
             id,
             dataOrRef,
@@ -117,22 +137,49 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             [rect.width, rect.height],
             ev,
             rect,
+            pos,
             offset
           )
         );
-        (ev.target as Element).setPointerCapture(ev.pointerId);
-        events.onDragStart?.(ev, unref<IData>(dataOrRef));
+        // (ev.target as Element).setPointerCapture(ev.pointerId);
+        // events.onDragStart?.(ev, unref<IData>(dataOrRef));
       },
       onContextmenu: (ev: Event) => {
+        const stagedExe = this.stagedExecutions.find((exe) => exe.source === dragTargetId);
+        if (stagedExe) {
+          this.stagedExecutions.splice(this.stagedExecutions.indexOf(stagedExe), 1)
+          return
+        }
+
         const exe = this.executions.find((exe) => exe.source === dragTargetId);
         if (exe) {
           ev.preventDefault();
         }
       },
       onPointermove: (ev: PointerEvent) => {
+        const stagedExe = this.stagedExecutions.find(
+          (exe) => exe.initialEvent.pointerId === ev.pointerId
+        );
+
+        if (stagedExe) {
+          const currentPos = [ev.clientX, ev.clientY]
+          const initialPos = stagedExe.initialMouse
+          const dist = ((currentPos[0] - initialPos[0]) ** 2 + (currentPos[1] - initialPos[1]) ** 2) ** 0.5
+          if (dist > this.options.minDragDistance!) {
+            findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
+            this.executions.push(stagedExe);
+            (ev.target as Element).setPointerCapture(ev.pointerId);
+            events.onDragStart?.(ev, unref<IData>(dataOrRef));
+            getSelection()?.empty()
+          }
+
+          return
+        }
+
         const exe = this.executions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
+
         if (exe) {
           exe.lastEvent = ev;
 
@@ -201,6 +248,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         }
       },
       onPointercancel: (ev: PointerEvent) => {
+        const stagedExe = this.stagedExecutions.find(
+          (exe) => exe.initialEvent.pointerId === ev.pointerId
+        );
+
+        if (stagedExe) {
+          findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
+          return
+        }
+
         const exe = this.executions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -213,6 +269,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         }
       },
       onPointerup: (ev: PointerEvent) => {
+        const stagedExe = this.stagedExecutions.find(
+          (exe) => exe.initialEvent.pointerId === ev.pointerId
+        );
+
+        if (stagedExe) {
+          findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
+          return
+        }
+
         const exe = this.executions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -338,6 +403,6 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   }
 }
 
-export const usePointerEventProvider = () => {
-  provide(PROVIDER_INJECTOR_KEY, new PointerEventProvider());
+export const usePointerEventProvider = (opts?: Partial<PointerEventProviderOptions>) => {
+  provide(PROVIDER_INJECTOR_KEY, new PointerEventProvider(opts));
 };
