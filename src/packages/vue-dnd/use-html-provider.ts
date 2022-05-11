@@ -4,7 +4,7 @@ import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
-const transparentImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
+const TRANSPARENT_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=='
 
 const prefix = 'application/vue-dnd'
 
@@ -46,10 +46,14 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   private dropTargetId = 0
   private dragTargetId = 0
   private executions: HtmlExecutionImpl<IData>[] = shallowReactive<HtmlExecutionImpl<IData>[]>([])
+  private emptyImage: HTMLImageElement
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
 
   constructor() {
+    this.emptyImage = new Image()
+    this.emptyImage.src = TRANSPARENT_IMAGE
+
     const handler = (ev: DragEvent) => {
       // console.log(ev)
       if (this.executions.length !== 0) {
@@ -106,9 +110,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         if (previewGetter == null) {
           ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
         } else {
-          const img = new Image()
-          img.src = transparentImage
-          ev.dataTransfer?.setDragImage(img, 0, 0)
+          ev.dataTransfer?.setDragImage(this.emptyImage, 0, 0)
         }
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')
