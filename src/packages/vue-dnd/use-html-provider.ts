@@ -54,7 +54,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     this.emptyImage = new Image()
     this.emptyImage.src = TRANSPARENT_IMAGE
 
-    const handler = (ev: DragEvent) => {
+    const dragOverHandler = (ev: DragEvent) => {
       // console.log(ev)
       if (this.executions.length !== 0) {
         const position = [ev.clientX, ev.clientY] as const
@@ -62,13 +62,30 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           exe.mousePosition = position
         }
       }
+
+      const id = getId(ev)
+      const inst = id != null ? this.executions.find(exe => exe.id === id) : undefined
+      if (inst && inst.preview != null) {
+        ev.preventDefault()
+      }
     }
+
+    const dropHandler = (ev: DragEvent) => {
+      const id = getId(ev)
+      const inst = id != null ? this.executions.find(exe => exe.id === id) : undefined
+      if (inst && inst.preview != null) {
+        ev.preventDefault()
+      }
+    }
+
     onMounted(() => {
-      document.addEventListener('dragover', handler)
+      document.addEventListener('dragover', dragOverHandler)
+      document.addEventListener('dragover', dropHandler)
     })
 
     onUnmounted(() => {
-      document.removeEventListener('dragover', handler)
+      document.removeEventListener('dragover', dragOverHandler)
+      document.addEventListener('dragover', dropHandler)
     })
   }
 
@@ -154,12 +171,6 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         ev.preventDefault()
         findAndRemove(this.executions, item => item.id === id)
 
-        if (execution.preview && !matchAccept(accept, unref<IData>(execution.data))) {
-          // this is allowed to trigger only just because of custom preview
-          ev.preventDefault()
-          return
-        }
-
         events.onDrop?.(ev, unref<IData>(execution.data))
       },
       onDragenter: (ev: DragEvent) => {
@@ -210,9 +221,6 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
 
         if (matchAccept(accept, unref<IData>(execution.data))) {
-          ev.preventDefault()
-        } else if (execution.preview != null) {
-          // always accept item with custom preview
           ev.preventDefault()
         }
 
