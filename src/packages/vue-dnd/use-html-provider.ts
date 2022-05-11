@@ -128,7 +128,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     ]
   }
   getDroppableDecorator<T, U, V>(
-    accept: IData | ((arg: IData) => boolean) | undefined,
+    accept: IData | ((arg: IData) => boolean),
     events: {
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
@@ -153,6 +153,13 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
         ev.preventDefault()
         findAndRemove(this.executions, item => item.id === id)
+
+        if (execution.preview && !matchAccept(accept, unref<IData>(execution.data))) {
+          // this is allowed to trigger only just because of custom preview
+          ev.preventDefault()
+          return
+        }
+
         events.onDrop?.(ev, unref<IData>(execution.data))
       },
       onDragenter: (ev: DragEvent) => {
@@ -202,10 +209,11 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           return
         }
 
-        if (accept != null) {
-          if (matchAccept(accept, unref<IData>(execution.data))) {
-            ev.preventDefault()
-          }
+        if (matchAccept(accept, unref<IData>(execution.data))) {
+          ev.preventDefault()
+        } else if (execution.preview != null) {
+          // always accept item with custom preview
+          ev.preventDefault()
         }
 
         events.onDragOver?.(ev, unref<IData>(execution.data))
