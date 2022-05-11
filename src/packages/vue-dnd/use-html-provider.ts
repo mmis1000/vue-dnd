@@ -66,7 +66,15 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       const id = getId(ev)
       const inst = id != null ? this.executions.find(exe => exe.id === id) : undefined
       if (inst && inst.preview != null) {
-        ev.preventDefault()
+        // console.log(ev.defaultPrevented)
+        if (!ev.defaultPrevented) {
+          ev.preventDefault()
+          // must be 'move' or the drop handler didn't work
+          // https://www.w3.org/html/wg/spec/dnd.html#drag-and-drop-processing-model
+          ev.dataTransfer!.dropEffect = "move"
+        } else {
+          ev.dataTransfer!.dropEffect = "copy"
+        }
       }
     }
 
@@ -80,12 +88,12 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
     onMounted(() => {
       document.addEventListener('dragover', dragOverHandler)
-      document.addEventListener('dragover', dropHandler)
+      document.addEventListener('drop', dropHandler)
     })
 
     onUnmounted(() => {
       document.removeEventListener('dragover', dragOverHandler)
-      document.addEventListener('dragover', dropHandler)
+      document.removeEventListener('drop', dropHandler)
     })
   }
 
