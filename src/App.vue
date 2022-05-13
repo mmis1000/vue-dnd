@@ -2,6 +2,8 @@
 import ExampleSimple from './components/ExampleSimple.vue';
 import ExampleHandle from './components/ExampleHandle.vue';
 import Board from './components/Board.vue';
+import SortableList from './components/SortableList.vue';
+
 </script>
 
 <template>
@@ -17,6 +19,7 @@ import Board from './components/Board.vue';
   <Board />
   <div>Pointer Event Provider</div>
   <Board :usePointerEvent="true"/>
+  <SortableList />
 </template>
 
 <style scoped>
