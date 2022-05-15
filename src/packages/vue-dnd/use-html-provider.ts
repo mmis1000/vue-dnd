@@ -1,4 +1,4 @@
-import { ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, readonly, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
@@ -22,9 +22,24 @@ const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
     }
   }
 }
+
+interface DropTargetState {
+  id: DragDropTargetIdentifier,
+  elements: Element[]
+}
+
 class HtmlExecutionImpl<T> implements Execution<T> {
 
-  readonly targets: DragDropTargetIdentifier[] = reactive([])
+  readonly targetStatus: DropTargetState[] = reactive([])
+
+  readonly mappedTargets = computed(() => {
+    return this.targetStatus.map(s => s.id)
+  })
+
+  get targets(): readonly DragDropTargetIdentifier[] {
+    return this.mappedTargets.value
+  }
+
   constructor(
     readonly id: string,
     readonly data: T | Ref<T> | ComputedRef<T>,
@@ -184,34 +199,68 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
+          if (import.meta.env.DEV) {
+            console.log('[HTML Drop] add', 'illegal event', 'null id')
+          }
           return
         }
 
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
+          if (import.meta.env.DEV) {
+            console.log('[HTML Drop] add', 'illegal event', id)
+          }
           // return, not a event from this provider
           return
         }
-        if (execution.targets.indexOf(dropTargetId) < 0) {
-          execution.targets.push(dropTargetId)
+
+        if (execution.targetStatus.find(i => i.id === dropTargetId) == null) {
+          if (import.meta.env.DEV) {
+            console.log('[HTML Drop] add', dropTargetId, ev.target)
+          }
+
+          execution.targetStatus.push({ id: dropTargetId, elements: [] })
         }
+
+        execution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
+
         events.onDragEnter?.(ev, unref<IData>(execution.data))
       },
       onDragleave: (ev: DragEvent) => {
         const id = getId(ev)
+
         if (id === null) {
+          if (import.meta.env.DEV) {
+            console.log('[HTML Drop] remove', 'illegal event', 'null id')
+          }
           return
         }
 
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
+          if (import.meta.env.DEV) {
+            console.log('[HTML Drop] remove', 'illegal event', id)
+          }
           // return, not a event from this provider
           return
         }
 
-        findAndRemove(execution.targets, i => i === dropTargetId)
+        if (import.meta.env.DEV) {
+          console.log('[HTML Drop] remove', dropTargetId, ev.target)
+        }
+
+        const targetStatus = execution.targetStatus.find(i => i.id === dropTargetId)
+
+        if (targetStatus != null) {
+          findAndRemove(targetStatus.elements, i => i === ev.target)
+
+          if (targetStatus.elements.length === 0) {
+            findAndRemove(execution.targetStatus, i => i === targetStatus)
+          }
+        }
+
 
         events.onDragLeave?.(ev, unref<IData>(execution.data))
       },

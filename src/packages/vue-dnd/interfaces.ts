@@ -8,7 +8,7 @@ export interface Execution<T> {
   readonly id: string,
   readonly data: T | Ref<T> | ComputedRef<T>,
   readonly source: DragDropTargetIdentifier,
-  readonly targets: DragDropTargetIdentifier[],
+  readonly targets: readonly DragDropTargetIdentifier[],
   mousePosition: readonly [number, number],
   readonly mouseOffset: readonly [number, number],
   readonly preview?: () => VNode<any, any, any>,
