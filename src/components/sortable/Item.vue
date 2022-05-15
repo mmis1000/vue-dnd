@@ -1,6 +1,6 @@
 <template>
-  <div class="item" v-bind:class="{ insertTop, insertDown }" v-bind="propsItem(propsDropItem())">
-    <textarea v-if="!props.isPreview" name="" id="" cols="30" rows="10" v-model="value">fd</textarea>
+  <div class="item" v-bind:class="{ insertTop, insertDown, isPreview }" v-bind="propsItem(propsDropItem())">
+    <textarea v-if="!disableInput" name="" id="" cols="30" rows="10" v-model="value">fd</textarea>
     <div v-else class="textarea">{{ value }}</div>
   </div>
 </template>
@@ -65,6 +65,10 @@ const insertTop = computed(() => {
 const insertDown = computed(() => {
   return item.value != null && item.value.data < props.index;
 });
+
+const disableInput = computed(() => {
+  return props.isPreview || hoverState.draggingItems.length > 0
+})
 </script>
 
 <style scoped>
@@ -108,5 +112,9 @@ const insertDown = computed(() => {
 
 .item:not(:first-child) {
   margin-top: 8px;
+}
+
+.item.isPreview {
+  opacity: 0.8;
 }
 </style>
