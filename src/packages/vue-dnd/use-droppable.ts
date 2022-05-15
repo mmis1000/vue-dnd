@@ -1,6 +1,6 @@
-import { cloneVNode, computed, inject, mergeProps, reactive, unref, VNode } from "vue"
+import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
 import { DndDragHandlerWithData, DndProvider } from "./interfaces"
-import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal"
+import { matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDroppable = <IData = unknown>(options: {
   accept: IData | ((arg: IData) => boolean)
@@ -23,7 +23,7 @@ export const useDroppable = <IData = unknown>(options: {
   })
 
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
-  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : mergeProps(extra, getProps())
+  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : myMergeProps(extra, getProps())
 
   const hoverComputed = computed(() => provider.readonlyExecutions.find(execution => execution.targets.indexOf(id) >= 0) != null)
   const draggingItems = computed(() => {

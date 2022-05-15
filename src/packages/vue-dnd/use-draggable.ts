@@ -1,9 +1,9 @@
-import { cloneVNode, computed, ComputedRef, inject, mergeProps, reactive, Ref, VNode } from "vue"
+import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
 import { DndDragHandlerWithData, DndProvider, Execution } from "./interfaces"
-import { PROVIDER_INJECTOR_KEY } from "./internal"
+import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggableWithHandle = <IData = unknown>(
-  data: IData | Ref<IData> | ComputedRef<IData>,
+  data: IData | Ref<IData>,
   options: {
     disabled?: boolean
     preview?: () => VNode<any, any, any>
@@ -42,8 +42,8 @@ export const useDraggableWithHandle = <IData = unknown>(
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
   const wrapHandle = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getHandleProps(), true) as any
 
-  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : mergeProps(extra, getProps())
-  const propsHandle = <T extends Record<string, any>>(extra?: T) => extra == null ? getHandleProps() : mergeProps(extra, getHandleProps())
+  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : myMergeProps(extra, getProps())
+  const propsHandle = <T extends Record<string, any>>(extra?: T) => extra == null ? getHandleProps() : myMergeProps(extra, getHandleProps())
 
   return {
     propsItem,
@@ -56,7 +56,7 @@ export const useDraggableWithHandle = <IData = unknown>(
   }
 }
 export const useDraggable = <IData = unknown>(
-  data: IData | Ref<IData> | ComputedRef<IData>,
+  data: IData | Ref<IData>,
   options: {
     disabled?: boolean
     preview?: () => VNode<any, any, any>,

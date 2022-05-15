@@ -90,6 +90,7 @@ const disableInput = computed(() => {
   padding: 2px;
   margin: 0;
   border: 1px #333 solid;
+  font-family: monospace;
 }
 
 .item.insertTop::after {

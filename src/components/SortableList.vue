@@ -10,11 +10,23 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useHtmlProvider } from '../packages/vue-dnd';
+import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
 import Item from './sortable/Item.vue'
 import List from './sortable/List.vue'
 import { DragLayer } from "../packages/vue-dnd/DragLayer";
 
-useHtmlProvider();
+const props = defineProps({
+  usePointerEvent: {
+    type: Boolean,
+    default: false
+  },
+});
+
+if (props.usePointerEvent) {
+  usePointerEventProvider();
+} else {
+  useHtmlProvider();
+}
 
 const list = reactive(<{
   id: number,

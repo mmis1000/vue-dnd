@@ -24,7 +24,7 @@ export interface DndProvider<IData> {
     events: {
       onDragStart?: DndDragHandlerWithData<IData>
     },
-    dataOrRef: IData | Ref<IData> | ComputedRef<IData>,
+    dataOrRef: IData | Ref<IData>,
     previewGetter?: () => VNode<any, any, any>
   ): [
       id: DragDropTargetIdentifier,

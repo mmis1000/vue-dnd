@@ -97,7 +97,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
 
   getDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData> },
-    dataOrRef: IData | Ref<IData> | ComputedRef<IData>,
+    dataOrRef: IData | Ref<IData>,
     previewGetter?: () => VNode<any, any, any>
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
     const dragTargetId = this.dragTargetId++;
@@ -118,7 +118,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       onPointerdown: (ev: PointerEvent) => {
         const pos = [ev.clientX, ev.clientY] as [number, number];
         const id = this.currentInstanceId + "." + this.dragEventIndex++;
-        const rect = (ev.target as Element).getBoundingClientRect();
+        const rect = elementRef.value!.getBoundingClientRect();
         const mouseOffset = [pos[0] - rect.left, pos[1] - rect.top] as const;
         // rect + offset = mouse
         const offset = [0, 0] as [number, number];
@@ -168,7 +168,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           if (dist > this.options.minDragDistance!) {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
-            (ev.target as Element).setPointerCapture(ev.pointerId);
+            elementRef.value!.setPointerCapture(ev.pointerId);
             events.onDragStart?.(ev, unref<IData>(dataOrRef));
             getSelection()?.empty()
           }
@@ -261,7 +261,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
         if (exe) {
-          (ev.target as Element).releasePointerCapture(ev.pointerId);
+          elementRef.value!.releasePointerCapture(ev.pointerId);
           findAndRemove(
             this.executions,
             (exe) => exe.initialEvent.pointerId === ev.pointerId
@@ -281,8 +281,10 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         const exe = this.executions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
+
         if (exe) {
-          (ev.target as Element).releasePointerCapture(ev.pointerId);
+          elementRef.value!.releasePointerCapture(ev.pointerId);
+
           findAndRemove(
             this.executions,
             (exe) => exe.initialEvent.pointerId === ev.pointerId
