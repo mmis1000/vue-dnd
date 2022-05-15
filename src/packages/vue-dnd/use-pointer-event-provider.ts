@@ -103,15 +103,26 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     const dragTargetId = this.dragTargetId++;
 
     const elementRef: Ref<Element | null> = ref(null);
+    const handleRef: Ref<Element | null> = ref(null);
 
     onMounted(() => {
-      if (!elementRef.value) return;
+      if (!elementRef.value) {
+        console.error('[Vue dnd] Cannot get element with ref, did you applied the props to the element?')
+        return;
+      }
+
+      if (!handleRef.value) {
+        console.error('[Vue dnd] Cannot get handle element with ref, did you applied the props to the element?')
+        return;
+      }
+
       this.draggableElements.set(dragTargetId, elementRef.value);
     });
 
     onUnmounted(() => {
       this.draggableElements.delete(dragTargetId);
     });
+
 
     const targetAreas = new Map<DragDropTargetIdentifier, DOMRect>();
     const handleMixin = {
@@ -168,7 +179,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           if (dist > this.options.minDragDistance!) {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
-            elementRef.value!.setPointerCapture(ev.pointerId);
+            handleRef.value!.setPointerCapture(ev.pointerId);
             events.onDragStart?.(ev, unref<IData>(dataOrRef));
             getSelection()?.empty()
           }
@@ -261,7 +272,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
         if (exe) {
-          elementRef.value!.releasePointerCapture(ev.pointerId);
+          handleRef.value!.releasePointerCapture(ev.pointerId);
           findAndRemove(
             this.executions,
             (exe) => exe.initialEvent.pointerId === ev.pointerId
@@ -283,7 +294,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         );
 
         if (exe) {
-          elementRef.value!.releasePointerCapture(ev.pointerId);
+          handleRef.value!.releasePointerCapture(ev.pointerId);
 
           findAndRemove(
             this.executions,
@@ -313,6 +324,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))
         // events.onDragStart?.(ev, data)
       },
+      ref: handleRef,
     };
     const propMixin = {
       ref: elementRef,
