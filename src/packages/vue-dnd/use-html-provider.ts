@@ -199,27 +199,17 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
-          if (import.meta.env.DEV) {
-            console.log('[HTML Drop] add', 'illegal event', 'null id')
-          }
           return
         }
 
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          if (import.meta.env.DEV) {
-            console.log('[HTML Drop] add', 'illegal event', id)
-          }
           // return, not a event from this provider
           return
         }
 
         if (execution.targetStatus.find(i => i.id === dropTargetId) == null) {
-          if (import.meta.env.DEV) {
-            console.log('[HTML Drop] add', dropTargetId, ev.target)
-          }
-
           execution.targetStatus.push({ id: dropTargetId, elements: [] })
         }
 
@@ -231,24 +221,14 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const id = getId(ev)
 
         if (id === null) {
-          if (import.meta.env.DEV) {
-            console.log('[HTML Drop] remove', 'illegal event', 'null id')
-          }
           return
         }
 
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
-          if (import.meta.env.DEV) {
-            console.log('[HTML Drop] remove', 'illegal event', id)
-          }
           // return, not a event from this provider
           return
-        }
-
-        if (import.meta.env.DEV) {
-          console.log('[HTML Drop] remove', dropTargetId, ev.target)
         }
 
         const targetStatus = execution.targetStatus.find(i => i.id === dropTargetId)
