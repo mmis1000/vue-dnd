@@ -44,7 +44,7 @@
     "vite": "^2.9.0",
     "vue": "^3.2.32",
     "vue-loader": "^16.8.3",
-    "vue-tsc": "^0.29.8"
+    "vue-tsc": "^0.34.15"
   },
   "peerDependencies": {
     "vue": "^3.2.32"
