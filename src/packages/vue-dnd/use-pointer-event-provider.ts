@@ -95,7 +95,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     this.options = Object.assign({}, DEFAULT_OPTIONS, opts ?? {})
   }
 
-  getDraggableDecorator<T, U, V>(
+  useDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
     previewGetter?: () => VNode<any, any, any>
@@ -384,7 +384,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       },
     ];
   }
-  getDroppableDecorator<T, U, V>(
+  useDroppableDecorator<T, U, V>(
     accept: IData | ((arg: IData) => boolean),
     events: {
       onDragOver?: DndDragHandlerWithData<IData>;

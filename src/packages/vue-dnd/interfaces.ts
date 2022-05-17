@@ -20,7 +20,7 @@ export type GetProps = () => Record<string, any>
 export interface DndProvider<IData> {
   readonly readonlyExecutions: Readonly<Execution<IData>[]>
 
-  getDraggableDecorator<RendererNode, RendererElement, ExtraProps>(
+  useDraggableDecorator<RendererNode, RendererElement, ExtraProps>(
     events: {
       onDragStart?: DndDragHandlerWithData<IData>
     },
@@ -32,7 +32,7 @@ export interface DndProvider<IData> {
       getHandleProps: GetProps
     ]
 
-  getDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
+  useDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
     accept: IData | ((arg: IData) => boolean),
     events: {
       onDragOver?: DndDragHandlerWithData<IData>;

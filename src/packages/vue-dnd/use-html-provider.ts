@@ -112,7 +112,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     })
   }
 
-  getDraggableDecorator<T, U, V>(
+  useDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData>; },
     dataOrRef: IData | Ref<IData>,
     previewGetter?: () => VNode<any, any, any>
@@ -167,7 +167,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       () => handleMixin
     ]
   }
-  getDroppableDecorator<T, U, V>(
+  useDroppableDecorator<T, U, V>(
     accept: IData | ((arg: IData) => boolean),
     events: {
       onDragOver?: DndDragHandlerWithData<IData>;

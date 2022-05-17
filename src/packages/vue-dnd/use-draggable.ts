@@ -35,7 +35,7 @@ export const useDraggableWithHandle = <IData = unknown>(
     throw new Error('[vue-dnd] useDraggableWithHandle must be used with a provider')
   }
 
-  const [id, getProps, getHandleProps] = provider.getDraggableDecorator({
+  const [id, getProps, getHandleProps] = provider.useDraggableDecorator({
     onDragStart: options.onDragStart
   }, data, options.preview)
 
