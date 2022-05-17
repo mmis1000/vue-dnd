@@ -18,6 +18,7 @@ import {
   DragDropTargetIdentifier,
   Execution,
   GetProps,
+  StartDirection,
 } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
@@ -98,7 +99,13 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   useDraggableDecorator<T, U, V>(
     events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
-    previewGetter?: () => VNode<any, any, any>
+    {
+      previewGetter,
+      startDirection = 'all'
+    } = <{
+      previewGetter?: () => VNode<any, any, any>;
+      startDirection?: StartDirection | Ref<StartDirection>;
+    }>{}
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
     const dragTargetId = this.dragTargetId++;
 
@@ -175,7 +182,14 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         if (stagedExe) {
           const currentPos = [ev.clientX, ev.clientY]
           const initialPos = stagedExe.initialMouse
-          const dist = ((currentPos[0] - initialPos[0]) ** 2 + (currentPos[1] - initialPos[1]) ** 2) ** 0.5
+
+          const dist =
+            unref(startDirection) === 'all'
+              ? ((currentPos[0] - initialPos[0]) ** 2 + (currentPos[1] - initialPos[1]) ** 2) ** 0.5
+              : unref(startDirection) === 'x'
+                ? Math.abs(currentPos[0] - initialPos[0])
+                : Math.abs(currentPos[1] - initialPos[1])
+
           if (dist > this.options.minDragDistance!) {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
@@ -369,13 +383,13 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
 
         const styleOverride: StyleValue = dragging
           ? {
-            "touch-action": "none",
+            'touch-action': unref(startDirection) === 'all' ? 'none' : unref(startDirection) === 'x' ? 'pan-y' : 'pan-x',
             'user-select': 'none',
-            cursor: accepted ? "move" : "no-drop",
+            cursor: accepted ? 'move' : 'no-drop',
           }
           : {
-            "touch-action": "none",
-          };
+            'touch-action': unref(startDirection) === 'all' ? 'none' : unref(startDirection) === 'x' ? 'pan-y' : 'pan-x',
+          }
         const finalMixin = {
           ...handleMixin,
           style: styleOverride,

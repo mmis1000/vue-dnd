@@ -3,6 +3,7 @@ import ExampleSimple from './components/ExampleSimple.vue';
 import ExampleHandle from './components/ExampleHandle.vue';
 import Board from './components/Board.vue';
 import SortableList from './components/SortableList.vue';
+import StartDirection from './components/StartDirection.vue';
 
 </script>
 
@@ -20,13 +21,13 @@ import SortableList from './components/SortableList.vue';
   <div>Pointer Event Provider</div>
   <Board :usePointerEvent="true"/>
   <SortableList />
+  <div>All</div>
+  <StartDirection usePointerEvent startDirection="all"/>
+  <div>X</div>
+  <StartDirection usePointerEvent startDirection="x"/>
+  <div>Y</div>
+  <StartDirection usePointerEvent startDirection="y"/>
 </template>
 
 <style scoped>
-.wrap {
-  display: inline-block;
-}
-.row {
-  display: flex;
-}
 </style>

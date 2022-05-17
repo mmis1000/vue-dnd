@@ -17,6 +17,8 @@ export interface Execution<T> {
 
 export type GetProps = () => Record<string, any>
 
+export type StartDirection = 'all' | 'x' | 'y'
+
 export interface DndProvider<IData> {
   readonly readonlyExecutions: Readonly<Execution<IData>[]>
 
@@ -25,7 +27,10 @@ export interface DndProvider<IData> {
       onDragStart?: DndDragHandlerWithData<IData>
     },
     dataOrRef: IData | Ref<IData>,
-    previewGetter?: () => VNode<any, any, any>
+    options?: {
+      previewGetter?: () => VNode<any, any, any>
+      startDirection?: StartDirection | Ref<StartDirection>
+    }
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,

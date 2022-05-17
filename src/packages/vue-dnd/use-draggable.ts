@@ -1,5 +1,5 @@
 import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
-import { DndDragHandlerWithData, DndProvider, Execution } from "./interfaces"
+import { DndDragHandlerWithData, DndProvider, Execution, StartDirection } from "./interfaces"
 import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggableWithHandle = <IData = unknown>(
@@ -7,6 +7,7 @@ export const useDraggableWithHandle = <IData = unknown>(
   options: {
     disabled?: boolean
     preview?: () => VNode<any, any, any>
+    startDirection?: StartDirection | Ref<StartDirection>
     onDragStart?: DndDragHandlerWithData<IData>
   }
 ): {
@@ -37,7 +38,10 @@ export const useDraggableWithHandle = <IData = unknown>(
 
   const [id, getProps, getHandleProps] = provider.useDraggableDecorator({
     onDragStart: options.onDragStart
-  }, data, options.preview)
+  }, data, {
+    previewGetter: options.preview,
+    startDirection: options.startDirection
+  })
 
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
   const wrapHandle = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getHandleProps(), true) as any
@@ -60,6 +64,7 @@ export const useDraggable = <IData = unknown>(
   options: {
     disabled?: boolean
     preview?: () => VNode<any, any, any>,
+    startDirection?: StartDirection | Ref<StartDirection>
     onDragStart?: DndDragHandlerWithData<IData>
   }
 ): {

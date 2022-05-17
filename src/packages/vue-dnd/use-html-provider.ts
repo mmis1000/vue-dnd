@@ -1,5 +1,5 @@
-import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, readonly, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
-import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps } from "./interfaces";
+import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
@@ -24,12 +24,11 @@ const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
 }
 
 interface DropTargetState {
-  id: DragDropTargetIdentifier,
+  id: DragDropTargetIdentifier
   elements: Element[]
 }
 
 class HtmlExecutionImpl<T> implements Execution<T> {
-
   readonly targetStatus: DropTargetState[] = reactive([])
 
   readonly mappedTargets = computed(() => {
@@ -60,7 +59,9 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   private dragEventIndex = 0
   private dropTargetId = 0
   private dragTargetId = 0
-  private executions: HtmlExecutionImpl<IData>[] = shallowReactive<HtmlExecutionImpl<IData>[]>([])
+  private executions: HtmlExecutionImpl<IData>[] = shallowReactive<
+    HtmlExecutionImpl<IData>[]
+  >([])
   private emptyImage: HTMLImageElement
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
@@ -86,16 +87,17 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           ev.preventDefault()
           // must be 'move' or the drop handler didn't work
           // https://www.w3.org/html/wg/spec/dnd.html#drag-and-drop-processing-model
-          ev.dataTransfer!.dropEffect = "move"
+          ev.dataTransfer!.dropEffect = 'move'
         } else {
-          ev.dataTransfer!.dropEffect = "copy"
+          ev.dataTransfer!.dropEffect = 'copy'
         }
       }
     }
 
     const dropHandler = (ev: DragEvent) => {
       const id = getId(ev)
-      const inst = id != null ? this.executions.find(exe => exe.id === id) : undefined
+      const inst =
+        id != null ? this.executions.find((exe) => exe.id === id) : undefined
       if (inst && inst.preview != null) {
         ev.preventDefault()
       }
@@ -113,9 +115,15 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   }
 
   useDraggableDecorator<T, U, V>(
-    events: { onDragStart?: DndDragHandlerWithData<IData>; },
+    events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
-    previewGetter?: () => VNode<any, any, any>
+    {
+      previewGetter,
+      startDirection = 'all'
+    } = <{
+      previewGetter?: () => VNode<any, any, any>;
+      startDirection?: StartDirection | Ref<StartDirection>;
+    }>{}
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
