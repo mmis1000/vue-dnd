@@ -1,6 +1,6 @@
 <template>
     <div class="ball" :style="{ 'opacity': state.isDragging ? '0.5' : '1' }" v-bind="propsItem()">
-      Ball
+      {{startDirection}}
     </div>
 </template>
 
@@ -29,5 +29,8 @@ const { propsItem, state } = useDraggable(
   height: 50px;
   background: red;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
