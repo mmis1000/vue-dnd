@@ -29,7 +29,7 @@ export interface PointerEventProviderOptions {
 }
 
 const DEFAULT_OPTIONS: PointerEventProviderOptions = Object.freeze({
-  minDragDistance: 10
+  minDragDistance: 5
 })
 
 const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
