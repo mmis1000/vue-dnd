@@ -1,4 +1,6 @@
 <template>
+  Only works with pointer event provider. <br>
+  There is no way to control how native dnd works
   <div class="wrap">
     <StartDirectionDraggable 
       :start-direction="props.startDirection"

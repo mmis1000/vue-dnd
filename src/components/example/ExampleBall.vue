@@ -50,5 +50,9 @@ export { ExampleBall as default }
   height: 50px;
   background: red;
   border-radius: 50%;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -174,6 +174,16 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           ev.preventDefault();
         }
       },
+      onPointerout: (ev: PointerEvent) => {
+        const stagedExe = this.stagedExecutions.find(
+          (exe) => exe.initialEvent.pointerId === ev.pointerId
+        );
+
+        if (stagedExe) {
+          findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
+          return
+        }
+      },
       onPointermove: (ev: PointerEvent) => {
         const stagedExe = this.stagedExecutions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
@@ -183,14 +193,11 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           const currentPos = [ev.clientX, ev.clientY]
           const initialPos = stagedExe.initialMouse
 
-          const dist =
-            unref(startDirection) === 'all'
-              ? ((currentPos[0] - initialPos[0]) ** 2 + (currentPos[1] - initialPos[1]) ** 2) ** 0.5
-              : unref(startDirection) === 'x'
-                ? Math.abs(currentPos[0] - initialPos[0])
-                : Math.abs(currentPos[1] - initialPos[1])
+          const dist = ((currentPos[0] - initialPos[0]) ** 2 + (currentPos[1] - initialPos[1]) ** 2) ** 0.5
 
-          if (dist > this.options.minDragDistance!) {
+          const direction = Math.abs(currentPos[0] - initialPos[0]) > Math.abs(currentPos[1] - initialPos[1]) ? 'x' : 'y'
+
+          if (dist > this.options.minDragDistance! && (unref(startDirection) === 'all' || unref(startDirection) === direction)) {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
             handleRef.value!.setPointerCapture(ev.pointerId);
