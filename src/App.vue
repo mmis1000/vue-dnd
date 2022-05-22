@@ -4,6 +4,7 @@ import ExampleHandle from './components/ExampleHandle.vue';
 import Board from './components/Board.vue';
 import SortableList from './components/SortableList.vue';
 import StartDirection from './components/StartDirection.vue';
+import DropNative from './components/DropNative.vue';
 
 </script>
 
@@ -27,6 +28,8 @@ import StartDirection from './components/StartDirection.vue';
   <StartDirection usePointerEvent startDirection="x"/>
   <div>Y</div>
   <StartDirection usePointerEvent startDirection="y"/>
+  <div>DropNative</div>
+  <DropNative />
 </template>
 
 <style scoped>
