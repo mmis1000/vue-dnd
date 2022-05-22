@@ -1,10 +1,17 @@
 import { computed, InjectionKey, isRef, mergeProps, ref, Ref, VNodeProps } from "vue";
-import { DndProvider } from "./interfaces";
+import { TYPES } from "./constants";
+import { DndProvider, DroppableAcceptType } from "./interfaces";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider<any>>
 export const nuzz = () => {}
 
-export const matchAccept = <T>(accept: T | ((arg: T) => boolean), data: T) => {
+export const matchAccept = <T>(accept: DroppableAcceptType<T>, data: T) => {
+  if (accept === TYPES.NONE) {
+    return false
+  }
+  if (accept === TYPES.ANY) {
+    return true
+  }
   if (typeof accept === 'function') {
     if ((accept as ((arg: T) => boolean))(data)) {
       return true

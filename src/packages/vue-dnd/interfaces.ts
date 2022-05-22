@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, VNode } from "vue"
-
+import type { TYPES } from "./constants"
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 export type DndDragHandlerNative = (ev: DragEvent) => void
 
@@ -7,7 +7,7 @@ export type DragDropTargetIdentifier = number
 
 export interface Execution<T> {
   readonly id: string,
-  readonly data: T | Ref<T> | ComputedRef<T>,
+  readonly data: T | Ref<T>,
   readonly source: DragDropTargetIdentifier,
   readonly targets: readonly DragDropTargetIdentifier[],
   mousePosition: readonly [number, number],
@@ -20,6 +20,8 @@ export type GetProps = () => Record<string, any>
 
 export type StartDirection = 'all' | 'x' | 'y'
 
+export type DroppableAcceptType<IData> = IData | ((arg: IData) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
+
 export interface DraggableDecoratorOptions<IData> {
   preview?: () => VNode<any, any, any>
   onDragStart?: DndDragHandlerWithData<IData>
@@ -27,7 +29,7 @@ export interface DraggableDecoratorOptions<IData> {
 }
 
 export interface DroppableDecoratorOptions<IData> {
-  accept: IData | ((arg: IData) => boolean);
+  accept: DroppableAcceptType<IData>;
   onDragOver?: DndDragHandlerWithData<IData>;
   onDragEnter?: DndDragHandlerWithData<IData>;
   onDragLeave?: DndDragHandlerWithData<IData>;
@@ -52,18 +54,7 @@ export interface DndProvider<IData> {
     ]
 
   useDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
-    options: {
-      accept: IData | ((arg: IData) => boolean);
-      onDragOver?: DndDragHandlerWithData<IData>;
-      onDragEnter?: DndDragHandlerWithData<IData>;
-      onDragLeave?: DndDragHandlerWithData<IData>;
-      onDrop?: DndDragHandlerWithData<IData>;
-      acceptNative?: true | ((ev: DragEvent) => boolean);
-      onDragOverNative?: DndDragHandlerNative;
-      onDragEnterNative?: DndDragHandlerNative;
-      onDragLeaveNative?: DndDragHandlerNative;
-      onDropNative?: DndDragHandlerNative;
-    }
+    options: DroppableDecoratorOptions<IData>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps
