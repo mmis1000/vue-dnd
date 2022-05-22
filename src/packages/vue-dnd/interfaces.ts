@@ -29,7 +29,7 @@ export interface DndProvider<IData> {
     },
     dataOrRef: IData | Ref<IData>,
     options?: {
-      previewGetter?: () => VNode<any, any, any>
+      preview?: () => VNode<any, any, any>
       startDirection?: StartDirection | Ref<StartDirection>
     }
   ): [

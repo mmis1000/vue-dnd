@@ -100,10 +100,10 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
     {
-      previewGetter,
+      preview,
       startDirection = 'all'
     } = <{
-      previewGetter?: () => VNode<any, any, any>;
+        preview?: () => VNode<any, any, any>;
       startDirection?: StartDirection | Ref<StartDirection>;
     }>{}
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
@@ -151,7 +151,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             dragTargetId,
             mouseOffset,
             pos,
-            previewGetter,
+            preview,
             [rect.width, rect.height],
             ev,
             rect,
@@ -360,7 +360,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         const dragging = execution != null;
 
         // rect + offset = mouse
-        const styleOverride: Record<string, string> = dragging && previewGetter === undefined
+        const styleOverride: Record<string, string> = dragging && preview === undefined
           ? {
             transform: `translate(${execution.elementOffset[0]}px, ${execution.elementOffset[1]}px)`,
           }

@@ -118,10 +118,10 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
     {
-      previewGetter,
+      preview,
       startDirection = 'all'
     } = <{
-      previewGetter?: () => VNode<any, any, any>;
+        preview?: () => VNode<any, any, any>;
       startDirection?: StartDirection | Ref<StartDirection>;
     }>{}
   ): [
@@ -151,11 +151,11 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           dragTargetId,
           mouseOffset,
           pos,
-          previewGetter,
+          preview,
           [elPos.width, elPos.height],
           ev.target as HTMLElement
         ))
-        if (previewGetter == null) {
+        if (preview == null) {
           ev.dataTransfer?.setDragImage(elementRef.value!, ...mouseOffset)
         } else {
           ev.dataTransfer?.setDragImage(this.emptyImage, 0, 0)

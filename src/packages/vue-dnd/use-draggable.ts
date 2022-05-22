@@ -39,7 +39,7 @@ export const useDraggableWithHandle = <IData = unknown>(
   const [id, getProps, getHandleProps] = provider.useDraggableDecorator({
     onDragStart: options.onDragStart
   }, data, {
-    previewGetter: options.preview,
+    preview: options.preview,
     startDirection: options.startDirection
   })
 
