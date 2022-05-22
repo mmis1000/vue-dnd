@@ -19,6 +19,8 @@ import {
   Execution,
   GetProps,
   StartDirection,
+  DraggableDecoratorOptions,
+  DroppableDecoratorOptions,
 } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
@@ -79,13 +81,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   private droppableElements = new Map<DragDropTargetIdentifier, Element>();
   private droppableDeclarations = new Map<
     DragDropTargetIdentifier,
-    {
-      accept: IData | ((arg: IData) => boolean);
-      onDragOver?: DndDragHandlerWithData<IData>;
-      onDragEnter?: DndDragHandlerWithData<IData>;
-      onDragLeave?: DndDragHandlerWithData<IData>;
-      onDrop?: DndDragHandlerWithData<IData>;
-    }
+    DroppableDecoratorOptions<IData>
   >();
 
   private options: PointerEventProviderOptions
@@ -100,11 +96,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       onDragStart,
       preview,
       startDirection = 'all'
-    } = <{
-      onDragStart?: DndDragHandlerWithData<IData>,
-      preview?: () => VNode<any, any, any>,
-      startDirection?: StartDirection | Ref<StartDirection>
-    }>{}
+    } = <DraggableDecoratorOptions<IData>>{}
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
     const dragTargetId = this.dragTargetId++;
 
@@ -405,13 +397,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     ];
   }
   useDroppableDecorator<T, U, V>(
-    options: {
-      accept: IData | ((arg: IData) => boolean),
-      onDragOver?: DndDragHandlerWithData<IData>;
-      onDragEnter?: DndDragHandlerWithData<IData>;
-      onDragLeave?: DndDragHandlerWithData<IData>;
-      onDrop?: DndDragHandlerWithData<IData>;
-    }
+    options: DroppableDecoratorOptions<IData>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++;
 

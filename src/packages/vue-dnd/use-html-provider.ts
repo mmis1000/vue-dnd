@@ -1,5 +1,5 @@
 import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
-import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection, DndDragHandlerNative } from "./interfaces";
+import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection, DndDragHandlerNative, DraggableDecoratorOptions, DroppableDecoratorOptions } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
@@ -120,11 +120,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       onDragStart,
       preview,
       startDirection = 'all'
-    } = <{
-      onDragStart?: DndDragHandlerWithData<IData>,
-      preview?: () => VNode<any, any, any>,
-      startDirection?: StartDirection | Ref<StartDirection>;
-    }>{}
+    } = <DraggableDecoratorOptions<IData>>{}
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
@@ -177,19 +173,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     ]
   }
   useDroppableDecorator<T, U, V>(
-    options: {
-      accept: IData | ((arg: IData) => boolean),
-      onDragOver?: DndDragHandlerWithData<IData>;
-      onDragEnter?: DndDragHandlerWithData<IData>;
-      onDragLeave?: DndDragHandlerWithData<IData>;
-      onDrop?: DndDragHandlerWithData<IData>;
-
-      acceptNative?: true | ((ev: DragEvent) => boolean);
-      onDragOverNative?: DndDragHandlerNative;
-      onDragEnterNative?: DndDragHandlerNative;
-      onDragLeaveNative?: DndDragHandlerNative;
-      onDropNative?: DndDragHandlerNative;
-    }
+    options: DroppableDecoratorOptions<IData>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {

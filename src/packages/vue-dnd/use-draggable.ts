@@ -1,15 +1,12 @@
 import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
-import { DndDragHandlerWithData, DndProvider, Execution, StartDirection } from "./interfaces"
+import { DndDragHandlerWithData, DndProvider, DraggableDecoratorOptions, Execution, StartDirection } from "./interfaces"
 import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggableWithHandle = <IData = unknown>(
   data: IData | Ref<IData>,
   options: {
     disabled?: boolean
-    preview?: () => VNode<any, any, any>
-    startDirection?: StartDirection | Ref<StartDirection>
-    onDragStart?: DndDragHandlerWithData<IData>
-  }
+  } & DraggableDecoratorOptions<IData>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   propsHandle: (originalProps?: Record<string, any>) => Record<string, any>
@@ -62,10 +59,7 @@ export const useDraggable = <IData = unknown>(
   data: IData | Ref<IData>,
   options: {
     disabled?: boolean
-    preview?: () => VNode<any, any, any>,
-    startDirection?: StartDirection | Ref<StartDirection>
-    onDragStart?: DndDragHandlerWithData<IData>
-  }
+  } & DraggableDecoratorOptions<IData>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
