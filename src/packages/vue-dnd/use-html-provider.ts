@@ -115,13 +115,14 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   }
 
   useDraggableDecorator<T, U, V>(
-    events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
     {
+      onDragStart,
       preview,
       startDirection = 'all'
     } = <{
-        preview?: () => VNode<any, any, any>;
+      onDragStart?: DndDragHandlerWithData<IData>,
+      preview?: () => VNode<any, any, any>,
       startDirection?: StartDirection | Ref<StartDirection>;
     }>{}
   ): [
@@ -162,7 +163,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')
-        events.onDragStart?.(ev, unref<IData>(dataOrRef))
+        onDragStart?.(ev, unref<IData>(dataOrRef))
       },
       onDragend: (ev: DragEvent) => {
         findAndRemove(this.executions, item => item.movingElement === ev.target)

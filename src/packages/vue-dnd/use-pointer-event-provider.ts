@@ -88,7 +88,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         onDrop?: DndDragHandlerWithData<IData>;
       };
     }
-    >();
+  >();
 
   private options: PointerEventProviderOptions
 
@@ -97,14 +97,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   }
 
   useDraggableDecorator<T, U, V>(
-    events: { onDragStart?: DndDragHandlerWithData<IData> },
     dataOrRef: IData | Ref<IData>,
     {
+      onDragStart,
       preview,
       startDirection = 'all'
     } = <{
-        preview?: () => VNode<any, any, any>;
-      startDirection?: StartDirection | Ref<StartDirection>;
+      onDragStart?: DndDragHandlerWithData<IData>,
+      preview?: () => VNode<any, any, any>,
+      startDirection?: StartDirection | Ref<StartDirection>
     }>{}
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
     const dragTargetId = this.dragTargetId++;
@@ -201,7 +202,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
             handleRef.value!.setPointerCapture(ev.pointerId);
-            events.onDragStart?.(ev, unref<IData>(dataOrRef));
+            onDragStart?.(ev, unref<IData>(dataOrRef));
             getSelection()?.empty()
           }
 

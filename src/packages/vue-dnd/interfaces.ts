@@ -24,12 +24,10 @@ export interface DndProvider<IData> {
   readonly readonlyExecutions: Readonly<Execution<IData>[]>
 
   useDraggableDecorator<RendererNode, RendererElement, ExtraProps>(
-    events: {
-      onDragStart?: DndDragHandlerWithData<IData>
-    },
     dataOrRef: IData | Ref<IData>,
     options?: {
       preview?: () => VNode<any, any, any>
+      onDragStart?: DndDragHandlerWithData<IData>
       startDirection?: StartDirection | Ref<StartDirection>
     }
   ): [
