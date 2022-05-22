@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, VNode } from "vue"
+import { Ref, VNode } from "vue"
 import type { TYPES } from "./constants"
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 export type DndDragHandlerNative = (ev: DragEvent) => void
@@ -21,6 +21,7 @@ export type GetProps = () => Record<string, any>
 export type StartDirection = 'all' | 'x' | 'y'
 
 export type DroppableAcceptType<IData> = IData | ((arg: IData) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
+export type DroppableAcceptNativeType = ((ev: DragEvent) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
 
 export interface DraggableDecoratorOptions<IData> {
   preview?: () => VNode<any, any, any>
@@ -34,7 +35,7 @@ export interface DroppableDecoratorOptions<IData> {
   onDragEnter?: DndDragHandlerWithData<IData>;
   onDragLeave?: DndDragHandlerWithData<IData>;
   onDrop?: DndDragHandlerWithData<IData>;
-  acceptNative?: true | ((ev: DragEvent) => boolean);
+  acceptNative?: DroppableAcceptNativeType;
   onDragOverNative?: DndDragHandlerNative;
   onDragEnterNative?: DndDragHandlerNative;
   onDragLeaveNative?: DndDragHandlerNative;

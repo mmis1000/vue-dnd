@@ -1,5 +1,5 @@
 import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
-import { DndDragHandlerWithData, DndProvider, DraggableDecoratorOptions, Execution, StartDirection } from "./interfaces"
+import { DndProvider, DraggableDecoratorOptions, Execution } from "./interfaces"
 import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDraggableWithHandle = <IData = unknown>(

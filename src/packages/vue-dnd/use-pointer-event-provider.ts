@@ -10,18 +10,13 @@ import {
   shallowReadonly,
   StyleValue,
   unref,
-  VNode,
+  VNode
 } from "vue";
 import { TYPES } from "./constants";
 import {
-  DndProvider,
-  DndDragHandlerWithData,
-  DragDropTargetIdentifier,
-  Execution,
-  GetProps,
-  StartDirection,
-  DraggableDecoratorOptions,
-  DroppableDecoratorOptions,
+  DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions,
+  DroppableDecoratorOptions, Execution,
+  GetProps
 } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 

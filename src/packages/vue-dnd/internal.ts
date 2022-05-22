@@ -1,6 +1,6 @@
 import { computed, InjectionKey, isRef, mergeProps, ref, Ref, VNodeProps } from "vue";
 import { TYPES } from "./constants";
-import { DndProvider, DroppableAcceptType } from "./interfaces";
+import { DndProvider, DroppableAcceptNativeType, DroppableAcceptType } from "./interfaces";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider<any>>
 export const nuzz = () => {}
@@ -24,6 +24,15 @@ export const matchAccept = <T>(accept: DroppableAcceptType<T>, data: T) => {
   return false
 }
 
+export const matchAcceptNative = (accept: DroppableAcceptNativeType, data: DragEvent) => {
+  if (accept === TYPES.NONE) {
+    return false
+  }
+  if (accept === TYPES.ANY) {
+    return true
+  }
+  return accept(data)
+}
 type Data = { [x: string]: unknown }
 export const myMergeProps = (...args: (Data & VNodeProps)[]): Data => {
   const refs: (Ref<unknown> | ((arg: any) => void))[] = []

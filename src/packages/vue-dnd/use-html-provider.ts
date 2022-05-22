@@ -1,7 +1,7 @@
 import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { TYPES } from "./constants";
-import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection, DndDragHandlerNative, DraggableDecoratorOptions, DroppableDecoratorOptions } from "./interfaces";
-import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
+import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
+import { matchAccept, matchAcceptNative, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
 
@@ -263,10 +263,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       onDragover: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
-          if (
-            (typeof options.acceptNative === 'function' && options.acceptNative(ev)) ||
-            options.acceptNative === true
-          ) {
+          if (options.acceptNative && matchAcceptNative(options.acceptNative, ev)) {
             ev.preventDefault()
           }
 
