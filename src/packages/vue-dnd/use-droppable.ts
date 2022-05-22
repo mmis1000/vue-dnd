@@ -1,4 +1,5 @@
 import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
+import { TYPES } from "./constants"
 import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
 import { matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
@@ -18,7 +19,7 @@ export const useDroppable = <IData = unknown>(options: DroppableDecoratorOptions
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
-        return matchAccept(options.accept, unref<IData>(execution.data))
+        return matchAccept(options.accept ?? TYPES.NONE, unref<IData>(execution.data))
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,

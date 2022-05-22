@@ -29,7 +29,7 @@ export interface DraggableDecoratorOptions<IData> {
 }
 
 export interface DroppableDecoratorOptions<IData> {
-  accept: DroppableAcceptType<IData>;
+  accept?: DroppableAcceptType<IData>;
   onDragOver?: DndDragHandlerWithData<IData>;
   onDragEnter?: DndDragHandlerWithData<IData>;
   onDragLeave?: DndDragHandlerWithData<IData>;

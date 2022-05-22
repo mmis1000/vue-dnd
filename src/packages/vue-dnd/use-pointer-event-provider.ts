@@ -12,6 +12,7 @@ import {
   unref,
   VNode,
 } from "vue";
+import { TYPES } from "./constants";
 import {
   DndProvider,
   DndDragHandlerWithData,
@@ -323,7 +324,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           const validTargets = targets.filter((id) => {
             const decl = this.droppableDeclarations.get(id);
             if (decl === undefined) return false;
-            return matchAccept(decl.accept, unref<IData>(dataOrRef));
+            return matchAccept(decl.accept ?? TYPES.NONE, unref<IData>(dataOrRef));
           });
 
           if (validTargets.length > 0) {
@@ -374,7 +375,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const def = this.droppableDeclarations.get(target);
 
             if (def) {
-              accepted = matchAccept(def.accept, unref<IData>(execution.data));
+              accepted = matchAccept(def.accept ?? TYPES.NONE, unref<IData>(execution.data));
             }
           }
         }
