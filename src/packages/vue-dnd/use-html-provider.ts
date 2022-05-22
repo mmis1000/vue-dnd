@@ -177,8 +177,8 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     ]
   }
   useDroppableDecorator<T, U, V>(
-    accept: IData | ((arg: IData) => boolean),
     options: {
+      accept: IData | ((arg: IData) => boolean),
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
       onDragLeave?: DndDragHandlerWithData<IData>;
@@ -298,7 +298,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           return
         }
 
-        if (matchAccept(accept, unref<IData>(execution.data))) {
+        if (matchAccept(options.accept, unref<IData>(execution.data))) {
           ev.preventDefault()
         }
 

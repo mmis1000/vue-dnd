@@ -20,7 +20,8 @@ export const useDroppable = <IData = unknown>(options: {
     throw new Error('[vue-dnd] useDroppable must be used with a provider')
   }
 
-  const [id, getProps] = provider.useDroppableDecorator(options.accept, {
+  const [id, getProps] = provider.useDroppableDecorator({
+    accept: options.accept,
     onDrop: options.onDrop,
     onDragEnter: options.onDragEnter,
     onDragLeave: options.onDragLeave,

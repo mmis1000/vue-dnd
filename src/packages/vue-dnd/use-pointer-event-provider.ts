@@ -81,12 +81,10 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     DragDropTargetIdentifier,
     {
       accept: IData | ((arg: IData) => boolean);
-      events: {
-        onDragOver?: DndDragHandlerWithData<IData>;
-        onDragEnter?: DndDragHandlerWithData<IData>;
-        onDragLeave?: DndDragHandlerWithData<IData>;
-        onDrop?: DndDragHandlerWithData<IData>;
-      };
+      onDragOver?: DndDragHandlerWithData<IData>;
+      onDragEnter?: DndDragHandlerWithData<IData>;
+      onDragLeave?: DndDragHandlerWithData<IData>;
+      onDrop?: DndDragHandlerWithData<IData>;
     }
   >();
 
@@ -267,7 +265,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.events.onDragLeave?.(ev, unref<IData>(exe.data));
+              decl.onDragLeave?.(ev, unref<IData>(exe.data));
             }
           }
 
@@ -275,7 +273,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.events.onDragEnter?.(ev, unref<IData>(exe.data));
+              decl.onDragEnter?.(ev, unref<IData>(exe.data));
             }
           }
         }
@@ -340,7 +338,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             // fire on the last one
             const targetId = validTargets[targets.length - 1];
             const decl = this.droppableDeclarations.get(targetId);
-            decl?.events.onDrop?.(ev, unref<IData>(dataOrRef));
+            decl?.onDrop?.(ev, unref<IData>(dataOrRef));
           }
         }
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))
@@ -407,8 +405,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     ];
   }
   useDroppableDecorator<T, U, V>(
-    accept: IData | ((arg: IData) => boolean),
-    events: {
+    options: {
+      accept: IData | ((arg: IData) => boolean),
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
       onDragLeave?: DndDragHandlerWithData<IData>;
@@ -422,7 +420,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     onMounted(() => {
       if (!elementRef.value) return;
       this.droppableElements.set(dropTargetId, elementRef.value);
-      this.droppableDeclarations.set(dropTargetId, { accept, events });
+      this.droppableDeclarations.set(dropTargetId, options);
     });
 
     onUnmounted(() => {

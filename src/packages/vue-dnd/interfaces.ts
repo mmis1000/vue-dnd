@@ -20,16 +20,31 @@ export type GetProps = () => Record<string, any>
 
 export type StartDirection = 'all' | 'x' | 'y'
 
+export interface DraggableDecoratorOptions<IData> {
+  preview?: () => VNode<any, any, any>
+  onDragStart?: DndDragHandlerWithData<IData>
+  startDirection?: StartDirection | Ref<StartDirection>
+}
+
+export interface DroppableDecoratorOptions<IData> {
+  accept: IData | ((arg: IData) => boolean);
+  onDragOver?: DndDragHandlerWithData<IData>;
+  onDragEnter?: DndDragHandlerWithData<IData>;
+  onDragLeave?: DndDragHandlerWithData<IData>;
+  onDrop?: DndDragHandlerWithData<IData>;
+  acceptNative?: true | ((ev: DragEvent) => boolean);
+  onDragOverNative?: DndDragHandlerNative;
+  onDragEnterNative?: DndDragHandlerNative;
+  onDragLeaveNative?: DndDragHandlerNative;
+  onDropNative?: DndDragHandlerNative;
+}
+
 export interface DndProvider<IData> {
   readonly readonlyExecutions: Readonly<Execution<IData>[]>
 
   useDraggableDecorator<RendererNode, RendererElement, ExtraProps>(
     dataOrRef: IData | Ref<IData>,
-    options?: {
-      preview?: () => VNode<any, any, any>
-      onDragStart?: DndDragHandlerWithData<IData>
-      startDirection?: StartDirection | Ref<StartDirection>
-    }
+    options?: DraggableDecoratorOptions<IData>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
@@ -37,8 +52,8 @@ export interface DndProvider<IData> {
     ]
 
   useDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
-    accept: IData | ((arg: IData) => boolean),
     options: {
+      accept: IData | ((arg: IData) => boolean);
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
       onDragLeave?: DndDragHandlerWithData<IData>;
