@@ -1,5 +1,5 @@
 import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
-import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection } from "./interfaces";
+import { DndProvider, DndDragHandlerWithData, DragDropTargetIdentifier, Execution, GetProps, StartDirection, DndDragHandlerNative } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
 
 let instanceId = 0
@@ -177,18 +177,32 @@ class HtmlProvider<IData> implements DndProvider<IData> {
   }
   useDroppableDecorator<T, U, V>(
     accept: IData | ((arg: IData) => boolean),
-    events: {
+    options: {
       onDragOver?: DndDragHandlerWithData<IData>;
       onDragEnter?: DndDragHandlerWithData<IData>;
       onDragLeave?: DndDragHandlerWithData<IData>;
       onDrop?: DndDragHandlerWithData<IData>;
+
+      acceptNative?: true | ((ev: DragEvent) => boolean);
+      onDragOverNative?: DndDragHandlerNative;
+      onDragEnterNative?: DndDragHandlerNative;
+      onDragLeaveNative?: DndDragHandlerNative;
+      onDropNative?: DndDragHandlerNative;
     }
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {
       onDrop: (ev: DragEvent) => {
         const id = getId(ev)
+
         if (id === null) {
+          if (options.acceptNative != null) {
+            ev.preventDefault()
+          }
+
+          if (options.onDropNative != null) {
+            options.onDropNative(ev)
+          }
           return
         }
 
@@ -202,11 +216,15 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         ev.preventDefault()
         findAndRemove(this.executions, item => item.id === id)
 
-        events.onDrop?.(ev, unref<IData>(execution.data))
+        options.onDrop?.(ev, unref<IData>(execution.data))
       },
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
+          if (options.onDragEnterNative != null) {
+            options.onDragEnterNative(ev)
+          }
+
           return
         }
 
@@ -223,12 +241,16 @@ class HtmlProvider<IData> implements DndProvider<IData> {
 
         execution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
 
-        events.onDragEnter?.(ev, unref<IData>(execution.data))
+        options.onDragEnter?.(ev, unref<IData>(execution.data))
       },
       onDragleave: (ev: DragEvent) => {
         const id = getId(ev)
 
         if (id === null) {
+          if (options.onDragLeaveNative != null) {
+            options.onDragLeaveNative(ev)
+          }
+
           return
         }
 
@@ -250,11 +272,21 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
 
 
-        events.onDragLeave?.(ev, unref<IData>(execution.data))
+        options.onDragLeave?.(ev, unref<IData>(execution.data))
       },
       onDragover: (ev: DragEvent) => {
         const id = getId(ev)
         if (id === null) {
+          if (
+            (typeof options.acceptNative === 'function' && options.acceptNative(ev)) ||
+            options.acceptNative === true
+          ) {
+            ev.preventDefault()
+          }
+
+          if (options.onDragOverNative != null) {
+            options.onDragOverNative(ev)
+          }
           return
         }
 
@@ -269,7 +301,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           ev.preventDefault()
         }
 
-        events.onDragOver?.(ev, unref<IData>(execution.data))
+        options.onDragOver?.(ev, unref<IData>(execution.data))
       }
     }
     return [dropTargetId, () => mixinProps]

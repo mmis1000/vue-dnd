@@ -1,5 +1,5 @@
 import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
-import { DndDragHandlerWithData, DndProvider } from "./interfaces"
+import { DndDragHandlerNative, DndDragHandlerWithData, DndProvider } from "./interfaces"
 import { matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 export const useDroppable = <IData = unknown>(options: {
@@ -8,6 +8,11 @@ export const useDroppable = <IData = unknown>(options: {
   onDragOver?: DndDragHandlerWithData<IData>
   onDragEnter?: DndDragHandlerWithData<IData>
   onDragLeave?: DndDragHandlerWithData<IData>
+  acceptNative?: true | ((ev: DragEvent) => boolean);
+  onDragOverNative?: DndDragHandlerNative;
+  onDragEnterNative?: DndDragHandlerNative;
+  onDragLeaveNative?: DndDragHandlerNative;
+  onDropNative?: DndDragHandlerNative;
 }) => {
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
 
@@ -19,7 +24,12 @@ export const useDroppable = <IData = unknown>(options: {
     onDrop: options.onDrop,
     onDragEnter: options.onDragEnter,
     onDragLeave: options.onDragLeave,
-    onDragOver: options.onDragOver
+    onDragOver: options.onDragOver,
+    acceptNative: options.acceptNative,
+    onDragOverNative: options.onDragOverNative,
+    onDragEnterNative: options.onDragEnterNative,
+    onDragLeaveNative: options.onDragLeaveNative,
+    onDropNative: options.onDropNative
   })
 
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
