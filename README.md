@@ -12,9 +12,10 @@ Usage
 
 ```ts
 import { defineComponent, PropType, reactive, computed } from "vue";
-import { useDraggable, useDroppable, useHtmlProvider, usePointerEventProvider } from "@mmis1000/vue-dnd";
+import { useDraggable, useDroppable, useHtmlProvider, usePointerEventProvider, createType } from "@mmis1000/vue-dnd";
 
 type Message = [currentBucket: number, id: number];
+export const MessageType = createType<Message>()
 
 const Ball = defineComponent({
   props: {
@@ -29,10 +30,12 @@ const Ball = defineComponent({
   },
   setup(props) {
     // propsItem is a function that return required attribute during the rendering
-    const { propsItem } = useDraggable<Message>(
-      // Specify what did you want to send to the drop zone, can either be ref or raw value
-      computed(() => [props.currentBucket, props.id] as Message),
+    const { propsItem } = useDraggable(
+      // specify type of the message
+      MessageType,
       {
+        // Specify what did you want to send to the drop zone, can either be ref or raw value
+        data: computed(() => [props.currentBucket, props.id] as Message),
         // optional handlers
         onDragStart: (ev, data) => {},
       }
@@ -62,10 +65,10 @@ const Bucket = defineComponent({
   },
   setup(props, ctx) {
     // propsItem is a function that return required attribute during the rendering
-    const { propsItem, hoverState } = useDroppable<Message>({
-      // Declare whether you want to receive the draggable item or not
-      // A predicate function or raw value
-      accept: (msg) => msg[0] !== props.id,
+    const { propsItem, hoverState } = useDroppable({
+      // Declare type of the message you want toi receive
+      // The `withFilter` can further filter some message out
+      accept: MessageType.withFilter((msg) => msg[0] !== props.id),
       // The drop zone receives message from draggable item
       onDrop: (ev, data) => {
         // Tell the parent that something dropped
