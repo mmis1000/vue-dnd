@@ -41,14 +41,24 @@ const Template = (args) => ({
   template: '<start-direction v-bind="args" />',
 });
 
-export const NativeEvents = Template.bind({});
-NativeEvents.args = {
+export const AllDirection = Template.bind({});
+AllDirection.args = {
   // More on composing args: https://storybook.js.org/docs/vue/writing-stories/args#args-composition
-  usePointerEvent: false
+  usePointerEvent: true,
+  startDirection: 'all'
 };
 
-export const PointerEvents = Template.bind({});
-PointerEvents.args = {
+export const XOnly = Template.bind({});
+XOnly.args = {
   // More on composing args: https://storybook.js.org/docs/vue/writing-stories/args#args-composition
-  usePointerEvent: true
+  usePointerEvent: true,
+  startDirection: 'x'
 };
+
+export const YOnly = Template.bind({});
+YOnly.args = {
+  // More on composing args: https://storybook.js.org/docs/vue/writing-stories/args#args-composition
+  usePointerEvent: true,
+  startDirection: 'y'
+};
+
