@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { Message } from "./exampleType";
+import { MessageType } from "./exampleType";
 import { defineComponent, PropType } from "vue";
 import { useDroppable } from "../../packages/vue-dnd";
 export default defineComponent({
@@ -16,10 +16,10 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    const { propsItem, hoverState } = useDroppable<Message>({
+    const { propsItem, hoverState } = useDroppable({
       // Declare whether you want to receive the draggable item or not
       // A predicate function or raw value
-      accept: (msg) => msg[0] !== props.id,
+      accept: MessageType.withFilter((msg) => msg[0] !== props.id),
       // The drop zone receives message from draggable item
       onDrop: (ev, data) => {
         props.onDrop(data[1], data[0], props.id);

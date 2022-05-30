@@ -1,4 +1,4 @@
-import { Ref, UnwrapRef } from "vue"
+import { Ref, unref, UnwrapRef } from "vue"
 
 /**
  * @private
@@ -40,9 +40,9 @@ export const matchNativeFile = (ev: DragEvent, rule: NativeFileRule) => {
 export const isTypedDataRule = (v: any): v is Type<any, any> => {
     return v != null && typeof v[TYPE_TYPED] === 'symbol'
 }
-export const matchTyped = <T>(data: T, rule: Type<any, T>) => {
+export const matchTyped = <T>(data: T | Ref<T>, rule: Type<any, T>) => {
     if (rule.accept == null) return true
-    return typeof rule.accept === 'function' ? (rule as any).accept(data) : rule.accept === data
+    return typeof rule.accept === 'function' ? (rule as any).accept(unref(data)) : rule.accept === unref(data)
 }
 
 const createNativeFileRule = (accept?: NonNullable<NativeFileRule['accept']>) => {
@@ -66,7 +66,8 @@ export const createType = <
             const res = createType(accept)
             res[TYPE_TYPED] = type
             return res
-        }
+        },
+        accept
     } as Type<NAME, T>
 }
 
@@ -77,13 +78,3 @@ export type DragType<T> = MaybeRef<Type<any, T> | (Type<any, T>)[]>
 export type DropType<T> = MaybeRef<Type<any, T> | NativeFileRule | (Type<any, T> | NativeFileRule)[]>
 
 export type UnwrapDragDropType<T> = ToDataType<UnwrapArray<UnwrapRef<T>>>
-
-class Test<T extends DropType<any>> {
-    constructor(
-        public types: T
-    ) { }
-
-    get(): ToDataType<UnwrapArray<UnwrapRef<T>>> {
-        throw new Error()
-    }
-}

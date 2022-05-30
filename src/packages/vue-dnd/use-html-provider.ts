@@ -1,8 +1,7 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
-import { TYPES } from "./constants";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
-import { Default, DragType, DropType, isNativeFileRule, isTypedDataRule, matchNativeFile, matchTyped, UnwrapDragDropType } from "./types";
+import { Default, DragType, DropType, UnwrapDragDropType } from "./types";
 
 let instanceId = 0
 
@@ -166,7 +165,7 @@ class HtmlProvider implements DndProvider {
         }
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')
-        onDragStart?.(ev, unref(data))
+        onDragStart?.(ev, unref(data) as any)
       },
       onDragend: (ev: DragEvent) => {
         findAndRemove(this.executions, item => item.movingElement === ev.target)
@@ -241,14 +240,14 @@ class HtmlProvider implements DndProvider {
         const id = getId(ev)
         const execution = this.executions.find(i => i.id === id)
 
-        if (execution == null) {
+        if (id != null && execution == null) {
           // return, not a event from this provider
           return
         }
 
         if (matchAccept(options.accept, ev, execution)) {
           ev.preventDefault()
-          options.onDragOver?.(ev, unref(execution.data) as any)
+          options.onDragOver?.(ev, execution ? unref(execution.data) as any : undefined)
         }
       }
     }

@@ -11,14 +11,13 @@ import {
   unref,
   VNode
 } from "vue";
-import { TYPES } from "./constants";
 import {
   DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions,
   DroppableDecoratorOptions, Execution,
   GetProps
 } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
-import { Default, DragType, DropType, isTypedDataRule, matchTyped, UnwrapDragDropType } from "./types";
+import { Default, DragType, DropType, UnwrapDragDropType } from "./types";
 
 let instanceId = 0;
 
@@ -191,7 +190,8 @@ class PointerEventProvider implements DndProvider {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
             handleRef.value!.setPointerCapture(ev.pointerId);
-            onDragStart?.(ev, unref(data));
+            // these didn't work due to how type works
+            onDragStart?.(ev as any, unref(data) as any);
             getSelection()?.empty()
           }
 
@@ -256,7 +256,8 @@ class PointerEventProvider implements DndProvider {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.onDragLeave?.(ev, unref(exe.data));
+              // these didn't work due to how type works
+              decl.onDragLeave?.(ev as any, unref(exe.data) as any);
             }
           }
 
@@ -264,7 +265,8 @@ class PointerEventProvider implements DndProvider {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.onDragEnter?.(ev, unref(exe.data));
+              // these didn't work due to how type works
+              decl.onDragEnter?.(ev as any, unref(exe.data) as any);
             }
           }
         }
@@ -330,7 +332,9 @@ class PointerEventProvider implements DndProvider {
             // fire on the last one
             const targetId = validTargets[targets.length - 1];
             const decl = this.droppableDeclarations.get(targetId);
-            decl?.onDrop?.(ev, unref(data));
+
+            // these didn't work due to how type works
+            decl?.onDrop?.(ev as any, unref(data) as any);
           }
         }
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))

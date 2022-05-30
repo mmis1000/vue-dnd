@@ -1,14 +1,15 @@
 <script lang="tsx">
 import { defineComponent, ref } from "vue";
 import { TYPES, useDroppable } from "../../packages/vue-dnd";
+import { NativeFile } from "../../packages/vue-dnd/types";
 
 export default defineComponent({
   setup(props, { slots }) {
     const image = ref('')
 
     const { propsItem } = useDroppable({
-      acceptNative: TYPES.ANY,
-      onDropNative(ev) {
+      accept: NativeFile,
+      onDrop(ev) {
         if (ev.dataTransfer?.files.length ?? 0 > 0) {
           const file = ev.dataTransfer!.files.item(0)!
           if (!file.type.startsWith('image/')) {

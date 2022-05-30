@@ -1,7 +1,6 @@
 import { computed, InjectionKey, isRef, mergeProps, ref, Ref, unref, VNodeProps } from "vue";
-import { TYPES } from "./constants";
-import { DndProvider, DroppableAcceptNativeType, DroppableAcceptType, Execution } from "./interfaces";
-import { DragType, DropType, isNativeFileRule, isTypedDataRule, matchNativeFile, matchTyped, TYPE_TYPED, UnwrapDragDropType } from "./types";
+import { DndProvider, Execution } from "./interfaces";
+import { DragType, DropType, isNativeFileRule, isTypedDataRule, matchNativeFile, matchTyped, TYPE_TYPED } from "./types";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider>
 export const nuzz = () => { }
@@ -15,7 +14,8 @@ export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent 
 
   const sourceTypeOrListOfType = execution ? unref(execution.type) : []
   const sourceTypeList = Array.isArray(sourceTypeOrListOfType) ? sourceTypeOrListOfType : [sourceTypeOrListOfType]
-  for (let item of sourceTypeList) {
+
+  for (const item of sourceTypeList) {
     sourceSymbols.add(item[TYPE_TYPED])
   }
 

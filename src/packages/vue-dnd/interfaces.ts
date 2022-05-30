@@ -1,8 +1,10 @@
 import { Ref, UnwrapRef, VNode } from "vue"
 import type { TYPES } from "./constants"
-import { DragType, DropType, ToDataType, UnwrapArray, UnwrapDragDropType } from "./types"
-export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
-export type DndDragHandlerNative = (ev: DragEvent) => void
+import { DragType, DropType, ToDataType, Type, UnwrapArray, UnwrapDragDropType } from "./types"
+export type DndDragHandlerWithData<T extends DropType<any>> =
+  UnwrapArray<UnwrapRef<T>> extends Type<any, infer U>
+  ? (ev: DragEvent | PointerEvent, data: U) => void
+  : (ev: DragEvent, data: undefined) => void
 
 export type DragDropTargetIdentifier = number
 
@@ -30,16 +32,16 @@ export interface DraggableDecoratorOptions<ItemType extends DragType<any>> {
   data: UnwrapDragDropType<ItemType> | Ref<UnwrapDragDropType<ItemType>>
   type: ItemType
   preview?: () => VNode<any, any, any>
-  onDragStart?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>
+  onDragStart?: DndDragHandlerWithData<ItemType>
   startDirection?: StartDirection | Ref<StartDirection>
 }
 
 export interface DroppableDecoratorOptions<ItemType extends DropType<any>> {
   accept: ItemType;
-  onDragOver?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
-  onDragEnter?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
-  onDragLeave?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
-  onDrop?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
+  onDragOver?: DndDragHandlerWithData<ItemType>;
+  onDragEnter?: DndDragHandlerWithData<ItemType>;
+  onDragLeave?: DndDragHandlerWithData<ItemType>;
+  onDrop?: DndDragHandlerWithData<ItemType>;
 }
 
 export interface DndProvider {

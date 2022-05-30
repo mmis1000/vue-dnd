@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { PropType, computed } from "vue";
 import { useDroppable } from "../../packages/vue-dnd/use-droppable";
+import { BoardType } from "./type";
 
 const emit = defineEmits<{
   (e: "drop", data: { index: [number, number] }): void;
@@ -23,8 +24,8 @@ const props = defineProps({
   dark: Boolean,
 });
 
-const { propsItem, hoverState } = useDroppable<[number, number]>({
-  accept: (d) => {
+const { propsItem, hoverState } = useDroppable({
+  accept: BoardType.withFilter((d) => {
     if (
       (Math.abs(d[0] - props.index[0]) === 1 &&
         Math.abs(d[1] - props.index[1]) === 2) ||
@@ -35,7 +36,7 @@ const { propsItem, hoverState } = useDroppable<[number, number]>({
     } else {
       return false;
     }
-  },
+  }),
   onDrop: (ev, data) => {
     emit("drop", { index: props.index });
   },

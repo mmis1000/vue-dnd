@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { Message } from "./exampleType";
+import { MessageType } from "./exampleType";
 import { defineComponent, computed } from "vue";
 import { useDraggableWithHandle } from "../../packages/vue-dnd";
 export default defineComponent({
@@ -14,10 +14,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { propsItem, propsHandle } = useDraggableWithHandle<Message>(
-      // Specify what did you want to send to the dropzone, can either be ref or raw value
-      computed(() => [props.currentBucket, props.id] as Message),
-      {}
+    const { propsItem, propsHandle } = useDraggableWithHandle(
+      MessageType,
+      {
+        data: computed(() => [props.currentBucket, props.id] as [number, number])
+      }
     );
 
     return () => {

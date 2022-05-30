@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { useDraggable } from "../../packages/vue-dnd/use-draggable";
+import { BoardType } from "./type";
 
 const props = defineProps({
   index: {
@@ -27,8 +28,9 @@ const props = defineProps({
 });
 
 const { propsItem, state } = useDraggable(
-  computed(() => props.index),
+  BoardType,
   {
+    data: computed(() => props.index),
     onDragStart(ev) {
       console.log("start", ev);
     },

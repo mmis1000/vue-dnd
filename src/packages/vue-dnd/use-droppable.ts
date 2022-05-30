@@ -20,7 +20,7 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(op
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
-        return matchAccept(options.accept, execution.initialDragEvent, unref(execution.data))
+        return matchAccept(options.accept, execution.initialDragEvent, execution)
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,

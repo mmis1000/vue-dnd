@@ -8,6 +8,7 @@
 <script setup lang="tsx">
 import { computed, defineAsyncComponent, markRaw } from 'vue'
 import { useDraggable, useDroppable } from '../../packages/vue-dnd';
+import { ItemType } from './types';
 
 const props = defineProps({
   index: {
@@ -38,17 +39,18 @@ const value = computed({
 const Item = defineAsyncComponent(async () => (await import('./Item.vue')).default)
 
 const { propsItem, state } = useDraggable(
-  computed(() => props.index),
+  ItemType, 
   {
+    data: computed(() => props.index),
     disabled: props.isPreview,
     preview: () => markRaw(<Item {...props} isPreview={true}/>)
   }
 );
 
-const { propsItem: propsDropItem, hoverState } = useDroppable<number>({
-  accept: (d) => {
+const { propsItem: propsDropItem, hoverState } = useDroppable({
+  accept: ItemType.withFilter((d) => {
     return d !== props.index;
-  },
+  }),
   onDrop: (ev, data) => {
     emit("drop", { from: data, to: props.index });
   }
