@@ -1,19 +1,22 @@
-import { Ref, VNode } from "vue"
+import { Ref, UnwrapRef, VNode } from "vue"
 import type { TYPES } from "./constants"
+import { DragType, DropType, ToDataType, UnwrapArray, UnwrapDragDropType } from "./types"
 export type DndDragHandlerWithData<IData> = (ev: DragEvent | PointerEvent, data: IData) => void
 export type DndDragHandlerNative = (ev: DragEvent) => void
 
 export type DragDropTargetIdentifier = number
 
-export interface Execution<T> {
+export interface Execution<ItemType extends DragType<any>> {
+  readonly type: ItemType,
   readonly id: string,
-  readonly data: T | Ref<T>,
+  readonly data: UnwrapDragDropType<ItemType> | Ref<UnwrapDragDropType<ItemType>>,
   readonly source: DragDropTargetIdentifier,
   readonly targets: readonly DragDropTargetIdentifier[],
   mousePosition: readonly [number, number],
   readonly mouseOffset: readonly [number, number],
   readonly preview?: () => VNode<any, any, any>,
-  readonly size?: readonly [number, number]
+  readonly size?: readonly [number, number],
+  readonly initialDragEvent?: DragEvent
 }
 
 export type GetProps = () => Record<string, any>
@@ -23,39 +26,35 @@ export type StartDirection = 'all' | 'x' | 'y'
 export type DroppableAcceptType<IData> = IData | ((arg: IData) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
 export type DroppableAcceptNativeType = ((ev: DragEvent) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
 
-export interface DraggableDecoratorOptions<IData> {
+export interface DraggableDecoratorOptions<ItemType extends DragType<any>> {
+  data: UnwrapDragDropType<ItemType> | Ref<UnwrapDragDropType<ItemType>>
+  type: ItemType
   preview?: () => VNode<any, any, any>
-  onDragStart?: DndDragHandlerWithData<IData>
+  onDragStart?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>
   startDirection?: StartDirection | Ref<StartDirection>
 }
 
-export interface DroppableDecoratorOptions<IData> {
-  accept?: DroppableAcceptType<IData>;
-  onDragOver?: DndDragHandlerWithData<IData>;
-  onDragEnter?: DndDragHandlerWithData<IData>;
-  onDragLeave?: DndDragHandlerWithData<IData>;
-  onDrop?: DndDragHandlerWithData<IData>;
-  acceptNative?: DroppableAcceptNativeType;
-  onDragOverNative?: DndDragHandlerNative;
-  onDragEnterNative?: DndDragHandlerNative;
-  onDragLeaveNative?: DndDragHandlerNative;
-  onDropNative?: DndDragHandlerNative;
+export interface DroppableDecoratorOptions<ItemType extends DropType<any>> {
+  accept: ItemType;
+  onDragOver?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
+  onDragEnter?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
+  onDragLeave?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
+  onDrop?: DndDragHandlerWithData<UnwrapDragDropType<ItemType>>;
 }
 
-export interface DndProvider<IData> {
-  readonly readonlyExecutions: Readonly<Execution<IData>[]>
+export interface DndProvider {
+  readonly readonlyExecutions: Readonly<Execution<DragType<any>>[]>
 
-  useDraggableDecorator<RendererNode, RendererElement, ExtraProps>(
-    dataOrRef: IData | Ref<IData>,
-    options?: DraggableDecoratorOptions<IData>
+  useDraggableDecorator<ItemType extends DragType<any>, RendererNode, RendererElement, ExtraProps>(
+    options: DraggableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
       getHandleProps: GetProps
     ]
 
-  useDroppableDecorator<RendererNode, RendererElement, ExtraProps>(
-    options: DroppableDecoratorOptions<IData>
+  useDroppableDecorator<ItemType extends DropType<any>, RendererNode, RendererElement, ExtraProps>(
+    options: DroppableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps

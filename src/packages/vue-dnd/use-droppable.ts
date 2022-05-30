@@ -2,9 +2,10 @@ import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
 import { TYPES } from "./constants"
 import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
 import { matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
+import { Default, DropType, Type } from "./types"
 
-export const useDroppable = <IData = unknown>(options: DroppableDecoratorOptions<IData>) => {
-  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
+export const useDroppable = <ItemType extends DropType<any> = typeof Default>(options: DroppableDecoratorOptions<ItemType>) => {
+  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider | undefined
 
   if (provider == null) {
     throw new Error('[vue-dnd] useDroppable must be used with a provider')
@@ -19,11 +20,11 @@ export const useDroppable = <IData = unknown>(options: DroppableDecoratorOptions
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
-        return matchAccept(options.accept ?? TYPES.NONE, unref<IData>(execution.data))
+        return matchAccept(options.accept, execution.initialDragEvent, unref(execution.data))
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,
-        data: unref<IData>(execution.data),
+        data: unref(execution.data),
         get accepted() {
           return accepted.value
         }

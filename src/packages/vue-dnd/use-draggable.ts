@@ -1,19 +1,21 @@
 import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
 import { DndProvider, DraggableDecoratorOptions, Execution } from "./interfaces"
 import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
+import { Default, DragType, UnwrapDragDropType } from "./types"
 
-export const useDraggableWithHandle = <IData = unknown>(
-  data: IData | Ref<IData>,
-  options: {
-    disabled?: boolean
-  } & DraggableDecoratorOptions<IData>
+interface DragHookOptions<ItemType extends DragType<any>> extends DraggableDecoratorOptions<ItemType> {
+  disabled?: boolean
+}
+export const useDraggableWithHandle = <ItemType extends DragType<any>>(
+  type: DragHookOptions<ItemType>['type'],
+  options: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type'>>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   propsHandle: (originalProps?: Record<string, any>) => Record<string, any>
   wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
   wrapHandle: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
   state: {
-    isDragging: Execution<IData> | undefined
+    isDragging: Execution<ItemType> | undefined
   }
 } => {
   if (options.disabled === true) {
@@ -27,13 +29,15 @@ export const useDraggableWithHandle = <IData = unknown>(
       }
     }
   }
-  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider<IData> | undefined
+  const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider | undefined
 
   if (provider == null) {
     throw new Error('[vue-dnd] useDraggableWithHandle must be used with a provider')
   }
 
-  const [id, getProps, getHandleProps] = provider.useDraggableDecorator(data, {
+  const [id, getProps, getHandleProps] = provider.useDraggableDecorator({
+    type: type,
+    data: options.data,
     onDragStart: options.onDragStart,
     preview: options.preview,
     startDirection: options.startDirection
@@ -51,23 +55,25 @@ export const useDraggableWithHandle = <IData = unknown>(
     wrapItem,
     wrapHandle,
     state: reactive({
-      isDragging: computed(() => provider.readonlyExecutions.find(exe => exe.source === id))
+      isDragging: computed(() =>
+        // because only execution triggered from this hook will have same id with id here, this cast should be safe
+        provider.readonlyExecutions.find(exe => exe.source === id) as unknown as Execution<ItemType> | undefined
+      )
     })
   }
 }
-export const useDraggable = <IData = unknown>(
-  data: IData | Ref<IData>,
-  options: {
-    disabled?: boolean
-  } & DraggableDecoratorOptions<IData>
+
+export const useDraggable = <ItemType extends DragType<any>>(
+  type: DragHookOptions<ItemType>['type'],
+  options: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type'>>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
   state: {
-    isDragging: Execution<IData> | undefined
+    isDragging: Execution<ItemType> | undefined
   }
 } => {
-  const { wrapItem, wrapHandle, propsItem, propsHandle, state } = useDraggableWithHandle(data, options)
+  const { wrapItem, wrapHandle, propsItem, propsHandle, state } = useDraggableWithHandle(type, options)
   const mergeProps = <T extends Record<string, any>>(extra?: T) => propsItem(propsHandle(extra))
   return {
     propsItem: mergeProps,

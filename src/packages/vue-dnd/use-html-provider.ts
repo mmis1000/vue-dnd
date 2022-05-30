@@ -1,7 +1,8 @@
-import { computed, ComputedRef, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { TYPES } from "./constants";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
-import { matchAccept, matchAcceptNative, PROVIDER_INJECTOR_KEY } from "./internal";
+import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
+import { Default, DragType, DropType, isNativeFileRule, isTypedDataRule, matchNativeFile, matchTyped, UnwrapDragDropType } from "./types";
 
 let instanceId = 0
 
@@ -29,7 +30,7 @@ interface DropTargetState {
   elements: Element[]
 }
 
-class HtmlExecutionImpl<T> implements Execution<T> {
+class HtmlExecutionImpl<T extends DragType<any>> implements Execution<T> {
   readonly targetStatus: DropTargetState[] = reactive([])
 
   readonly mappedTargets = computed(() => {
@@ -41,13 +42,15 @@ class HtmlExecutionImpl<T> implements Execution<T> {
   }
 
   constructor(
+    readonly type: T,
     readonly id: string,
-    readonly data: T | Ref<T> | ComputedRef<T>,
+    readonly data: UnwrapDragDropType<T> | Ref<UnwrapDragDropType<T>>,
     readonly source: DragDropTargetIdentifier,
     readonly mouseOffset: readonly [number, number],
     public mousePosition: readonly [number, number],
     readonly preview: undefined | (() => VNode<any, any, any>),
     readonly size: readonly [number, number],
+    readonly initialDragEvent: DragEvent,
     // implementation specified properties
     readonly movingElement: HTMLElement
   ) {
@@ -55,13 +58,13 @@ class HtmlExecutionImpl<T> implements Execution<T> {
   }
 }
 
-class HtmlProvider<IData> implements DndProvider<IData> {
+class HtmlProvider implements DndProvider {
   private currentInstanceId = instanceId++
   private dragEventIndex = 0
   private dropTargetId = 0
   private dragTargetId = 0
-  private executions: HtmlExecutionImpl<IData>[] = shallowReactive<
-    HtmlExecutionImpl<IData>[]
+  private executions: HtmlExecutionImpl<DragType<unknown>>[] = shallowReactive<
+    HtmlExecutionImpl<DragType<unknown>>[]
   >([])
   private emptyImage: HTMLImageElement
 
@@ -115,13 +118,14 @@ class HtmlProvider<IData> implements DndProvider<IData> {
     })
   }
 
-  useDraggableDecorator<T, U, V>(
-    dataOrRef: IData | Ref<IData>,
+  useDraggableDecorator<ItemType extends DragType<unknown>, T, U, V>(
     {
+      data,
+      type = Default as any,
       onDragStart,
       preview,
       startDirection = 'all'
-    } = <DraggableDecoratorOptions<IData>>{}
+    } = {} as DraggableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
       getItemProps: GetProps,
@@ -144,13 +148,15 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         const mouseOffset = [pos[0] - elPos.left, pos[1] - elPos.top] as const
         // console.log(elementRef.value, pos, elPos, mouseOffset)
         this.executions.push(new HtmlExecutionImpl(
+          type,
           id,
-          dataOrRef,
+          data,
           dragTargetId,
           mouseOffset,
           pos,
           preview,
           [elPos.width, elPos.height],
+          ev,
           ev.target as HTMLElement
         ))
         if (preview == null) {
@@ -160,7 +166,7 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
         ev.dataTransfer!.setData('text/plain', '')
         ev.dataTransfer!.setData(prefix + '-' + id, '')
-        onDragStart?.(ev, unref<IData>(dataOrRef))
+        onDragStart?.(ev, unref(data))
       },
       onDragend: (ev: DragEvent) => {
         findAndRemove(this.executions, item => item.movingElement === ev.target)
@@ -173,47 +179,28 @@ class HtmlProvider<IData> implements DndProvider<IData> {
       () => handleMixin
     ]
   }
-  useDroppableDecorator<T, U, V>(
-    options: DroppableDecoratorOptions<IData>
+  useDroppableDecorator<ItemType extends DropType<unknown>, T, U, V>(
+    options: DroppableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {
       onDrop: (ev: DragEvent) => {
         const id = getId(ev)
-
-        if (id === null) {
-          if (options.acceptNative != null) {
-            ev.preventDefault()
-          }
-
-          if (options.onDropNative != null) {
-            options.onDropNative(ev)
-          }
-          return
-        }
-
         const execution = this.executions.find(i => i.id === id)
 
-        if (execution == null) {
-          // return, not a event from this provider
+        if (id != null && execution == null) {
+          // we don't care. it is event from other provider
           return
         }
 
-        ev.preventDefault()
-        findAndRemove(this.executions, item => item.id === id)
-
-        options.onDrop?.(ev, unref<IData>(execution.data))
+        if (matchAccept(options.accept, ev, execution)) {
+          ev.preventDefault()
+          findAndRemove(this.executions, item => item.id === id)
+          options.onDrop?.(ev, execution ? unref(execution.data) as any : undefined)
+        }
       },
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
-        if (id === null) {
-          if (options.onDragEnterNative != null) {
-            options.onDragEnterNative(ev)
-          }
-
-          return
-        }
-
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
@@ -225,20 +212,10 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           execution.targetStatus.push({ id: dropTargetId, elements: [] })
         }
 
-        execution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
-
-        options.onDragEnter?.(ev, unref<IData>(execution.data))
+        options.onDragEnter?.(ev, unref(execution.data) as any)
       },
       onDragleave: (ev: DragEvent) => {
         const id = getId(ev)
-
-        if (id === null) {
-          if (options.onDragLeaveNative != null) {
-            options.onDragLeaveNative(ev)
-          }
-
-          return
-        }
 
         const execution = this.executions.find(i => i.id === id)
 
@@ -258,21 +235,10 @@ class HtmlProvider<IData> implements DndProvider<IData> {
         }
 
 
-        options.onDragLeave?.(ev, unref<IData>(execution.data))
+        options.onDragLeave?.(ev, unref(execution.data) as any)
       },
       onDragover: (ev: DragEvent) => {
         const id = getId(ev)
-        if (id === null) {
-          if (options.acceptNative && matchAcceptNative(options.acceptNative, ev)) {
-            ev.preventDefault()
-          }
-
-          if (options.onDragOverNative != null) {
-            options.onDragOverNative(ev)
-          }
-          return
-        }
-
         const execution = this.executions.find(i => i.id === id)
 
         if (execution == null) {
@@ -280,11 +246,10 @@ class HtmlProvider<IData> implements DndProvider<IData> {
           return
         }
 
-        if (matchAccept(options.accept ?? TYPES.NONE, unref<IData>(execution.data))) {
+        if (matchAccept(options.accept, ev, execution)) {
           ev.preventDefault()
+          options.onDragOver?.(ev, unref(execution.data) as any)
         }
-
-        options.onDragOver?.(ev, unref<IData>(execution.data))
       }
     }
     return [dropTargetId, () => mixinProps]

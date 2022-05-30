@@ -1,5 +1,4 @@
 import {
-  ComputedRef,
   onMounted,
   onUnmounted,
   provide,
@@ -19,6 +18,7 @@ import {
   GetProps
 } from "./interfaces";
 import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
+import { Default, DragType, DropType, isTypedDataRule, matchTyped, UnwrapDragDropType } from "./types";
 
 let instanceId = 0;
 
@@ -39,12 +39,13 @@ const findAndRemove = <T>(arr: T[], predicate: (arg: T) => boolean) => {
   }
 };
 
-class PointerExecutionImpl<T> implements Execution<T> {
+class PointerExecutionImpl<T extends DragType<unknown>> implements Execution<T> {
   targets: DragDropTargetIdentifier[] = reactive([]);
   public lastEvent: PointerEvent;
   constructor(
+    readonly type: T,
     readonly id: string,
-    readonly data: T | Ref<T> | ComputedRef<T>,
+    readonly data: UnwrapDragDropType<T> | Ref<UnwrapDragDropType<T>>,
     readonly source: DragDropTargetIdentifier,
     readonly mouseOffset: readonly [number, number],
     public mousePosition: readonly [number, number],
@@ -61,14 +62,14 @@ class PointerExecutionImpl<T> implements Execution<T> {
   }
 }
 
-class PointerEventProvider<IData> implements DndProvider<IData> {
+class PointerEventProvider implements DndProvider {
   private currentInstanceId = instanceId++;
   private dragEventIndex = 0;
   private dropTargetId = 0;
   private dragTargetId = 0;
-  private stagedExecutions: PointerExecutionImpl<IData>[] = []
-  private executions: PointerExecutionImpl<IData>[] = shallowReactive<
-    PointerExecutionImpl<IData>[]
+  private stagedExecutions: PointerExecutionImpl<any>[] = []
+  private executions: PointerExecutionImpl<any>[] = shallowReactive<
+    PointerExecutionImpl<any>[]
   >([]);
 
   readonly readonlyExecutions = shallowReadonly(this.executions);
@@ -77,7 +78,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
   private droppableElements = new Map<DragDropTargetIdentifier, Element>();
   private droppableDeclarations = new Map<
     DragDropTargetIdentifier,
-    DroppableDecoratorOptions<IData>
+    DroppableDecoratorOptions<DropType<any>>
   >();
 
   private options: PointerEventProviderOptions
@@ -86,13 +87,14 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     this.options = Object.assign({}, DEFAULT_OPTIONS, opts ?? {})
   }
 
-  useDraggableDecorator<T, U, V>(
-    dataOrRef: IData | Ref<IData>,
+  useDraggableDecorator<ItemType extends DragType<unknown>, T, U, V>(
     {
+      data,
+      type = Default as any,
       onDragStart,
       preview,
       startDirection = 'all'
-    } = <DraggableDecoratorOptions<IData>>{}
+    } = {} as DraggableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
     const dragTargetId = this.dragTargetId++;
 
@@ -133,8 +135,9 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
         findAndRemove(this.executions, i => i.initialEvent.pointerId === ev.pointerId)
         this.stagedExecutions.push(
           new PointerExecutionImpl(
+            type,
             id,
-            dataOrRef,
+            data,
             dragTargetId,
             mouseOffset,
             pos,
@@ -188,7 +191,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
             handleRef.value!.setPointerCapture(ev.pointerId);
-            onDragStart?.(ev, unref<IData>(dataOrRef));
+            onDragStart?.(ev, unref(data));
             getSelection()?.empty()
           }
 
@@ -253,7 +256,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.onDragLeave?.(ev, unref<IData>(exe.data));
+              decl.onDragLeave?.(ev, unref(exe.data));
             }
           }
 
@@ -261,7 +264,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
-              decl.onDragEnter?.(ev, unref<IData>(exe.data));
+              decl.onDragEnter?.(ev, unref(exe.data));
             }
           }
         }
@@ -319,14 +322,15 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           const validTargets = targets.filter((id) => {
             const decl = this.droppableDeclarations.get(id);
             if (decl === undefined) return false;
-            return matchAccept(decl.accept ?? TYPES.NONE, unref<IData>(dataOrRef));
+
+            return matchAccept(decl.accept, undefined, exe)
           });
 
           if (validTargets.length > 0) {
             // fire on the last one
             const targetId = validTargets[targets.length - 1];
             const decl = this.droppableDeclarations.get(targetId);
-            decl?.onDrop?.(ev, unref<IData>(dataOrRef));
+            decl?.onDrop?.(ev, unref(data));
           }
         }
         // this.executions.push(new PointerExecutionImpl(id, data, dragTargetId, ev))
@@ -369,8 +373,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
           for (let target of execution.targets) {
             const def = this.droppableDeclarations.get(target);
 
-            if (def) {
-              accepted = matchAccept(def.accept ?? TYPES.NONE, unref<IData>(execution.data));
+            if (def && matchAccept(def.accept, undefined, execution)) {
+              accepted = true
             }
           }
         }
@@ -392,8 +396,8 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
       },
     ];
   }
-  useDroppableDecorator<T, U, V>(
-    options: DroppableDecoratorOptions<IData>
+  useDroppableDecorator<ItemType extends DropType<unknown>, T, U, V>(
+    options: DroppableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++;
 
@@ -402,7 +406,7 @@ class PointerEventProvider<IData> implements DndProvider<IData> {
     onMounted(() => {
       if (!elementRef.value) return;
       this.droppableElements.set(dropTargetId, elementRef.value);
-      this.droppableDeclarations.set(dropTargetId, options);
+      this.droppableDeclarations.set(dropTargetId, options as unknown as DroppableDecoratorOptions<DropType<any>>);
     });
 
     onUnmounted(() => {
