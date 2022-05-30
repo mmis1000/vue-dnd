@@ -16,8 +16,8 @@ import {
   DroppableDecoratorOptions, Execution,
   GetProps
 } from "./interfaces";
-import { matchAccept, PROVIDER_INJECTOR_KEY } from "./internal";
-import { Default, DragType, DropType, UnwrapDragDropType } from "./types";
+import { DragType, DropType, matchAccept, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
+import { Default } from "./types";
 
 let instanceId = 0;
 

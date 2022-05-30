@@ -1,6 +1,6 @@
 import { Ref, UnwrapRef, VNode } from "vue"
-import type { TYPES } from "./constants"
-import { DragType, DropType, ToDataType, Type, UnwrapArray, UnwrapDragDropType } from "./types"
+import { DragType, DropType, UnwrapArray, UnwrapDragDropType } from "./internal"
+import { Type } from "./types"
 export type DndDragHandlerWithData<T extends DropType<any>> =
   UnwrapArray<UnwrapRef<T>> extends Type<any, infer U>
   ? (ev: DragEvent | PointerEvent, data: U) => void
@@ -24,9 +24,6 @@ export interface Execution<ItemType extends DragType<any>> {
 export type GetProps = () => Record<string, any>
 
 export type StartDirection = 'all' | 'x' | 'y'
-
-export type DroppableAcceptType<IData> = IData | ((arg: IData) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
-export type DroppableAcceptNativeType = ((ev: DragEvent) => boolean) | (typeof TYPES)['NONE'] | (typeof TYPES)['ANY']
 
 export interface DraggableDecoratorOptions<ItemType extends DragType<any>> {
   data: UnwrapDragDropType<ItemType> | Ref<UnwrapDragDropType<ItemType>>

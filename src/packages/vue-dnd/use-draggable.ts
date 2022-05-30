@@ -1,7 +1,6 @@
-import { cloneVNode, computed, inject, reactive, Ref, VNode } from "vue"
+import { cloneVNode, computed, inject, reactive, VNode } from "vue"
 import { DndProvider, DraggableDecoratorOptions, Execution } from "./interfaces"
-import { myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
-import { Default, DragType, UnwrapDragDropType } from "./types"
+import { DragType, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 
 interface DragHookOptions<ItemType extends DragType<any>> extends DraggableDecoratorOptions<ItemType> {
   disabled?: boolean

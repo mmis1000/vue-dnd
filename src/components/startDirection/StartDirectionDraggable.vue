@@ -6,8 +6,7 @@
 
 <script setup lang="ts">
 import { toRefs } from 'vue';
-import { StartDirection, useDraggable } from '../../packages/vue-dnd';
-import { createType } from '../../packages/vue-dnd/types';
+import { StartDirection, useDraggable, createType } from '../../packages/vue-dnd';
 
 const props = defineProps({
   startDirection: {

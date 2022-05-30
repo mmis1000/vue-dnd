@@ -1,7 +1,6 @@
 <script lang="tsx">
 import { defineComponent, ref } from "vue";
-import { TYPES, useDroppable } from "../../packages/vue-dnd";
-import { NativeFile } from "../../packages/vue-dnd/types";
+import { useDroppable, NativeFile } from "../../packages/vue-dnd";
 
 export default defineComponent({
   setup(props, { slots }) {

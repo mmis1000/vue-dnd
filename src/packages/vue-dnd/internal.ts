@@ -1,6 +1,6 @@
-import { computed, InjectionKey, isRef, mergeProps, ref, Ref, unref, VNodeProps } from "vue";
+import { computed, InjectionKey, isRef, mergeProps, ref, Ref, unref, UnwrapRef, VNodeProps } from "vue";
 import { DndProvider, Execution } from "./interfaces";
-import { DragType, DropType, isNativeFileRule, isTypedDataRule, matchNativeFile, matchTyped, TYPE_TYPED } from "./types";
+import { NativeFileRule, Type } from "./types";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider>
 export const nuzz = () => { }
@@ -65,4 +65,37 @@ export const myMergeProps = (...args: (Data & VNodeProps)[]): Data => {
   }
 
   return refProxy === null ? mergeProps(...args) : mergeProps(...args, { ref: refProxy })
+}
+
+export const TYPE_NATIVE = Symbol('native_file')
+export const TYPE_TYPED = Symbol('typed')
+
+export type UnwrapArray<T> = T extends (infer U)[] ? U : T
+export type ToDataType<T> =
+  // native file don't have a custom data field
+  T extends NativeFileRule ? undefined :
+  // typed data
+  T extends Type<any, infer R> ? R :
+  // a exact value matching
+  T
+
+export type MaybeRef<T> = T | Ref<T>
+export type DragType<T> = MaybeRef<Type<any, T> | (Type<any, T>)[]>
+export type DropType<T> = MaybeRef<Type<any, T> | NativeFileRule | (Type<any, T> | NativeFileRule)[]>
+
+export type UnwrapDragDropType<T> = ToDataType<UnwrapArray<UnwrapRef<T>>>
+
+export const isNativeFileRule = (v: any): v is NativeFileRule => {
+  return v != null && v[TYPE_NATIVE] === true
+}
+export const matchNativeFile = (ev: DragEvent, rule: NativeFileRule) => {
+  if (rule.accept == null) return true
+  return rule.accept(ev)
+}
+export const isTypedDataRule = (v: any): v is Type<any, any> => {
+  return v != null && typeof v[TYPE_TYPED] === 'symbol'
+}
+export const matchTyped = <T>(data: T | Ref<T>, rule: Type<any, T>) => {
+  if (rule.accept == null) return true
+  return typeof rule.accept === 'function' ? (rule as any).accept(unref(data)) : rule.accept === unref(data)
 }

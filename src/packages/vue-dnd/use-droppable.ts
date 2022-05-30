@@ -1,8 +1,7 @@
 import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
-import { TYPES } from "./constants"
 import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
-import { matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
-import { Default, DropType, Type } from "./types"
+import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
+import { Default } from "./types"
 
 export const useDroppable = <ItemType extends DropType<any> = typeof Default>(options: DroppableDecoratorOptions<ItemType>) => {
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider | undefined
