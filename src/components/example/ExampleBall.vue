@@ -26,8 +26,9 @@ const ExampleBall = defineComponent({
     const { propsItem, state } = useDraggable(
       MessageType,
       // Specify what did you want to send to the dropzone, can either be ref or raw value
+      computed(() => [props.currentBucket, props.id] as [number, number]),
       {
-        data: computed(() => [props.currentBucket, props.id] as [number, number]),
+        // option for disable the whole hook
         disabled: props.isPreview,
         // optional handlers
         onDragStart: (ev, data) => {},

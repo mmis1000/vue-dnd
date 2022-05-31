@@ -33,9 +33,9 @@ const Ball = defineComponent({
     const { propsItem } = useDraggable(
       // specify type of the message
       MessageType,
+      // Specify what did you want to send to the drop zone, can either be ref or raw value
+      computed(() => [props.currentBucket, props.id] as Message),
       {
-        // Specify what did you want to send to the drop zone, can either be ref or raw value
-        data: computed(() => [props.currentBucket, props.id] as Message),
         // optional handlers
         onDragStart: (ev, data) => {},
       }

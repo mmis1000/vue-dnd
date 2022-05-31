@@ -29,8 +29,8 @@ const props = defineProps({
 
 const { propsItem, state } = useDraggable(
   BoardType,
+  computed(() => props.index),
   {
-    data: computed(() => props.index),
     onDragStart(ev) {
       console.log("start", ev);
     },

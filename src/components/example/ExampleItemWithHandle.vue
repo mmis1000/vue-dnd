@@ -16,9 +16,7 @@ export default defineComponent({
   setup(props) {
     const { propsItem, propsHandle } = useDraggableWithHandle(
       MessageType,
-      {
-        data: computed(() => [props.currentBucket, props.id] as [number, number])
-      }
+      computed(() => [props.currentBucket, props.id] as [number, number])
     );
 
     return () => {

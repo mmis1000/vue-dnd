@@ -39,9 +39,9 @@ const value = computed({
 const Item = defineAsyncComponent(async () => (await import('./Item.vue')).default)
 
 const { propsItem, state } = useDraggable(
-  ItemType, 
+  ItemType,
+  computed(() => props.index),
   {
-    data: computed(() => props.index),
     disabled: props.isPreview,
     preview: () => markRaw(<Item {...props} isPreview={true}/>)
   }

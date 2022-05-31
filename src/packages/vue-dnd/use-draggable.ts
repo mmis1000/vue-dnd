@@ -7,7 +7,8 @@ interface DragHookOptions<ItemType extends DragType<any>> extends DraggableDecor
 }
 export const useDraggableWithHandle = <ItemType extends DragType<any>>(
   type: DragHookOptions<ItemType>['type'],
-  options: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type'>>
+  data: DragHookOptions<ItemType>['data'],
+  options: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type' | 'data'>> = {}
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   propsHandle: (originalProps?: Record<string, any>) => Record<string, any>
@@ -36,7 +37,7 @@ export const useDraggableWithHandle = <ItemType extends DragType<any>>(
 
   const [id, getProps, getHandleProps] = provider.useDraggableDecorator({
     type: type,
-    data: options.data,
+    data: data,
     onDragStart: options.onDragStart,
     preview: options.preview,
     startDirection: options.startDirection
@@ -64,7 +65,8 @@ export const useDraggableWithHandle = <ItemType extends DragType<any>>(
 
 export const useDraggable = <ItemType extends DragType<any>>(
   type: DragHookOptions<ItemType>['type'],
-  options: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type'>>
+  data: DragHookOptions<ItemType>['data'],
+  options?: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type' | 'data'>>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
@@ -72,7 +74,7 @@ export const useDraggable = <ItemType extends DragType<any>>(
     isDragging: Execution<ItemType> | undefined
   }
 } => {
-  const { wrapItem, wrapHandle, propsItem, propsHandle, state } = useDraggableWithHandle(type, options)
+  const { wrapItem, wrapHandle, propsItem, propsHandle, state } = useDraggableWithHandle(type, data, options)
   const mergeProps = <T extends Record<string, any>>(extra?: T) => propsItem(propsHandle(extra))
   return {
     propsItem: mergeProps,
