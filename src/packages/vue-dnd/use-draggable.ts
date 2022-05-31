@@ -20,8 +20,8 @@ export const useDraggableWithHandle = <ItemType extends DragType<any>>(
 } => {
   if (options.disabled === true) {
     return {
-      propsItem: () => ({}),
-      propsHandle: () => ({}),
+      propsItem: (originalProps?: Record<string, any>) => (originalProps ?? {}),
+      propsHandle: (originalProps?: Record<string, any>) => (originalProps ?? {}),
       wrapItem: node => node,
       wrapHandle: node => node,
       state: {
