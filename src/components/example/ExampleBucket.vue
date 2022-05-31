@@ -16,15 +16,17 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    const { propsItem, hoverState } = useDroppable({
+    const { propsItem, hoverState } = useDroppable(
       // Declare whether you want to receive the draggable item or not
       // A predicate function or raw value
-      accept: MessageType.withFilter((msg) => msg[0] !== props.id),
-      // The drop zone receives message from draggable item
-      onDrop: (ev, data) => {
-        props.onDrop(data[1], data[0], props.id);
-      },
-    });
+      MessageType.withFilter((msg) => msg[0] !== props.id),
+      {
+        // The drop zone receives message from draggable item
+        onDrop: (ev, data) => {
+          props.onDrop(data[1], data[0], props.id);
+        },
+      }
+    );
 
     return () => (
       <div

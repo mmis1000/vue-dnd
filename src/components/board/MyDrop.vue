@@ -24,8 +24,8 @@ const props = defineProps({
   dark: Boolean,
 });
 
-const { propsItem, hoverState } = useDroppable({
-  accept: BoardType.withFilter((d) => {
+const { propsItem, hoverState } = useDroppable(
+  BoardType.withFilter((d) => {
     if (
       (Math.abs(d[0] - props.index[0]) === 1 &&
         Math.abs(d[1] - props.index[1]) === 2) ||
@@ -37,11 +37,13 @@ const { propsItem, hoverState } = useDroppable({
       return false;
     }
   }),
-  onDrop: (ev, data) => {
-    emit("drop", { index: props.index });
-  },
-  onDragOver(ev, data) {},
-});
+  {
+    onDrop: (ev, data) => {
+      emit("drop", { index: props.index });
+    },
+    onDragOver(ev, data) {},
+  }
+);
 
 const computedState = computed((): Record<string, string> => {
   const state = hoverState;

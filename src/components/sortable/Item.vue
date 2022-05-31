@@ -47,14 +47,16 @@ const { propsItem, state } = useDraggable(
   }
 );
 
-const { propsItem: propsDropItem, hoverState } = useDroppable({
-  accept: ItemType.withFilter((d) => {
+const { propsItem: propsDropItem, hoverState } = useDroppable(
+  ItemType.withFilter((d) => {
     return d !== props.index;
   }),
-  onDrop: (ev, data) => {
-    emit("drop", { from: data, to: props.index });
+  {
+    onDrop: (ev, data) => {
+      emit("drop", { from: data, to: props.index });
+    }
   }
-});
+);
 
 const item = computed(() => {
   return hoverState.hover ? hoverState.draggingItems[0] : null;

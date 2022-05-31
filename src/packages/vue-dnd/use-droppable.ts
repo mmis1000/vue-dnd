@@ -3,14 +3,18 @@ import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
 import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
 import { Default } from "./types"
 
-export const useDroppable = <ItemType extends DropType<any> = typeof Default>(options: DroppableDecoratorOptions<ItemType>) => {
+export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
+
+  accept: DroppableDecoratorOptions<ItemType>['accept'],
+  options: Pick<DroppableDecoratorOptions<ItemType>, Exclude<keyof DroppableDecoratorOptions<ItemType>, 'accept'>> = {}
+) => {
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider | undefined
 
   if (provider == null) {
     throw new Error('[vue-dnd] useDroppable must be used with a provider')
   }
 
-  const [id, getProps] = provider.useDroppableDecorator(options)
+  const [id, getProps] = provider.useDroppableDecorator({ accept, ...options })
 
   const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
   const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : myMergeProps(extra, getProps())
@@ -19,7 +23,7 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(op
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
-        return matchAccept(options.accept, execution.initialDragEvent, execution)
+        return matchAccept(accept, execution.initialDragEvent, execution)
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,

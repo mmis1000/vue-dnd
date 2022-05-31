@@ -6,23 +6,25 @@ export default defineComponent({
   setup(props, { slots }) {
     const image = ref('')
 
-    const { propsItem } = useDroppable({
-      accept: NativeFile,
-      onDrop(ev) {
-        if (ev.dataTransfer?.files.length ?? 0 > 0) {
-          const file = ev.dataTransfer!.files.item(0)!
-          if (!file.type.startsWith('image/')) {
-            alert('not a image')
-            return
+    const { propsItem } = useDroppable(
+      NativeFile,
+      {
+        onDrop(ev) {
+          if (ev.dataTransfer?.files.length ?? 0 > 0) {
+            const file = ev.dataTransfer!.files.item(0)!
+            if (!file.type.startsWith('image/')) {
+              alert('not a image')
+              return
+            }
+            const url = URL.createObjectURL(file)
+            if (image.value !== '') {
+              URL.revokeObjectURL(image.value)
+            }
+            image.value = url
           }
-          const url = URL.createObjectURL(file)
-          if (image.value !== '') {
-            URL.revokeObjectURL(image.value)
-          }
-          image.value = url
         }
       }
-    });
+    );
     return () => <div class="viewer">
       <img src={image.value} alt="" />
       <div class="overlay" {...propsItem()}>

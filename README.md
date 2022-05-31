@@ -65,20 +65,22 @@ const Bucket = defineComponent({
   },
   setup(props, ctx) {
     // propsItem is a function that return required attribute during the rendering
-    const { propsItem, hoverState } = useDroppable({
+    const { propsItem, hoverState } = useDroppable(
       // Declare type of the message you want toi receive
       // The `withFilter` can further filter some message out
-      accept: MessageType.withFilter((msg) => msg[0] !== props.id),
-      // The drop zone receives message from draggable item
-      onDrop: (ev, data) => {
-        // Tell the parent that something dropped
-        props.onDrop(data[1], data[0], props.id);
-      },
-      // optional handlers
-      onDragOver: (ev, data) => {},
-      onDragEnter: (ev, data) => {},
-      onDragLeave: (ev, data) => {},
-    });
+      MessageType.withFilter((msg) => msg[0] !== props.id),
+      {
+        // The drop zone receives message from draggable item
+        onDrop: (ev, data) => {
+          // Tell the parent that something dropped
+          props.onDrop(data[1], data[0], props.id);
+        },
+        // optional handlers
+        onDragOver: (ev, data) => {},
+        onDragEnter: (ev, data) => {},
+        onDragLeave: (ev, data) => {},
+      }
+    );
 
     return () => (
       <div
