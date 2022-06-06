@@ -1,6 +1,6 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
-import { DragType, DropType, matchAccept, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
+import { DragType, DropType, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
 import { Default } from "./types";
 
 let instanceId = 0
@@ -51,7 +51,7 @@ class HtmlExecutionImpl<T extends DragType<any>> implements Execution<T> {
     readonly size: readonly [number, number],
     readonly initialDragEvent: DragEvent,
     // implementation specified properties
-    readonly movingElement: HTMLElement
+    readonly movingElement?: HTMLElement
   ) {
     return shallowReactive(this)
   }
@@ -194,13 +194,44 @@ class HtmlProvider implements DndProvider {
 
         if (matchAccept(options.accept, ev, execution)) {
           ev.preventDefault()
-          findAndRemove(this.executions, item => item.id === id)
+          findAndRemove(this.executions, item => item.id === (id ?? nativeDragExecutionId))
           options.onDrop?.(ev, execution ? unref(execution.data) as any : undefined)
         }
       },
       onDragenter: (ev: DragEvent) => {
         const id = getId(ev)
         const execution = this.executions.find(i => i.id === id)
+
+        if (id == null && execution == null) {
+          // probably a native event?
+          const matched = matchAccept(options.accept, ev, undefined)
+          if (matched) {
+            let currentExecution = this.executions.find(i => i.id === nativeDragExecutionId)
+            if (currentExecution == null) {
+              currentExecution = new HtmlExecutionImpl(
+                [],
+                nativeDragExecutionId,
+                undefined,
+                nativeDragSourceId,
+                [0, 0],
+                [0, 0],
+                undefined,
+                [0, 0],
+                ev,
+                undefined
+              )
+              this.executions.push(currentExecution)
+            }
+            if (currentExecution.targetStatus.find(i => i.id === dropTargetId) == null) {
+              currentExecution.targetStatus.push({ id: dropTargetId, elements: [] })
+            }
+
+            currentExecution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
+
+            options.onDragEnter?.(ev, unref(currentExecution.data) as any)
+            return
+          }
+        }
 
         if (execution == null) {
           // return, not a event from this provider
@@ -211,12 +242,45 @@ class HtmlProvider implements DndProvider {
           execution.targetStatus.push({ id: dropTargetId, elements: [] })
         }
 
+        execution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
+
         options.onDragEnter?.(ev, unref(execution.data) as any)
       },
       onDragleave: (ev: DragEvent) => {
         const id = getId(ev)
 
         const execution = this.executions.find(i => i.id === id)
+
+        if (id == null && execution == null) {
+          // probably a native event?
+          const matched = matchAccept(options.accept, ev, undefined)
+          if (matched) {
+            const currentExecution = this.executions.find(i => i.id === nativeDragExecutionId)
+            if (currentExecution != null) {
+
+              const targetStatus = currentExecution.targetStatus.find(i => i.id === dropTargetId)
+
+              if (targetStatus != null) {
+                findAndRemove(targetStatus.elements, i => i === ev.target)
+
+                if (targetStatus.elements.length === 0) {
+                  findAndRemove(currentExecution.targetStatus, i => i === targetStatus)
+                }
+              }
+
+              if (currentExecution.targetStatus.length === 0) {
+                // also remove execution itself
+
+                findAndRemove(this.executions, i => i.id === nativeDragExecutionId)
+              }
+
+              options.onDragLeave?.(ev, unref(currentExecution.data) as any)
+
+              return
+            }
+            // do not call event because we didn't even call enter
+          }
+        }
 
         if (execution == null) {
           // return, not a event from this provider

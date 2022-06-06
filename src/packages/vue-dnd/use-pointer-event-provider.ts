@@ -53,7 +53,7 @@ class PointerExecutionImpl<T extends DragType<unknown>> implements Execution<T> 
     // implementation specified properties
     readonly initialEvent: PointerEvent,
     readonly initialRect: DOMRect,
-    readonly initialMouse: [number, number],
+    readonly initialMouse: readonly [number, number],
     public elementOffset: readonly [number, number]
   ) {
     this.lastEvent = initialEvent;

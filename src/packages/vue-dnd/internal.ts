@@ -1,5 +1,5 @@
 import { computed, InjectionKey, isRef, mergeProps, ref, Ref, unref, UnwrapRef, VNodeProps } from "vue";
-import { DndProvider, Execution } from "./interfaces";
+import { DndProvider, DragDropTargetIdentifier, Execution } from "./interfaces";
 import { NativeFileRule, Type } from "./types";
 
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider>
@@ -38,6 +38,8 @@ export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent 
       }
     }
   }
+
+  return false
 }
 export const myMergeProps = (...args: (Data & VNodeProps)[]): Data => {
   const refs: (Ref<unknown> | ((arg: any) => void))[] = []
@@ -99,3 +101,6 @@ export const matchTyped = <T>(data: T | Ref<T>, rule: Type<any, T>) => {
   if (rule.accept == null) return true
   return typeof rule.accept === 'function' ? (rule as any).accept(unref(data)) : rule.accept === unref(data)
 }
+
+export const nativeDragExecutionId = 'NativeEvent'
+export const nativeDragSourceId: DragDropTargetIdentifier = -1

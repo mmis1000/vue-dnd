@@ -6,7 +6,7 @@ export default defineComponent({
   setup(props, { slots }) {
     const image = ref('')
 
-    const { propsItem } = useDroppable(
+    const { propsItem, hoverState } = useDroppable(
       NativeFile,
       {
         onDrop(ev) {
@@ -28,7 +28,7 @@ export default defineComponent({
     return () => <div class="viewer">
       <img src={image.value} alt="" />
       <div class="overlay" {...propsItem()}>
-        Drag image file into here
+        { hoverState.hover ? 'Dropping...' : 'Drag image file into here' }
       </div>
     </div>
   },

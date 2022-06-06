@@ -1,6 +1,6 @@
 import { cloneVNode, computed, inject, reactive, unref, VNode } from "vue"
 import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
-import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY } from "./internal"
+import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal"
 import { Default } from "./types"
 
 export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
@@ -27,7 +27,7 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
       })
       return {
         hover: execution.targets.indexOf(id) >= 0,
-        data: unref(execution.data),
+        data: unref(execution.data) as UnwrapDragDropType<ItemType>,
         get accepted() {
           return accepted.value
         }
