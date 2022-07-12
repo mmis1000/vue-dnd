@@ -19,9 +19,9 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
       propsItem: <T extends Record<string, any>>(extra?: T) => extra == null ? {} as Record<string, any> : extra,
       hoverState: reactive({
         hover: computed(() => false),
-        draggingItems: (() => [])
+        draggingItems: computed(() => [])
       })
-    } as never
+    }
   }
 
   if (provider == null) {
