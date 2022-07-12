@@ -12,22 +12,25 @@ import DropNative from './components/DropNative.vue';
   <div>Simple Example</div>
   <ExampleSimple />
   <div>Simple Example (use pointer event)</div>
-  <ExampleSimple :usePointerEvent="true"/>
+  <ExampleSimple :usePointerEvent="true" />
   <div>Simple Example with handle (use pointer event)</div>
-  <ExampleHandle/>
+  <ExampleHandle />
   <div>Simple Example with handle</div>
   <ExampleHandle :usePointerEvent="true" />
   <div>Native Provider</div>
   <Board />
   <div>Pointer Event Provider</div>
-  <Board :usePointerEvent="true"/>
+  <Board :usePointerEvent="true" />
+  <div>Sortable Native</div>
   <SortableList />
+  <div>Sortable Pointer Event</div>
+  <SortableList :usePointerEvent="true" />
   <div>All</div>
-  <StartDirection usePointerEvent startDirection="all"/>
+  <StartDirection usePointerEvent startDirection="all" />
   <div>X</div>
-  <StartDirection usePointerEvent startDirection="x"/>
+  <StartDirection usePointerEvent startDirection="x" />
   <div>Y</div>
-  <StartDirection usePointerEvent startDirection="y"/>
+  <StartDirection usePointerEvent startDirection="y" />
   <div>DropNative</div>
   <DropNative />
 </template>

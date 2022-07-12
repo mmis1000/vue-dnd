@@ -330,7 +330,7 @@ class PointerEventProvider implements DndProvider {
 
           if (validTargets.length > 0) {
             // fire on the last one
-            const targetId = validTargets[targets.length - 1];
+            const targetId = validTargets[validTargets.length - 1];
             const decl = this.droppableDeclarations.get(targetId);
 
             // these didn't work due to how type works
