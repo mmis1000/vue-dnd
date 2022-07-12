@@ -1,14 +1,15 @@
 <template>
   <List>
     <transition-group name="list">
-      <Item v-for="(item, index) of list" :key="item.id" v-model="item.value" :index="index" @drop="handleDrop" />
+      <Item v-for="(item, index) of list" :key="item.id" v-model="item.value" :index="index" @drop="handleDrop"
+        :class="{ moving: item.id === transitioning }" @transitionend="transitioning = -1" />
     </transition-group>
   </List>
   <DragLayer />
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useHtmlProvider } from '../packages/vue-dnd';
 import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
 import Item from './sortable/Item.vue'
@@ -40,7 +41,11 @@ for (let i = 0; i < 10; i++) {
   });
 }
 
+const transitioning = ref(-1)
+
 const handleDrop = ({ from, to }: { from: number, to: number }) => {
+  transitioning.value = list[from].id
+
   const item = list[from];
   list.splice(from, 1);
   list.splice(to, 0, item);
@@ -48,10 +53,15 @@ const handleDrop = ({ from, to }: { from: number, to: number }) => {
 </script>
 
 <style scoped>
-.list-move, /* apply transition to moving elements */
+.list-move,
+/* apply transition to moving elements */
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
 }
 
+.moving {
+  position: relative;
+  z-index: 1;
+}
 </style>
