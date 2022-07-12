@@ -1,8 +1,8 @@
 <template>
   <List>
     <transition-group name="list">
-      <Item v-for="(item, index) of list" :key="item.id" v-model="item.value" :index="index" @drop="handleDrop"
-        :class="{ moving: item.id === transitioning }" @transitionend="transitioning = -1" />
+      <Item v-for="(item, index) of list" :key="item.id" :id="item.id" v-model="item.value" :index="index"
+        @drop="handleDrop" :class="{ moving: item.id === transitioning }" @transitionend="transitioning = -1" />
     </transition-group>
   </List>
   <DragLayer />

@@ -252,6 +252,17 @@ class PointerEventProvider implements DndProvider {
 
           exe.targets = [...unchanged, ...entered];
 
+          for (let id of unchanged) {
+            const decl = this.droppableDeclarations.get(id);
+            const el = this.droppableElements.get(id);
+            const sourceEl = this.draggableElements.get(exe.source);
+
+            if (decl && el !== sourceEl) {
+              // these didn't work due to how type works
+              decl.onDragOver?.(ev as any, unref(exe.data) as any);
+            }
+          }
+
           for (let id of leaved) {
             const decl = this.droppableDeclarations.get(id);
 

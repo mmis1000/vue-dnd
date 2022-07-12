@@ -15,6 +15,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  id: {
+    type: Number,
+    required: true
+  },
   modelValue: {
     type: String,
     required: true
@@ -52,8 +56,12 @@ const { propsItem: propsDropItem, hoverState } = useDroppable(
     return d !== props.index;
   }),
   {
+    disabled: props.isPreview,
     onDrop: (ev, data) => {
       emit("drop", { from: data, to: props.index });
+    },
+    onDragOver: (ev, data) => {
+      console.log('Hover', props.id)
     }
   }
 );

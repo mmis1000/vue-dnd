@@ -3,12 +3,26 @@ import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
 import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal"
 import { Default } from "./types"
 
+interface DropHookOptions<ItemType extends DropType<any>> extends DroppableDecoratorOptions<ItemType> {
+  disabled?: boolean
+}
 export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
 
   accept: DroppableDecoratorOptions<ItemType>['accept'],
-  options: Pick<DroppableDecoratorOptions<ItemType>, Exclude<keyof DroppableDecoratorOptions<ItemType>, 'accept'>> = {}
+  options: Pick<DropHookOptions<ItemType>, Exclude<keyof DropHookOptions<ItemType>, 'accept'>> = {}
 ) => {
   const provider = inject(PROVIDER_INJECTOR_KEY) as DndProvider | undefined
+
+  if (options.disabled) {
+    return {
+      wrapItem: <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => node,
+      propsItem: <T extends Record<string, any>>(extra?: T) => extra == null ? {} as Record<string, any> : extra,
+      hoverState: reactive({
+        hover: computed(() => false),
+        draggingItems: (() => [])
+      })
+    } as never
+  }
 
   if (provider == null) {
     throw new Error('[vue-dnd] useDroppable must be used with a provider')
