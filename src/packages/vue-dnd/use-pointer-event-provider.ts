@@ -118,8 +118,6 @@ class PointerEventProvider implements DndProvider {
       this.draggableElements.delete(dragTargetId);
     });
 
-
-    const targetAreas = new Map<DragDropTargetIdentifier, DOMRect>();
     const handleMixin = {
       onPointerdown: (ev: PointerEvent) => {
         const pos = [ev.clientX, ev.clientY] as [number, number];
@@ -224,24 +222,23 @@ class PointerEventProvider implements DndProvider {
           exe.elementOffset = fullOffset;
           exe.mousePosition = [ev.clientX, ev.clientY];
 
-          // if (targetAreas.size === 0) {
-          for (let [id, element] of this.droppableElements) {
-            targetAreas.set(id, element.getBoundingClientRect());
+          const inner = document.elementFromPoint(ev.clientX, ev.clientY)
+          const elementToIds = new Map([... this.droppableElements].map(i => i.reverse() as unknown as [Element, DragDropTargetIdentifier]))
+          const containers = new Set(elementToIds.keys())
+
+          let targetAreas: DragDropTargetIdentifier[] = []
+          if (inner) {
+            for (let current: Element | null = inner; current != null; current = current.parentElement) {
+              console.log(containers, current)
+              if (containers.has(current)) {
+                targetAreas.push(elementToIds.get(current)!)
+                break
+              }
+            }
           }
-          // }
 
           const oldTargets = exe.targets;
-          const newTargets = reactive(
-            [...targetAreas]
-              .filter(
-                ([_, box]) =>
-                  box.left < ev.clientX &&
-                  box.right > ev.clientX &&
-                  box.top < ev.clientY &&
-                  box.bottom > ev.clientY
-              )
-              .map((i) => i[0])
-          );
+          const newTargets = targetAreas
 
           const oldSet = new Set(oldTargets);
           const newSet = new Set(newTargets);
@@ -325,12 +322,6 @@ class PointerEventProvider implements DndProvider {
             (exe) => exe.initialEvent.pointerId === ev.pointerId
           );
 
-          if (targetAreas.size === 0) {
-            for (let [id, element] of this.droppableElements) {
-              targetAreas.set(id, element.getBoundingClientRect());
-            }
-          }
-
           const targets = exe.targets;
           const validTargets = targets.filter((id) => {
             const decl = this.droppableDeclarations.get(id);
@@ -369,6 +360,7 @@ class PointerEventProvider implements DndProvider {
         const styleOverride: Record<string, string> = dragging && preview === undefined
           ? {
             transform: `translate(${execution.elementOffset[0]}px, ${execution.elementOffset[1]}px)`,
+            pointerEvents: dragging ? 'none' : ''
           }
           : {};
 
