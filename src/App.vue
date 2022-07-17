@@ -33,7 +33,13 @@ import DropNative from './components/DropNative.vue';
   <StartDirection usePointerEvent startDirection="y" />
   <div>DropNative</div>
   <DropNative />
+  <div class="broken">
+    <SortableList :usePointerEvent="true" />
+  </div>
 </template>
 
 <style scoped>
+.broken {
+  transform: translate(0, 0);
+}
 </style>
