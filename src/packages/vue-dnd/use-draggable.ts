@@ -12,8 +12,8 @@ export const useDraggableWithHandle = <ItemType extends DragType<any>>(
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
   propsHandle: (originalProps?: Record<string, any>) => Record<string, any>
-  wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
-  wrapHandle: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
+  wrapItem: { <T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> }
+  wrapHandle: { <T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> }
   state: {
     isDragging: Execution<ItemType> | undefined
   }
@@ -43,8 +43,8 @@ export const useDraggableWithHandle = <ItemType extends DragType<any>>(
     startDirection: options.startDirection
   })
 
-  const wrapItem = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
-  const wrapHandle = <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getHandleProps(), true) as any
+  const wrapItem = <T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
+  const wrapHandle = <T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getHandleProps(), true) as any
 
   const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : myMergeProps(extra, getProps())
   const propsHandle = <T extends Record<string, any>>(extra?: T) => extra == null ? getHandleProps() : myMergeProps(extra, getHandleProps())
@@ -69,7 +69,7 @@ export const useDraggable = <ItemType extends DragType<any>>(
   options?: Pick<DragHookOptions<ItemType>, Exclude<keyof DragHookOptions<ItemType>, 'type' | 'data'>>
 ): {
   propsItem: (originalProps?: Record<string, any>) => Record<string, any>
-  wrapItem: { <T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> }
+  wrapItem: { <T, U, V extends <T, U, V extends { [key: string]: any }>(node: VNode<T, U, V>) => VNode<T, U, V>>(node: VNode<T, U, V>): VNode<T, U, V> }
   state: {
     isDragging: Execution<ItemType> | undefined
   }
@@ -78,8 +78,8 @@ export const useDraggable = <ItemType extends DragType<any>>(
   const mergeProps = <T extends Record<string, any>>(extra?: T) => propsItem(propsHandle(extra))
   return {
     propsItem: mergeProps,
-    wrapItem<T, U, V>(node: VNode<T, U, V>): VNode<T, U, V> {
-      return wrapHandle(wrapItem(node))
+    wrapItem<T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> {
+      return wrapHandle<T, U, V>(wrapItem<T, U, V>(node))
     },
     state
   }
