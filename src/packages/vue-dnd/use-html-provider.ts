@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode } from "vue";
+import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode, watch } from "vue";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
 import { DragType, DropType, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
 import { Default } from "./types";
@@ -123,7 +123,8 @@ class HtmlProvider implements DndProvider {
       type = Default as any,
       onDragStart,
       preview,
-      startDirection = 'all'
+      startDirection = 'all',
+      disabled = false
     } = {} as DraggableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
@@ -141,6 +142,9 @@ class HtmlProvider implements DndProvider {
     const handleMixin = {
       draggable: 'true',
       onDragstart: (ev: DragEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const id = (this.currentInstanceId + '.' + this.dragEventIndex++)
         const pos = [ev.clientX, ev.clientY] as [number, number]
         const elPos = elementRef.value!.getBoundingClientRect()
@@ -168,9 +172,18 @@ class HtmlProvider implements DndProvider {
         onDragStart?.(ev, unref(data) as any)
       },
       onDragend: (ev: DragEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         findAndRemove(this.executions, item => item.movingElement === ev.target)
       }
     }
+
+    watch(() => unref(disabled), (v) => {
+      if (v) {
+        findAndRemove(this.executions, item => item.source === dragTargetId)
+      }
+    })
 
     return [
       dragTargetId,
@@ -184,6 +197,9 @@ class HtmlProvider implements DndProvider {
     const dropTargetId = this.dropTargetId++
     const mixinProps = {
       onDrop: (ev: DragEvent) => {
+        if (unref(options.disabled ?? false)) {
+          return
+        }
         const id = getId(ev)
         const execution = this.executions.find(i => i.id === id)
 
@@ -199,6 +215,9 @@ class HtmlProvider implements DndProvider {
         }
       },
       onDragenter: (ev: DragEvent) => {
+        if (unref(options.disabled ?? false)) {
+          return
+        }
         const id = getId(ev)
         const execution = this.executions.find(i => i.id === id)
 
@@ -247,6 +266,9 @@ class HtmlProvider implements DndProvider {
         options.onDragEnter?.(ev, unref(execution.data) as any)
       },
       onDragleave: (ev: DragEvent) => {
+        if (unref(options.disabled ?? false)) {
+          return
+        }
         const id = getId(ev)
 
         const execution = this.executions.find(i => i.id === id)
@@ -301,6 +323,9 @@ class HtmlProvider implements DndProvider {
         options.onDragLeave?.(ev, unref(execution.data) as any)
       },
       onDragover: (ev: DragEvent) => {
+        if (unref(options.disabled ?? false)) {
+          return
+        }
         const id = getId(ev)
         const execution = this.executions.find(i => i.id === id)
 
@@ -315,6 +340,16 @@ class HtmlProvider implements DndProvider {
         }
       }
     }
+
+    watch(() => unref(options.disabled ?? false), (v) => {
+      if (v) {
+        this.executions.forEach(i => {
+          findAndRemove(i.targetStatus, i => i.id === dropTargetId)
+        })
+        findAndRemove(this.executions, item => item.targets.length === 0)
+      }
+    })
+
     return [dropTargetId, () => mixinProps]
   }
 }

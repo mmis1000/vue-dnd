@@ -31,6 +31,7 @@ export interface DraggableDecoratorOptions<ItemType extends DragType<any>> {
   preview?: () => VNode<any, any, any>
   onDragStart?: DndDragHandlerWithData<ItemType>
   startDirection?: StartDirection | Ref<StartDirection>
+  disabled?: boolean | Ref<boolean>
 }
 
 export interface DroppableDecoratorOptions<ItemType extends DropType<any>> {
@@ -39,6 +40,7 @@ export interface DroppableDecoratorOptions<ItemType extends DropType<any>> {
   onDragEnter?: DndDragHandlerWithData<ItemType>;
   onDragLeave?: DndDragHandlerWithData<ItemType>;
   onDrop?: DndDragHandlerWithData<ItemType>;
+  disabled?: boolean | Ref<boolean>
 }
 
 export interface DndProvider {
