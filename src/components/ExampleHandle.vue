@@ -24,6 +24,8 @@ export default defineComponent({
       useHtmlProvider();
     }
 
+    const disabledItems = reactive(new Set<number>())
+
     const buckets = reactive(new Array(5).fill(null).map(() => [] as number[]));
     buckets[0].push(1, 2, 3, 4, 5);
 
@@ -37,8 +39,14 @@ export default defineComponent({
       <Board>
         {buckets.map((b, index) => (
           <Bucket id={index} key={index} onDrop={onDrop}>
-            {b.map((i, index2) => (
-              <Ball id={i} currentBucket={index} key={index2} />
+            {b.map((i) => (
+              <Ball
+                id={i}
+                currentBucket={index}
+                key={i}
+                disabled={disabledItems.has(i)}
+                onUpdate:disabled={(v: boolean) => v ? disabledItems.add(i) : disabledItems.delete(i)}
+              />
             ))}
           </Bucket>
         ))}
