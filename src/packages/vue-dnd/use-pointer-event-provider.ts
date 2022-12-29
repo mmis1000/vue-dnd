@@ -9,7 +9,8 @@ import {
   shallowReadonly,
   StyleValue,
   unref,
-  VNode
+  VNode,
+  watch
 } from "vue";
 import {
   DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions,
@@ -79,6 +80,10 @@ class PointerEventProvider implements DndProvider {
     DragDropTargetIdentifier,
     DroppableDecoratorOptions<DropType<any>>
   >();
+  private droppableDisabled = new Map<
+    DragDropTargetIdentifier,
+    boolean | Ref<boolean>
+  >();
 
   private options: PointerEventProviderOptions
 
@@ -92,6 +97,7 @@ class PointerEventProvider implements DndProvider {
       type = Default as any,
       onDragStart,
       preview,
+      disabled = false,
       startDirection = 'all'
     } = {} as DraggableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps, GetProps] {
@@ -120,6 +126,9 @@ class PointerEventProvider implements DndProvider {
 
     const handleMixin = {
       onPointerdown: (ev: PointerEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const pos = [ev.clientX, ev.clientY] as [number, number];
         const id = this.currentInstanceId + "." + this.dragEventIndex++;
         const rect = elementRef.value!.getBoundingClientRect();
@@ -150,6 +159,9 @@ class PointerEventProvider implements DndProvider {
         // events.onDragStart?.(ev, unref<IData>(dataOrRef));
       },
       onContextmenu: (ev: Event) => {
+        if (unref(disabled)) {
+          return
+        }
         const stagedExe = this.stagedExecutions.find((exe) => exe.source === dragTargetId);
         if (stagedExe) {
           this.stagedExecutions.splice(this.stagedExecutions.indexOf(stagedExe), 1)
@@ -162,6 +174,9 @@ class PointerEventProvider implements DndProvider {
         }
       },
       onPointerout: (ev: PointerEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const stagedExe = this.stagedExecutions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -172,6 +187,9 @@ class PointerEventProvider implements DndProvider {
         }
       },
       onPointermove: (ev: PointerEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const stagedExe = this.stagedExecutions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -227,12 +245,16 @@ class PointerEventProvider implements DndProvider {
           const containers = new Set(elementToIds.keys())
 
           let targetAreas: DragDropTargetIdentifier[] = []
+
           if (inner) {
             for (let current: Element | null = inner; current != null; current = current.parentElement) {
               console.log(containers, current)
               if (containers.has(current)) {
-                targetAreas.push(elementToIds.get(current)!)
-                break
+                const id = elementToIds.get(current)!
+                if (!unref(this.droppableDisabled.get(id))) {
+                  targetAreas.push(id)
+                  break
+                }
               }
             }
           }
@@ -280,6 +302,9 @@ class PointerEventProvider implements DndProvider {
         }
       },
       onPointercancel: (ev: PointerEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const stagedExe = this.stagedExecutions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -301,6 +326,9 @@ class PointerEventProvider implements DndProvider {
         }
       },
       onPointerup: (ev: PointerEvent) => {
+        if (unref(disabled)) {
+          return
+        }
         const stagedExe = this.stagedExecutions.find(
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
@@ -347,6 +375,12 @@ class PointerEventProvider implements DndProvider {
     const propMixin = {
       ref: elementRef,
     };
+
+    watch(() => unref(disabled), (v) => {
+      if (v) {
+        findAndRemove(this.executions, e => e.source === dragTargetId)
+      }
+    })
 
     return [
       dragTargetId,
@@ -414,12 +448,23 @@ class PointerEventProvider implements DndProvider {
       if (!elementRef.value) return;
       this.droppableElements.set(dropTargetId, elementRef.value);
       this.droppableDeclarations.set(dropTargetId, options as unknown as DroppableDecoratorOptions<DropType<any>>);
+      this.droppableDisabled.set(dropTargetId, options.disabled ?? false)
     });
 
     onUnmounted(() => {
       this.droppableElements.delete(dropTargetId);
       this.droppableDeclarations.delete(dropTargetId);
+      this.droppableDisabled.delete(dropTargetId)
     });
+
+    watch(() => unref(options.disabled ?? false), (v) => {
+      if (v) {
+        this.executions.forEach(e => {
+          findAndRemove(e.targets, (t) => t === dropTargetId)
+        })
+      }
+    })
+
 
     return [
       dropTargetId,

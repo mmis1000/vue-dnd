@@ -346,7 +346,6 @@ class HtmlProvider implements DndProvider {
         this.executions.forEach(i => {
           findAndRemove(i.targetStatus, i => i.id === dropTargetId)
         })
-        findAndRemove(this.executions, item => item.targets.length === 0)
       }
     })
 
