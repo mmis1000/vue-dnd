@@ -53,7 +53,8 @@ module.exports = {
           collapsable: false,
           children: [
             '',
-            'using-vue',
+            'get-started',
+            'first-drag-and-drop',
           ]
         }
       ],
