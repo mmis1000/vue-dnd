@@ -39,7 +39,7 @@ Assume you already have a object on screen for drag
 <script setup lang="ts">
 const props = defineProps({
     index: {
-        type: PropType<string>,
+        type: String,
         required: true,
     }
 });
