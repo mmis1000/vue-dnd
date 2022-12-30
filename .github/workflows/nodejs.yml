@@ -35,7 +35,7 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
           ${{ runner.os }}-
-    - run: npm ci
+    - run: npm ci && cd docs && npm ci
     - run: npm run build:example --if-present
     - run: npm run build:storybook --if-present
     - run: npm run build:docs --if-present
