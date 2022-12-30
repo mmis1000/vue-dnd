@@ -91,8 +91,6 @@ Assume you already have a container on screen for drop item
     >...</div>
 </template>
 <script setup lang="ts">
-import { useDroppable } from '@mmis1000/vue-dnd';
-import { BallType } from "./type";
 </script>
 <style>
 /* ... */
@@ -109,8 +107,10 @@ You can decorate it with the hook
       >...</div>
   </template>
   <script setup lang="ts">
++ import { useDroppable } from '@mmis1000/vue-dnd';
++ import { BallType } from "./type";
 + const { propsItem, hoverState } = useDroppable(
-+     BoardType,
++     BallType,
 +     {
 +         onDrop: (ev, data) => {
 +             console.log(`item dropped ${data}`)
