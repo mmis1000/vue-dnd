@@ -18,6 +18,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "build:example": "vue-tsc --noEmit && vite build -c vite.example.config.ts",
     "build:storybook": "build-storybook -o dist-storybook",
+    "build:docs": "cd docs && npm run build",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
     "prepack": "npm run build"

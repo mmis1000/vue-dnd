@@ -38,9 +38,12 @@ jobs:
     - run: npm ci
     - run: npm run build:example --if-present
     - run: npm run build:storybook --if-present
-    - run: mv dist-storybook dist-example/storybook
+    - run: npm run build:docs --if-present
+    - run: mv docs/src/.vuepress/dist dist-site
+    - run: mv dist-storybook dist-site/storybook
+    - run: mv dist-example dist-site/example
     - run: git config user.email "${GITHUB_ACTOR}@ci"
     - run: git config user.name "${GITHUB_ACTOR}"
     - run: git remote remove origin
     - run: git remote add origin "https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-    - run: npx gh-pages@3.2.3 --no-history --dist dist-example --message "[skip ci] Updates"
+    - run: npx gh-pages@3.2.3 --no-history --dist dist-site --message "[skip ci] Updates"
