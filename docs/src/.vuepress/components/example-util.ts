@@ -16,7 +16,7 @@ export const useLoggerParent = () => {
         event.emit(args)
     }
 
-    event.on((...args) => {
+    event.on((args) => {
         if (listeners.size >= 0) {
             for (const cb of listeners) {
                 cb(...args)

@@ -1,11 +1,22 @@
 <template>
-    <div class="ball"></div>
+    <div class="ball" v-bind="propsItem()"></div>
 </template>
-    
 <script setup lang='ts'>
-    
+import { computed } from "vue";
+import { useDraggable } from '@mmis1000/vue-dnd';
+import { BallType } from "./type";
+
+const props = defineProps({
+    index: {
+        type: String,
+        required: true,
+    }
+});
+const { propsItem } = useDraggable(
+    BallType,
+    computed(() => props.index)
+);
 </script>
-    
 <style>
 .ball {
     background: #5d1818;

@@ -37,7 +37,6 @@ onLogged((...args) => {
     logs.push(args.map(i => JSON.stringify(i)).join(' '))
 })
 
-const samplePane = ref(false)
 const logPane = ref(false)
 </script>
 <style scoped>
@@ -62,7 +61,7 @@ const logPane = ref(false)
 }
 
 .example-wrapper__pane-wrapper {
-    min-height: 200px;
+    height: 200px;
     display: flex;
     align-items: stretch;
 }

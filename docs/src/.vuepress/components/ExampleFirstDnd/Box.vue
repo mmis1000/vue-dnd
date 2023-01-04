@@ -1,11 +1,25 @@
 <template>
-    <div class="box"></div>
+    <div
+        class="box"
+        v-bind="propsItem()"
+    ></div>
 </template>
-    
 <script setup lang='ts'>
+import { useDroppable } from '@mmis1000/vue-dnd';
+import { useLogger } from '../example-util';
+import { BallType } from "./type";
 
+const log = useLogger()
+
+const { propsItem, hoverState } = useDroppable(
+        BallType,
+            {
+         onDrop: (ev, data) => {
+            log(`item dropped ${data}`)
+        }
+    }
+);
 </script>
-    
 <style>
 .box {
     background: #185d18;

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "composite": true,
     "target": "esnext",
     "useDefineForClassFields": true,
@@ -12,8 +13,26 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "paths": {
+      "@mmis1000/vue-dnd": ["src/packages/vue-dnd"],
+      "@mmis1000/vue-dnd/*": ["src/packages/vue-dnd/*"]
+    },
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "docs/src/**/*.ts", 
+    "docs/src/**/*.d.ts",
+    "docs/src/**/*.tsx",
+    "docs/src/**/*.vue",
+    "docs/src/.vuepress/**/*.ts",
+    "docs/src/.vuepress/**/*.d.ts",
+    "docs/src/.vuepress/**/*.tsx",
+    "docs/src/.vuepress/**/*.vue",
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

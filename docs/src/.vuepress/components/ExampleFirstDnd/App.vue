@@ -1,6 +1,6 @@
 <template>
     <Box></Box>
-    <Ball></Ball>
+    <Ball index="a ball"></Ball>
 </template>
     
 <script setup lang='ts'>
