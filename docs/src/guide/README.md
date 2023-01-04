@@ -15,7 +15,8 @@ It has 4 parts.
 - A hook to determine where you can drop the element.
 - A optional component that renders customized drag preview.
 
-The hooks runs at top level hosts drag and drop states and provide it to the environment using provide/inject.
+The hooks runs at top level hosts drag and drop states and provide it to the
+environment using provide/inject.
 
 The hooks on drag target decorate the element to make it is draggable.
 

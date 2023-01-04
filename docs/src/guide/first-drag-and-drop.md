@@ -5,8 +5,8 @@
 Before you setup the drag item and drop zone.  
 You need a event type to pair them
 
-<code-group>
-<code-block title="Typescript" active>
+:::: code-group
+::: code-group-item Typescript
 
 ```ts
 import { createType } from '@mmis1000/vue-dnd'
@@ -15,16 +15,16 @@ type DataType = string
 export const BallType = createType<DataType>()
 ```
 
-</code-block>
-<code-block title="Javascript">
+:::
+::: code-group-item Javascript
 
 ```js
 import { createType } from '@mmis1000/vue-dnd'
 export const BallType = createType()
 ```
 
-</code-block>
-</code-group>
+:::
+::::
 
 ## Setup the drag target
 
@@ -125,3 +125,5 @@ You can decorate it with the hook
 
 Try to drag the item into drop zone.  
 It should log the text you write in the drag item on the screen now.
+
+<example-wrapper title="example"><example-first-dnd-app></example-first-dnd-app></example-wrapper>

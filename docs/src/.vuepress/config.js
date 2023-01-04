@@ -1,6 +1,11 @@
 const { description } = require('../../package')
 import { defaultTheme } from 'vuepress'
+import { getDirname, path } from '@vuepress/utils'
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
+import { viteBundler } from '@vuepress/bundler-vite'
+import { defineUserConfig } from '@vuepress/cli'
 
+const __dirname = getDirname(import.meta.url)
 export default {
   base: '/vue-dnd/',
   /**
@@ -58,7 +63,35 @@ export default {
    * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
    */
   plugins: [
-    '@vuepress/plugin-back-to-top',
-    '@vuepress/plugin-medium-zoom',
-  ]
+    registerComponentsPlugin({
+      componentsDir: path.resolve(__dirname, './components'),
+      getComponentName: (filename) => {
+        const name = path.trimExt(
+          filename
+            .replace(/\/(?=[a-z])|\\(?=[a-z])/g, '-')
+            .replace(/\/|\\/g, '')
+        )
+        console.log(name)
+        return name
+      },
+    })
+  ],
+  bundler: viteBundler({
+    viteOptions: {
+      resolve: {
+        alias: {
+          '@mmis1000/vue-dnd': path.resolve(__dirname, '../../../src/packages/vue-dnd')
+        }
+      },
+      server: {
+        fs: {
+          allow: [
+            path.resolve(__dirname, '../../'),
+            path.resolve(__dirname, '../../../src/packages/vue-dnd')
+          ]
+        }
+      }
+    },
+    vuePluginOptions: {},
+  }),
 }
