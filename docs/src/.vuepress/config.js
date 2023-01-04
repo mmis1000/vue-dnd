@@ -43,8 +43,8 @@ module.exports = {
         link: '/config/'
       },
       {
-        text: 'VuePress',
-        link: 'https://v1.vuepress.vuejs.org'
+        text: 'Demo',
+        link: 'https://mmis1000.me/vue-dnd/storybook'
       }
     ],
     sidebar: {
@@ -56,6 +56,7 @@ module.exports = {
             '',
             'get-started',
             'first-drag-and-drop',
+            'dragging-state'
           ]
         }
       ],

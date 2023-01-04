@@ -4,7 +4,7 @@
 
 - Vue 3.x
 
-## Quick Start
+## Setup environments
 
 ### Install dependency
 
