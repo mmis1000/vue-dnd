@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "composite": true,
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
