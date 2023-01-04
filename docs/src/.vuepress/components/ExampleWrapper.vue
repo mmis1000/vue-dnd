@@ -5,7 +5,9 @@
         </div>
         <div class="example-wrapper__pane-wrapper">
             <div class="example-wrapper__pane">
-                <slot></slot>
+                <template v-if="mounted">
+                    <slot></slot>
+                </template>
             </div>
             <div class="example-wrapper__separator"></div>
             <div class="example-wrapper__pane">
@@ -21,15 +23,24 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useLoggerParent } from './example-util';
 
-defineProps({
+const props = defineProps({
     title: {
         type: String,
         default: ''
+    },
+    clientOnly: {
+        type: Boolean,
+        default: true
     }
 })
+const mounted = ref(!props.clientOnly)
+onMounted(() => {
+    mounted.value = true
+})
+
 const { onLogged } = useLoggerParent()
 const logs = reactive<string[]>([])
 
