@@ -1,6 +1,7 @@
 const { description } = require('../../package')
+import { defaultTheme } from 'vuepress'
 
-module.exports = {
+export default {
   base: '/vue-dnd/',
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
@@ -22,18 +23,10 @@ module.exports = {
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
   ],
 
-  /**
-   * Theme configuration, here is the default theme configuration for VuePress.
-   *
-   * ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
-   */
-  themeConfig: {
-    repo: '',
-    editLinks: false,
-    docsDir: '',
-    editLinkText: '',
-    lastUpdated: false,
-    nav: [
+  theme: defaultTheme({
+    repo: 'https://github.com/mmis1000/vue-dnd.git',
+    // default theme config
+    navbar: [
       {
         text: 'Guide',
         link: '/guide/',
@@ -43,7 +36,7 @@ module.exports = {
         link: '/config/'
       },
       {
-        text: 'Demo',
+        text: 'Examples',
         link: 'https://mmis1000.me/vue-dnd/storybook'
       }
     ],
@@ -53,7 +46,6 @@ module.exports = {
           title: 'Guide',
           collapsable: false,
           children: [
-            '',
             'get-started',
             'first-drag-and-drop',
             'dragging-state'
@@ -61,8 +53,7 @@ module.exports = {
         }
       ],
     }
-  },
-
+  }),
   /**
    * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
    */

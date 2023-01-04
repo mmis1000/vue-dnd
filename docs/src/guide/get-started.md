@@ -10,22 +10,22 @@
 
 Run the following command in a vue 3 project.
 
-<code-group>
-<code-block title="NPM" active>
+:::: code-group
+::: code-group-item NPM
 
 ```bash
 npm install @mmis1000/vue-dnd
 ```
 
-</code-block>
-<code-block title="YARN">
+:::
+::: code-group-item YARN
 
 ```bash
 yarn install @mmis1000/vue-dnd
 ```
 
-</code-block>
-</code-group>
+:::
+::::
 
 ### Add a provider
 
