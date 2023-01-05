@@ -113,7 +113,7 @@ You can decorate it with the hook
 +     BallType,
 +     {
 +         onDrop: (ev, data) => {
-+             console.log(`item dropped ${data}`)
++             console.log(`${data} dropped`)
 +         }
 +     }
 + );
@@ -123,7 +123,9 @@ You can decorate it with the hook
   </style>
 ```
 
+## Result
+
 Try to drag the item into drop zone.  
 It should log the text you write in the drag item on the screen now.
 
-<example-wrapper title="example"><example-first-dnd-app></example-first-dnd-app></example-wrapper>
+<example-wrapper title="example" source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleFirstDnd/App.vue"><example-first-dnd-app></example-first-dnd-app></example-wrapper>

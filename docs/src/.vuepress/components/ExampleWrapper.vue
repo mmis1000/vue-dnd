@@ -2,6 +2,7 @@
     <div class="example-wrapper__container">
         <div class="example-wrapper__title">
             {{ title }}
+            <a v-if="source != null" :href="source" target="_blank">Source</a>
         </div>
         <div class="example-wrapper__pane-wrapper">
             <div class="example-wrapper__pane">
@@ -34,6 +35,10 @@ const props = defineProps({
     clientOnly: {
         type: Boolean,
         default: true
+    },
+    source: {
+        type: String,
+        default: null
     }
 })
 const mounted = ref(!props.clientOnly)
@@ -52,6 +57,7 @@ const logPane = ref(false)
 </script>
 <style scoped>
 .example-wrapper__container {
+    margin: 0.85rem 0;
     background-color: var(--code-bg-color);
     border-radius: 6px;
     box-sizing: border-box;
@@ -63,6 +69,7 @@ const logPane = ref(false)
     padding: 8px 10px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     font-family: var(--font-family);
     font-size: .85em;
     line-height: 1.4;

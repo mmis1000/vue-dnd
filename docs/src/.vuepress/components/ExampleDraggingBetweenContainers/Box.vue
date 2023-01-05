@@ -10,12 +10,22 @@ import { useLogger } from '../example-util';
 import { BallType } from "./type";
 
 const log = useLogger()
+const props = defineProps({
+    index: {
+        type: String,
+        required: true,
+    }
+});
+const emit = defineEmits<{
+    (ev: 'drop', item: [item: string, target: string]): void
+}>()
 
 const { propsItem, hoverState } = useDroppable(
-        BallType,
-            {
-         onDrop: (ev, data) => {
-            log(`${data} dropped`)
+    BallType,
+    {
+        onDrop: (ev, data) => {
+            log(`${data} is dropped into ${props.index}`)
+            emit('drop', [data, props.index])
         }
     }
 );

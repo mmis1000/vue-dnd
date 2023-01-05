@@ -29,7 +29,9 @@ export default {
   ],
 
   theme: defaultTheme({
-    repo: 'https://github.com/mmis1000/vue-dnd.git',
+    repo: 'https://github.com/mmis1000/vue-dnd',
+    docsDir: 'docs/src',
+    docsBranch: 'master',
     // default theme config
     navbar: [
       {
@@ -53,6 +55,7 @@ export default {
           children: [
             'get-started',
             'first-drag-and-drop',
+            'drag-between-container',
             'dragging-state'
           ]
         }
