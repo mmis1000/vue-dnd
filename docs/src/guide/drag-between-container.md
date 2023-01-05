@@ -1,4 +1,4 @@
-# Dragging between container
+# Dragging between containers
 
 The vue dnd didn't manipulate the dom or data by itself.
 It is just a command channel that send message between components.

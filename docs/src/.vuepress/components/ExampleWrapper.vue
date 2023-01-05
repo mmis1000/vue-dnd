@@ -64,6 +64,7 @@ const logPane = ref(true)
     background-color: var(--code-bg-color);
     border-radius: 6px;
     box-sizing: border-box;
+    color: #eee;
 }
 
 .example-wrapper__title {
