@@ -1,7 +1,7 @@
 <template>
     <div
         class="box"
-        v-bind="propsItem()"
+        v-bind="propsItem"
     ><slot></slot></div>
 </template>
 <script setup lang='ts'>

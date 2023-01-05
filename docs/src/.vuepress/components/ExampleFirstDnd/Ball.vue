@@ -1,5 +1,5 @@
 <template>
-    <div class="ball" v-bind="propsItem()">
+    <div class="ball" v-bind="propsItem">
         {{ index }}
     </div>
 </template>

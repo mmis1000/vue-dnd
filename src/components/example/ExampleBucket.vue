@@ -33,13 +33,12 @@ export default defineComponent({
 
     return () => (
       <div
-        {...propsItem({
-          class: {
-            bucket: true,
-            hover: hoverState.hover,
-            disabled: disabled.value
-          }
-        })}
+        class={{
+          bucket: true,
+          hover: hoverState.hover,
+          disabled: disabled.value
+        }}
+        {...propsItem.value}
       >
         <label><input type="checkbox" onChange={(e) => { disabled.value = (e.target as HTMLInputElement).checked }} data-disabled={disabled.value} /> disabled</label>
         {ctx.slots.default?.()}

@@ -36,8 +36,8 @@ export default defineComponent({
         <div class={{
           box: true,
           disabled: disabled.value
-        }} {...propsItem({})}>
-          <div class="box-content" {...propsHandle({})}>
+        }} {...propsItem.value}>
+          <div class="box-content" {...propsHandle.value}>
             Handle
           </div>
           {props.id}<br />

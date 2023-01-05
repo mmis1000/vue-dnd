@@ -27,7 +27,7 @@ export default defineComponent({
     );
     return () => <div class="viewer">
       <img src={image.value} alt="" />
-      <div class="overlay" {...propsItem()}>
+      <div class="overlay" {...propsItem.value}>
         { hoverState.hover ? 'Dropping...' : 'Drag image file into here' }
       </div>
     </div>

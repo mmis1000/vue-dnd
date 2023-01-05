@@ -41,7 +41,7 @@ export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent 
 
   return false
 }
-export const myMergeProps = (...args: (Data & VNodeProps)[]): Data => {
+export const mergePropsWithRef = (...args: (Data & VNodeProps)[]): Data => {
   const refs: (Ref<unknown> | ((arg: any) => void))[] = []
   const current = ref<unknown>(null)
   for (let item of args) {

@@ -1,9 +1,10 @@
 import { cloneVNode, computed, inject, reactive, Ref, unref, VNode } from "vue"
 import { DndProvider, DroppableDecoratorOptions } from "./interfaces"
-import { DropType, matchAccept, myMergeProps, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal"
+import { DropType, matchAccept, mergePropsWithRef, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal"
 import { Default } from "./types"
 
 interface DropHookOptions<ItemType extends DropType<any>> extends DroppableDecoratorOptions<ItemType> {
+  ref?: Ref
 }
 export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
 
@@ -19,7 +20,7 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
   const [id, getProps] = provider.useDroppableDecorator({ accept, ...options })
 
   const wrapItem = <T, U, V extends { [key: string]: any; }>(node: VNode<T, U, V>): VNode<T, U, V> => cloneVNode(node, getProps(), true) as any
-  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : myMergeProps(extra, getProps())
+  const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : mergePropsWithRef(extra, getProps())
 
   const hoverComputed = computed(() => provider.readonlyExecutions.find(execution => execution.targets.indexOf(id) >= 0) != null)
   const draggingItems = computed(() => {
@@ -46,13 +47,13 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
         return node
       }
     },
-    propsItem: <T extends Record<string, any>>(extra?: T) => {
+    propsItem: computed(() => {
       if (options.disabled == null || !unref(options.disabled)) {
-        return propsItem(extra)
+        return propsItem({ ref: options.ref })
       } else {
-        return extra as Record<string, any>
+        return { ref: options.ref }
       }
-    },
+    }),
     hoverState: reactive({
       hover: hoverComputed,
       draggingItems: draggingItems

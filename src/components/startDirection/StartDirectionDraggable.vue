@@ -1,5 +1,5 @@
 <template>
-    <div class="ball" :style="{ 'opacity': state.isDragging ? '0.5' : '1' }" v-bind="propsItem()">
+    <div class="ball" :style="{ 'opacity': state.isDragging ? '0.5' : '1' }" v-bind="propsItem">
       {{startDirection}}
     </div>
 </template>

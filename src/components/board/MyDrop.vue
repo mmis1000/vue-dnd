@@ -2,7 +2,7 @@
   <div
     :class="props.dark ? 'a dark' : 'a'"
     :style="computedState"
-    v-bind="propsItem()"
+    v-bind="propsItem"
   >
     <slot></slot>
   </div>

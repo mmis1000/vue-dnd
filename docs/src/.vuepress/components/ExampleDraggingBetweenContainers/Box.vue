@@ -1,7 +1,7 @@
 <template>
     <div
         class="box"
-        v-bind="propsItem()"
+        v-bind="propsItem"
     >
         <slot></slot>
         <span class="label">{{ index }}</span>

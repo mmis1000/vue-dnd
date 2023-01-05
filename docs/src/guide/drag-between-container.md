@@ -16,7 +16,7 @@ container need to have a identifier so you know where the item was dragged into.
 <template>
     <div
         class="box"
-        v-bind="propsItem()"
+        v-bind="propsItem"
     >...</div>
 </template>
 <script setup lang="ts">
@@ -94,7 +94,7 @@ const boxes = reactive<Box[]>([
 <template>
     <div
         class="box"
-        v-bind="propsItem()"
+        v-bind="propsItem"
     ></div>
 </template>
 <script setup lang='ts'>

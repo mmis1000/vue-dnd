@@ -1,5 +1,5 @@
 <template>
-  <div class="item" v-bind:class="{ insertTop, insertDown, isPreview }" v-bind="propsItem(propsDropItem())">
+  <div class="item" v-bind:class="{ insertTop, insertDown, isPreview }" v-bind="mergePropsWithRef(propsItem, propsDropItem)">
     <textarea v-if="!disableInput" name="" id="" cols="30" rows="10" v-model="value">fd</textarea>
     <div v-else class="textarea">{{ value }}</div>
   </div>
@@ -7,7 +7,7 @@
 
 <script setup lang="tsx">
 import { computed, defineAsyncComponent, markRaw } from 'vue'
-import { useDraggable, useDroppable } from '../../packages/vue-dnd';
+import { useDraggable, useDroppable, mergePropsWithRef } from '../../packages/vue-dnd';
 import { ItemType } from './types';
 
 const props = defineProps({

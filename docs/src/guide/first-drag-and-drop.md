@@ -55,7 +55,7 @@ You can decorate it with the hook
   <template>
       <div
           class="ball"
-+         v-bind="propsItem()"
++         v-bind="propsItem"
       >...</div>
   </template>
   <script setup lang="ts">
@@ -103,7 +103,7 @@ You can decorate it with the hook
   <template>
       <div
           class="box"
-+         v-bind="propsItem()"
++         v-bind="propsItem"
       >...</div>
   </template>
   <script setup lang="ts">

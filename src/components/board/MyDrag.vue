@@ -6,7 +6,7 @@
       dark: props.dark,
       dragging: state.isDragging,
     }"
-    v-bind="propsItem()"
+    v-bind="propsItem"
   >
     <template v-if="state.isDragging"> "moving..." </template>
     <template v-else>
