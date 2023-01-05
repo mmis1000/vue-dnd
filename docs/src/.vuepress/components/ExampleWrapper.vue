@@ -10,16 +10,19 @@
                     <slot></slot>
                 </template>
             </div>
-            <div class="example-wrapper__separator"></div>
-            <div class="example-wrapper__pane">
+            <div v-show="logPane" class="example-wrapper__separator"></div>
+            <div v-show="logPane" class="example-wrapper__pane">
                 <div v-for="text of logs" :key="text" class="example-wrapper__log-text">
                     {{ text }}
                 </div>
             </div>
         </div>
         <div class="example-wrapper__footer">
-            <button class="example-wrapper__footer-button"
-                :class="{ 'example-wrapper__footer-button--active': logPane }">Log</button>
+            <button
+                class="example-wrapper__footer-button"
+                :class="{ 'example-wrapper__footer-button--active': logPane }"
+                @click="logPane = !logPane"
+            >Log</button>
         </div>
     </div>
 </template>
@@ -53,7 +56,7 @@ onLogged((...args) => {
     logs.push(args.map(i => JSON.stringify(i)).join(' '))
 })
 
-const logPane = ref(false)
+const logPane = ref(true)
 </script>
 <style scoped>
 .example-wrapper__container {
@@ -79,7 +82,7 @@ const logPane = ref(false)
 }
 
 .example-wrapper__pane-wrapper {
-    height: 200px;
+    height: 240px;
     display: flex;
     align-items: stretch;
 }
@@ -105,5 +108,19 @@ const logPane = ref(false)
     padding: 8px;
     display: flex;
     align-items: center;
+}
+
+.example-wrapper__footer-button {
+    padding: 0.15em 0.85em;
+    border-radius: 6px;
+    color: gray;
+    border: 1px solid gray;
+}
+.example-wrapper__footer-button--active {
+    padding: 0.15em 0.85em;
+    border-radius: 6px;
+    color: #333;
+    border: 1px solid #eee;
+    background: #eee;
 }
 </style>
