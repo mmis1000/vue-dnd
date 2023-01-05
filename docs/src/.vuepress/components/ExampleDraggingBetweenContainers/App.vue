@@ -28,11 +28,11 @@ interface Box {
 
 const boxes = ref<Box[]>([
     {
-        id: 'a',
-        items: ['a']
+        id: 'A',
+        items: ['a', 'b']
     },
     {
-        id: 'b',
+        id: 'B',
         items: []
     }
 ])
@@ -45,7 +45,7 @@ const onDrop = (
         if (box.id === target) {
             return {
                 ...box,
-                items: [...box.items, item]
+                items: [...box.items.filter(i => i !== item), item]
             }
         } else {
             return {

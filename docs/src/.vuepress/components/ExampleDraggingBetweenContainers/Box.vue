@@ -2,7 +2,10 @@
     <div
         class="box"
         v-bind="propsItem()"
-    ><slot></slot></div>
+    >
+        <slot></slot>
+        <span class="label">{{ index }}</span>
+    </div>
 </template>
 <script setup lang='ts'>
 import { useDroppable } from '@mmis1000/vue-dnd';
@@ -39,5 +42,13 @@ const { propsItem, hoverState } = useDroppable(
     padding: 5px;
     box-sizing: border-box;
     margin: 5px;
+    position: relative;
+}
+.label {
+    display: block;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    opacity: 0.5;
 }
 </style>
