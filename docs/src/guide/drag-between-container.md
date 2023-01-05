@@ -90,7 +90,7 @@ const boxes = reactive<Box[]>([
 
 ## Handle the message and emit event in drop target
 
-```html{17-19,25-26}
+```html{17-19,25-27}
 <template>
     <div
         class="box"
@@ -123,15 +123,7 @@ const { propsItem, hoverState } = useDroppable(
 );
 </script>
 <style>
-.box {
-    background: #185d18;
-    border-radius: 10px;
-    height: 100px;
-    width: 100px;
-    padding: 5px;
-    box-sizing: border-box;
-    margin: 5px;
-}
+/* ... */
 </style>
 ```
 
