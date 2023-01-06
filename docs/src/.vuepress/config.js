@@ -56,6 +56,7 @@ export default {
             'get-started',
             'first-drag-and-drop',
             'drag-between-container',
+            'drop-zone-limit',
             'dragging-state'
           ]
         }
