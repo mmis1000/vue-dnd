@@ -109,7 +109,7 @@ You can decorate it with the hook
   <script setup lang="ts">
 + import { useDroppable } from '@mmis1000/vue-dnd';
 + import { BallType } from "./type";
-+ const { propsItem, hoverState } = useDroppable(
++ const { propsItem } = useDroppable(
 +     BallType,
 +     {
 +         onDrop: (ev, data) => {

@@ -97,7 +97,7 @@ const emit = defineEmits<{
     (ev: 'drop', item: [item: string, target: string]): void
 }>()
 
-const { propsItem, hoverState } = useDroppable(
+const { propsItem } = useDroppable(
     BallType.withFilter(([item, source]) => source !== props.index),
     {
         onDrop: (ev, [data, source]) => {

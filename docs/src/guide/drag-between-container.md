@@ -30,7 +30,7 @@ const props = defineProps({
     }
 });
 
-const { propsItem, hoverState } = useDroppable(
+const { propsItem } = useDroppable(
     BallType,
     {
         onDrop: (ev, data) => {
@@ -111,7 +111,7 @@ const emit = defineEmits<{
     (ev: 'drop', item: [item: string, target: string]): void
 }>()
 
-const { propsItem, hoverState } = useDroppable(
+const { propsItem } = useDroppable(
     BallType,
     {
         onDrop: (ev, data) => {

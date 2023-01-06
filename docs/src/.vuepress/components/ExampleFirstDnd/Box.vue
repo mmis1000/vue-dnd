@@ -11,7 +11,7 @@ import { BallType } from "./type";
 
 const log = useLogger()
 
-const { propsItem, hoverState } = useDroppable(
+const { propsItem } = useDroppable(
         BallType,
             {
          onDrop: (ev, data) => {
