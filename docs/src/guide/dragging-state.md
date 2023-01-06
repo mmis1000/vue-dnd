@@ -7,7 +7,7 @@ But you may want to hint the user which item he is currently dragging
 This library expose this info as a computed to the hook,
 and you can use it to change style correspondingly.
 
-```html
+```html{5,27}
 <!-- ball.vue -->
 <template>
     <div
@@ -32,7 +32,10 @@ const props = defineProps({
         required: true,
     }
 });
-const { propsItem, state } = useDraggable(
+const {
+    propsItem,
+    state
+} = useDraggable(
     BallType,
     // computed(() => props.index)
     computed<[string, string]>(() => [props.index, props.from])
