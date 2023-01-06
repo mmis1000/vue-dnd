@@ -76,7 +76,7 @@ And now there is the important part.
 
 We need to make the system know whether we want to accept the message or not
 
-```html{22,26-27}
+```html{22,25-26}
 <template>
     <div
         class="box"
