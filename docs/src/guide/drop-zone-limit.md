@@ -76,7 +76,7 @@ And now there is the important part.
 
 We need to make the system know whether we want to accept the message or not
 
-```html{22,25-26}
+```html{22,24-25}
 <template>
     <div
         class="box"
@@ -101,7 +101,6 @@ const { propsItem } = useDroppable(
     BallType.withFilter(([item, source]) => source !== props.index),
     {
         onDrop: (ev, [data, source]) => {
-            // console.log(`${data} is dropped into ${props.index}`)
             console.log(`${data} from ${source} is dropped into ${props.index}`)
             emit('drop', [data, props.index])
         }

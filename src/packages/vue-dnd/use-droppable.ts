@@ -23,6 +23,7 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
   const propsItem = <T extends Record<string, any>>(extra?: T) => extra == null ? getProps() : mergePropsWithRef(extra, getProps())
 
   const hoverComputed = computed(() => provider.readonlyExecutions.find(execution => execution.targets.indexOf(id) >= 0) != null)
+
   const draggingItems = computed(() => {
     const mapped = provider.readonlyExecutions.map(execution => {
       const accepted = computed(() => {
@@ -37,6 +38,20 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
       }
     })
     return mapped
+  })
+
+  const acceptedComputed = computed(() => {
+    for (const item of draggingItems.value) {
+      if (item.accepted) {
+        return true
+      }
+    }
+
+    return false
+  })
+
+  const draggingComputed = computed(() => {
+    return provider.readonlyExecutions.length > 0
   })
 
   return {
@@ -56,6 +71,8 @@ export const useDroppable = <ItemType extends DropType<any> = typeof Default>(
     }),
     hoverState: reactive({
       hover: hoverComputed,
+      accepted: acceptedComputed,
+      dragging: draggingComputed,
       draggingItems: draggingItems
     })
   }

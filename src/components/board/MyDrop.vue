@@ -48,13 +48,13 @@ const { propsItem, hoverState } = useDroppable(
 const computedState = computed((): Record<string, string> => {
   const state = hoverState;
   if (state.hover) {
-    if (state.draggingItems.find((i) => i.accepted) != null) {
+    if (state.accepted) {
       return { background: "green", "user-select": "none" };
     } else {
       return { background: "red", "user-select": "none" };
     }
-  } else if (state.draggingItems.length > 0) {
-    if (state.draggingItems.find((i) => i.accepted) != null) {
+  } else if (state.dragging) {
+    if (state.accepted) {
       return { background: "blue", "user-select": "none" };
     } else {
       return { "user-select": "none" };

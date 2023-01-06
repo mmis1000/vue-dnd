@@ -35,6 +35,10 @@ const boxes = ref<Box[]>([
     {
         id: 'B',
         items: []
+    },
+    {
+        id: 'C',
+        items: []
     }
 ])
 

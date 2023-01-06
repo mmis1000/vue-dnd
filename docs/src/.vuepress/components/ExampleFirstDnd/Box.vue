@@ -22,7 +22,7 @@ const { propsItem } = useDroppable(
 </script>
 <style>
 .box {
-    background: #185d18;
+    background: #777;
     border-radius: 10px;
     height: 100px;
     width: 100px;

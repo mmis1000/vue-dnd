@@ -80,6 +80,10 @@ const boxes = reactive<Box[]>([
     {
         id: 'B',
         items: []
+    },
+    {
+        id: 'C',
+        items: []
     }
 ])
 </script>
