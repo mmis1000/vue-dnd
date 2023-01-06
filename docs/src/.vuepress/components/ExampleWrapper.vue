@@ -37,7 +37,7 @@ const props = defineProps({
     },
     clientOnly: {
         type: Boolean,
-        default: true
+        default: false
     },
     source: {
         type: String,

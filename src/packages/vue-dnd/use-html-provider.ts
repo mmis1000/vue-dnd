@@ -65,14 +65,10 @@ class HtmlProvider implements DndProvider {
   private executions: HtmlExecutionImpl<DragType<unknown>>[] = shallowReactive<
     HtmlExecutionImpl<DragType<unknown>>[]
   >([])
-  private emptyImage: HTMLImageElement
+  private emptyImage: HTMLImageElement = null!
 
   readonly readonlyExecutions = shallowReadonly(this.executions)
-
-  constructor() {
-    this.emptyImage = new Image()
-    this.emptyImage.src = TRANSPARENT_IMAGE
-
+  onMounted () {
     const dragOverHandler = (ev: DragEvent) => {
       // console.log(ev)
       if (this.executions.length !== 0) {
@@ -105,12 +101,10 @@ class HtmlProvider implements DndProvider {
         ev.preventDefault()
       }
     }
-
-    onMounted(() => {
-      document.addEventListener('dragover', dragOverHandler)
-      document.addEventListener('drop', dropHandler)
-    })
-
+    this.emptyImage = new Image()
+    this.emptyImage.src = TRANSPARENT_IMAGE
+    document.addEventListener('dragover', dragOverHandler)
+    document.addEventListener('drop', dropHandler)
     onUnmounted(() => {
       document.removeEventListener('dragover', dragOverHandler)
       document.removeEventListener('drop', dropHandler)
@@ -354,5 +348,9 @@ class HtmlProvider implements DndProvider {
 }
 
 export const useHtmlProvider = () => {
-  provide(PROVIDER_INJECTOR_KEY, new HtmlProvider())
+  const provider = new HtmlProvider()
+  onMounted(() => {
+    provider.onMounted()
+  })
+  provide(PROVIDER_INJECTOR_KEY, provider)
 }
