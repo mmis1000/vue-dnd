@@ -1,4 +1,4 @@
-import { cloneVNode, defineComponent, inject, onMounted, onUnmounted, PropType, Ref, ref, StyleValue, Teleport } from 'vue'
+import { cloneVNode, defineComponent, inject, PropType, StyleValue, Teleport, h } from 'vue'
 import { PROVIDER_INJECTOR_KEY } from './internal'
 
 export const DragLayer = defineComponent({

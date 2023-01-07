@@ -248,7 +248,6 @@ class PointerEventProvider implements DndProvider {
 
           if (inner) {
             for (let current: Element | null = inner; current != null; current = current.parentElement) {
-              console.log(containers, current)
               if (containers.has(current)) {
                 const id = elementToIds.get(current)!
                 if (!unref(this.droppableDisabled.get(id))) {

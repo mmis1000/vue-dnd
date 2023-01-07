@@ -1,22 +1,35 @@
 <template>
-    <div class="ball" v-bind="propsItem">
+    <div
+    class="ball"
+    :class="{ 'ball--dragging': state.isDragging }"
+    v-bind="propsItem"
+    >
         {{ index }}
     </div>
 </template>
 <script setup lang='ts'>
-import { computed } from "vue";
+import { computed, h } from "vue";
 import { useDraggable } from '@mmis1000/vue-dnd';
 import { BallType } from "./type";
+import BallPreview from "./BallPreview.vue";
 
 const props = defineProps({
+    from: {
+        type: String,
+        required: true,
+    },
     index: {
         type: String,
         required: true,
     }
 });
-const { propsItem } = useDraggable(
+
+const { propsItem, state } = useDraggable(
     BallType,
-    computed(() => props.index)
+    computed<[string, string]>(() => [props.index, props.from]),
+    {
+        preview: () => h(BallPreview, { index: props.index })
+    }
 );
 </script>
 <style scoped>
@@ -29,5 +42,8 @@ const { propsItem } = useDraggable(
     line-height: 40px;
     position: relative;
     z-index: 1;
+}
+.ball--dragging {
+    opacity: 50%;
 }
 </style>

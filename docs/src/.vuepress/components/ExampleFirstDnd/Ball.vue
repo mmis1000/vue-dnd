@@ -19,7 +19,7 @@ const { propsItem } = useDraggable(
     computed(() => props.index)
 );
 </script>
-<style>
+<style scoped>
 .ball {
     background: #5d1818;
     border-radius: 20px;

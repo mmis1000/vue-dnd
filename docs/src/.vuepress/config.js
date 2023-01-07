@@ -58,7 +58,8 @@ export default {
             'drag-between-container',
             'drop-zone-limit',
             'dragging-state',
-            'dropping-state'
+            'dropping-state',
+            'custom-preview'
           ]
         }
       ],
@@ -96,6 +97,10 @@ export default {
             path.resolve(__dirname, '../../../src/packages/vue-dnd')
           ]
         }
+      },
+      esbuild: {
+        jsxFactory: 'h',
+        jsxFragment: 'Fragment'
       }
     },
     vuePluginOptions: {},
