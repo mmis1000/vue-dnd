@@ -6,8 +6,15 @@
         </div>
         <div class="example-wrapper__pane-wrapper">
             <div class="example-wrapper__pane">
+                <template v-for="item of mappedOptions" :key="item.name">
+                    <label v-for="option of item.options">
+                        <input type="radio" :value="option.value" v-model="item.value.value">
+                        {{ option.text }}
+                    </label>
+                    <br>
+                </template>
                 <template v-if="mounted">
-                    <slot></slot>
+                    <slot v-bind="joinedOptions"></slot>
                 </template>
             </div>
             <div v-show="logPane" class="example-wrapper__separator"></div>
@@ -27,8 +34,15 @@
     </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, PropType, reactive, ref } from 'vue';
 import { useLoggerParent } from './example-util';
+
+interface OptionRadio<T> {
+    name: string,
+    type: 'radio',
+    value: T,
+    options: { text: string, value: T }[]
+}
 
 const props = defineProps({
     title: {
@@ -42,8 +56,38 @@ const props = defineProps({
     source: {
         type: String,
         default: null
+    },
+    options: {
+        type: Array as unknown as PropType<OptionRadio<any>[]>,
+        default: () => []
     }
 })
+const valueStore = reactive({} as Record<string, string>)
+const mappedOptions = computed(() => {
+    return props.options.map(o => {
+        if (o.type === 'radio') {
+            return {
+                name: o.name,
+                type: 'radio',
+                value: computed<string>({
+                    get: () => {
+                        return valueStore[o.name] ?? o.value
+                    },
+                    set: (v) => {
+                        valueStore[o.name] = v
+                    }
+                }),
+                options: o.options
+            }
+        } else {
+            throw new Error('unknown type')
+        }
+    })
+})
+const joinedOptions = computed(() => {
+    return Object.fromEntries(mappedOptions.value.map(i => [i.name, i.value.value]))
+})
+
 const mounted = ref(!props.clientOnly)
 onMounted(() => {
     mounted.value = true

@@ -35,6 +35,8 @@ const { propsItem, state } = useDraggable(
     width: 40px;
     margin: 5px;
     line-height: 40px;
+    position: relative;
+    z-index: 1;
 }
 .ball--dragging {
     opacity: 50%;

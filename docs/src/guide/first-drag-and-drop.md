@@ -128,4 +128,22 @@ You can decorate it with the hook
 Try to drag the item into drop zone.  
 It should log the text you write in the drag item on the screen now.
 
-<example-wrapper title="example" source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleFirstDnd/App.vue"><example-first-dnd-app></example-first-dnd-app></example-wrapper>
+<example-wrapper
+    title="example"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleFirstDnd/App.vue"
+    :options="[
+        {
+            name: 'provider',
+            type: 'radio',
+            value: 'html',
+            options: [
+                { text: 'HTML', value: 'html' },
+                { text: 'Pointer', value: 'pointer' }
+            ]
+        }
+    ]"
+>
+<template v-slot="{ provider }">
+<example-first-dnd-app :provider="provider"></example-first-dnd-app>
+</template>
+</example-wrapper>

@@ -70,13 +70,14 @@ export default {
   plugins: [
     registerComponentsPlugin({
       componentsDir: path.resolve(__dirname, './components'),
+      componentsPatterns: ['**/*.vue', '**/*.component.ts'],
       getComponentName: (filename) => {
         const name = path.trimExt(
           filename
+            .replace('.component.ts', '.vue')
             .replace(/\/(?=[a-z])|\\(?=[a-z])/g, '-')
             .replace(/\/|\\/g, '')
         )
-        console.log(name)
         return name
       },
     })

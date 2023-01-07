@@ -27,5 +27,7 @@ const { propsItem } = useDraggable(
     width: 40px;
     margin: 5px;
     line-height: 40px;
+    position: relative;
+    z-index: 1;
 }
 </style>

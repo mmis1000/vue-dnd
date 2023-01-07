@@ -52,4 +52,22 @@ const {
 
 ## Result
 
-<example-wrapper title="example" source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDraggingState/App.vue"><example-dragging-state-app></example-dragging-state-app></example-wrapper>
+<example-wrapper
+    title="example"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDraggingState/App.vue"
+    :options="[
+        {
+            name: 'provider',
+            type: 'radio',
+            value: 'html',
+            options: [
+                { text: 'HTML', value: 'html' },
+                { text: 'Pointer', value: 'pointer' }
+            ]
+        }
+    ]"
+>
+<template v-slot="{ provider }">
+<example-dragging-state-app :provider="provider"></example-dragging-state-app>
+</template>
+</example-wrapper>

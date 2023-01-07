@@ -116,4 +116,22 @@ const { propsItem } = useDroppable(
 
 As the result, you are now not allowed to drop ball into its own box.
 
-<example-wrapper title="example" source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDropZoneLimit"><example-drop-zone-limit-app></example-drop-zone-limit-app></example-wrapper>
+<example-wrapper
+    title="example"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDropZoneLimit"
+    :options="[
+        {
+            name: 'provider',
+            type: 'radio',
+            value: 'html',
+            options: [
+                { text: 'HTML', value: 'html' },
+                { text: 'Pointer', value: 'pointer' }
+            ]
+        }
+    ]"
+>
+<template v-slot="{ provider }">
+<example-drop-zone-limit-app :provider="provider"></example-drop-zone-limit-app>
+</template>
+</example-wrapper>

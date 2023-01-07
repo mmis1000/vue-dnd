@@ -1,25 +1,33 @@
 
 <template>
-    <Box
-        v-for="box in boxes"
-        :index="box.id"
-        :key="box.id"
-        @drop="onDrop"
-    >
-        <Ball
-            v-for="item in box.items"
-            :key="item"
-            :index="item"
-        ></Ball>
-    </Box>
+    <Component :is="provider === 'html' ? HtmlProvider : PointerEventProvider">
+        <Box
+            v-for="box in boxes"
+            :index="box.id"
+            :key="box.id"
+            @drop="onDrop"
+        >
+            <Ball
+                v-for="item in box.items"
+                :key="item"
+                :index="item"
+            ></Ball>
+        </Box>
+    </Component>
 </template>
     
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { PropType, ref } from 'vue';
 import Ball from './Ball.vue';
 import Box from './Box.vue';
-import { useHtmlProvider } from '@mmis1000/vue-dnd'
-useHtmlProvider()
+import { HtmlProvider, PointerEventProvider } from '@mmis1000/vue-dnd'
+
+defineProps({
+    provider: {
+        type: String as unknown as PropType<'html' | 'pointer'>,
+        default: 'html'
+    }
+})
 
 interface Box {
     id: string,

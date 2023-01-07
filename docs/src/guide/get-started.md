@@ -35,6 +35,9 @@ Install one of the provider on the top level of your project
 
 supports file upload but don't really works with touch devices
 
+:::: code-group
+::: code-group-item Hook
+
 ```diff
   <script setup>
 + import { useHtmlProvider } from '@mmis1000/vue-dnd'
@@ -42,9 +45,29 @@ supports file upload but don't really works with touch devices
   </script>
 ```
 
+:::
+::: code-group-item HOC
+
+```diff
+  <template>
++   <HtmlProvider>
+      <Page>
++   </HtmlProvider>
+  </template>
+  <script setup>
++ import { HtmlProvider } from '@mmis1000/vue-dnd'
+  </script>
+```
+
+:::
+::::
+
 #### Pointer event provider
 
 works with touch devices, but don't support file upload
+
+:::: code-group
+::: code-group-item Hook
 
 ```diff
   <script setup>
@@ -52,3 +75,20 @@ works with touch devices, but don't support file upload
 + usePointerEventProvider()
   </script>
 ```
+
+:::
+::: code-group-item HOC
+
+```diff
+  <template>
++   <PointerEventProvider>
+      <Page>
++   </PointerEvenProvider>
+  </template>
+  <script setup>
++ import { PointerEvenProvider } from '@mmis1000/vue-dnd'
+  </script>
+```
+
+:::
+::::

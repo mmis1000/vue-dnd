@@ -87,4 +87,22 @@ const extraStyle = computed(() => {
 
 ## Result
 
-<example-wrapper title="example" source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDroppingState/App.vue"><example-dropping-state-app></example-dropping-state-app></example-wrapper>
+<example-wrapper
+    title="example"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDroppingState/App.vue"
+    :options="[
+        {
+            name: 'provider',
+            type: 'radio',
+            value: 'html',
+            options: [
+                { text: 'HTML', value: 'html' },
+                { text: 'Pointer', value: 'pointer' }
+            ]
+        }
+    ]"
+>
+<template v-slot="{ provider }">
+<example-dropping-state-app :provider="provider"></example-dropping-state-app>
+</template>
+</example-wrapper>
