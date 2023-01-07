@@ -117,8 +117,8 @@ const { propsItem, state } = useDraggable(
 :::
 ::::
 
-The preview can in whatever component you wish,
-But it must not cause side effect because it can rerender in any time.
+The preview can be in whatever component you wish,
+but it must not cause side effect because it may be re-rendered at any time.
 
 ## Result
 
