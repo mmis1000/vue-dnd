@@ -88,11 +88,11 @@ function useDraggable (
 
 ### HtmlProvider
 
-The with as [useHtmlProvider](#usehtmlprovider) except it is a component
+The same with as [useHtmlProvider](#usehtmlprovider) except it is a component
 
 ### PointerEventProvider
 
-The with as [usePointerEventProvider](#usepointereventprovider) except it is a component
+The same with as [usePointerEventProvider](#usepointereventprovider) except it is a component
 
 ## Interfaces
 
