@@ -1,10 +1,10 @@
 # Dragging state
 
-In previous example, our ball is always solid regardless of whether it is being dragged.
+In the previous example, our ball is always solid regardless of whether it is being dragged.
 
-But you may want to hint the user which item he is currently dragging
+But you may want to hint to the user which item he is currently dragging.
 
-This library expose this info as a computed to the hook,
+This library exposes this info as a computed to the hook,
 and you can use it to change style correspondingly.
 
 ## Example

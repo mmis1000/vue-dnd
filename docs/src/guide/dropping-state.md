@@ -2,9 +2,9 @@
 
 Besides make the item being dragged transparent.
 
-You may want to give user a hint where you can drop the item.
+You may want to give users a hint about where you can drop the item.
 
-So we expose a few useful state to the dropping zone.
+So we expose a few useful states to the dropping zone.
 
 ```ts
 // const { propsItem } = useDroppable(/* ... */)
@@ -13,15 +13,16 @@ const { propsItem, hoverState } = useDroppable(/* ... */)
 
 ## Useful properties
 
-The hoverState has a few properties, there are 3 that we want to focus here
+The hoverState has a few properties, there are 3 that we want to focus on here
 
 - `dragging`: whether there is any ongoing dnd
 - `hover`: whether the dragging item is currently on the top of this drop zone
-- `accepted`: whether the current dropzone wish to accept this dragging item
+- `accepted`: whether the current dropzone wishes to accept this dragging item
 
 ## Example
 
-Let's try to add background to indicate whether it is allow to drop it into the container
+Let's try to add a background to indicate
+whether it is allowed to be dropped into the container
 
 ```html{4,22,31-55}
 <template>

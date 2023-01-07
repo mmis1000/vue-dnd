@@ -5,12 +5,12 @@ There is a problem that you can drop the ball into the box where it is already i
 
 In fact, vue dnd can limit what item a drop zone should accept.
 
-## Add the source to the message that drag item send to drop zone
+## Add the source to the message that dragging the item send to drop zone
 
-Before limit it in drop zone.
+Before adding a limit to the drop zone.
 we need to let drop zone know where the item was from.
 
-But this information is not included in previous guide.
+But this information is not included in the previous guide.
 
 So we need to add it.
 
@@ -114,7 +114,7 @@ const { propsItem } = useDroppable(
 
 ## Result
 
-As the result, you are now not allowed to drop ball into its own box.
+As the result, you are now not allowed to drop a ball into its own box.
 
 <example-wrapper
     title="example"

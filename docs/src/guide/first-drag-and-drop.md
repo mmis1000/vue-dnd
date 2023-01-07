@@ -2,8 +2,8 @@
 
 ## Create the event type
 
-Before you setup the drag item and drop zone.  
-You need a event type to pair them
+Before you set up the drag item and drop zone.
+You need an event type to pair them
 
 :::: code-group
 ::: code-group-item Typescript
@@ -28,7 +28,7 @@ export const BallType = createType()
 
 ## Setup the drag target
 
-Assume you already have a object on screen for drag
+Assume you already have an object on screen for drag
 
 ```html
 <template>

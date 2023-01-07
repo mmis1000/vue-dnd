@@ -1,18 +1,19 @@
 # Custom drag preview
 
-In previous chapter,
+In the previous chapter,
 you probably already noticed that the pointer event provider has a few caveats.
 
-For example
+For example,
 
 - you can't drag the item out of scroll container
-- the original place don't have a placeholder item there
+- the original place doesn't have a placeholder item there
 
 The vue dnd has a mechanism for you to customize this behavior.
 
 ## Setup
 
-Before add the preview, we need a container to contain the preview we want to render.
+Before adding the preview,
+we need a container to contain the preview we want to render.
 
 Due to css `overflow` containers,
 this container is preferred to be put in the `<body>` root.
@@ -118,7 +119,7 @@ const { propsItem, state } = useDraggable(
 ::::
 
 The preview can be in whatever component you wish,
-but it must not cause side effect because it may be re-rendered at any time.
+but it must not cause side effects because it may be re-rendered at any time.
 
 ## Result
 

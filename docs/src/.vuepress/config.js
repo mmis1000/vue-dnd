@@ -50,7 +50,7 @@ export default {
     sidebar: {
       '/guide/': [
         {
-          title: 'Guide',
+          text: 'Guide',
           collapsable: false,
           children: [
             'get-started',

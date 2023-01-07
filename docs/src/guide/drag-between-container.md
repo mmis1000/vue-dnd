@@ -1,15 +1,15 @@
 # Dragging between containers
 
 The vue dnd didn't manipulate the dom or data by itself.
-It is just a command channel that send message between components.
+It is just a command channel that sends messages between components.
 
-In order to actually drag item between containers,
+In order to actually drag items between containers,
 you need to change the data by yourself.
 
-## Label the container with id
+## Label the container with an id
 
-In order to drag item between containers,
-container need to have a identifier so you know where the item was dragged into.
+In order to drag an item between containers,
+the container needs to have an identifier so you know where the item was dragged into.
 
 ```html{12-17}
 <!-- Box.vue -->
@@ -92,7 +92,7 @@ const boxes = reactive<Box[]>([
 </style>
 ```
 
-## Handle the message and emit event in drop target
+## Handle the message and emit events from the drop target
 
 ```html{17-19,25-27}
 <template>
@@ -131,7 +131,7 @@ const { propsItem } = useDroppable(
 </style>
 ```
 
-## Handle the event and update the data in app
+## Handle the event and update the data in the app
 
 ```html{6,38-56}
 <!-- App.vue -->
