@@ -23,6 +23,7 @@ export const DragLayer = defineComponent({
       bottom: '0',
       overflow: 'hidden',
       'pointer-events': 'none',
+      'z-index': 2147483647
     }
 
     return () => {
