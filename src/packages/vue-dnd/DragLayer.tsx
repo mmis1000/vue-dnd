@@ -51,6 +51,7 @@ export const DragLayer = defineComponent({
             top: '0px',
             bottom: '0px',
             right: '0px',
+            margin: '0'
           }
           return (
             <div style={wrapStyle} key={i.id}>{cloneVNode(i.preview!(), { style })}</div>
