@@ -9,7 +9,8 @@ you need to change the data by yourself.
 ## Label the container with an id
 
 In order to drag an item between containers,
-the container needs to have an identifier so you know where the item was dragged into.
+the container needs to have an identifier
+so you know where the item was dragged into.
 
 ```html{12-17}
 <!-- Box.vue -->

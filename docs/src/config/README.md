@@ -4,9 +4,24 @@ sidebar: auto
 
 # Config
 
+## Utilities
+
+### createType\<T, Name = 'Unnamed'\>()
+
+Utility that can be used to create a type token.
+
+- Type arguments
+  - `T`
+    - Description: Data type associated with this Type
+  - `Name`
+    - Description: Optional human readable description
+
+- Returns
+  - [`Type<T, Name>`](#type-t-name-unnamed)
+
 ## Hooks
 
-### useHtmlProvider
+### useHtmlProvider()
 
 hook that provides native dnd based dnd experience
 
@@ -15,7 +30,7 @@ hook that provides native dnd based dnd experience
 - cons
   - does not work on touch devices
 
-### usePointerEventProvider
+### usePointerEventProvider()
 
 hook that provides pointer event-based dnd experience
 
@@ -41,7 +56,7 @@ function useDraggable (
 
 - Arguments
   - type
-    - Type: `Type<T>`
+    - Type: [`Type<T>`](#type-t-name-unnamed)
   - data
     - Type: `T`
   - options
@@ -86,15 +101,38 @@ function useDraggable (
 
 ## Components
 
+### DragLayer
+
+Container that the system used to render drag previews.
+
+Must be put under a provider.
+
+Preferably to be teleported to `<body>` to avoid overflow problems.
+
+- Attributes
+  - None
+
 ### HtmlProvider
 
-The same with as [useHtmlProvider](#usehtmlprovider) except it is a component
+The same as [useHtmlProvider](#usehtmlprovider) except it is a component
+
+- Attributes
+  - None
 
 ### PointerEventProvider
 
-The same with as [usePointerEventProvider](#usepointereventprovider) except it is a component
+The same as [usePointerEventProvider](#usepointereventprovider) except it is a component
+
+- Attributes
+  - None
 
 ## Interfaces
+
+### Type\<T, Name = 'Unnamed'\>
+
+Magic type that represents a data type
+
+Can only be created by [createType\<T, Name = 'Unnamed'\>()](#createtype-t-name-unnamed)
 
 ### DndDragHandlerWithData\<T\>
 
