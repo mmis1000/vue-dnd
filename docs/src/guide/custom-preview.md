@@ -5,7 +5,7 @@ you probably already noticed that the pointer event provider has a few caveats.
 
 For example,
 
-- you can't drag the item out of scroll container
+- you can't drag the item out of the scroll container
 - the original place doesn't have a placeholder item there
 
 The vue dnd has a mechanism for you to customize this behavior.
