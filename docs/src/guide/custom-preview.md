@@ -126,6 +126,7 @@ but it must not cause side effects because it may be re-rendered at any time.
 <example-wrapper
     title="example"
     source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleCustomPreview/App.vue"
+    client-only
     :options="[
         {
             name: 'provider',
