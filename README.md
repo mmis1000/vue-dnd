@@ -10,4 +10,4 @@ All it does is sending the message from draggable to drop zone for you.
 
 See official document
 
-[https://mmis1000.me/vue-dnd]<https://mmis1000.me/vue-dnd>
+<https://mmis1000.me/vue-dnd>
