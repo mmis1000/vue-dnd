@@ -45,7 +45,7 @@ class PointerExecutionImpl<T extends DragType<unknown>> implements Execution<T> 
   constructor(
     readonly type: T,
     readonly id: string,
-    readonly data: UnwrapDragDropType<T> | Ref<UnwrapDragDropType<T>>,
+    readonly data: UnwrapDragDropType<T>,
     readonly source: DragDropTargetIdentifier,
     readonly mouseOffset: readonly [number, number],
     public mousePosition: readonly [number, number],
@@ -143,7 +143,7 @@ class PointerEventProvider implements DndProvider {
           new PointerExecutionImpl(
             type,
             id,
-            data,
+            unref(data),
             dragTargetId,
             mouseOffset,
             pos,

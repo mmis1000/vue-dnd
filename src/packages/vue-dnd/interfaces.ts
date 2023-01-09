@@ -1,8 +1,11 @@
 import { Ref, UnwrapRef, VNode } from "vue"
 import { DragType, DropType, UnwrapArray, UnwrapDragDropType } from "./internal"
 import { Type } from "./types"
+
+
+type Unwrap<T> = T extends Type<string, infer U> ? U : never
 export type DndDragHandlerWithData<T extends DropType<any>> =
-  UnwrapArray<UnwrapRef<T>> extends Type<any, infer U>
+  Unwrap<UnwrapArray<UnwrapRef<T>>> extends infer U
   ? (ev: DragEvent | PointerEvent, data: U) => void
   : (ev: DragEvent, data: undefined) => void
 

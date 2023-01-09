@@ -2,6 +2,7 @@
 import ExampleSimple from './components/ExampleSimple.vue';
 import ExampleHandle from './components/ExampleHandle.vue';
 import Board from './components/Board.vue';
+import Board2 from './components/Board2.vue';
 import SortableList from './components/SortableList.vue';
 import StartDirection from './components/StartDirection.vue';
 import DropNative from './components/DropNative.vue';
@@ -21,6 +22,10 @@ import DropNative from './components/DropNative.vue';
   <Board />
   <div>Pointer Event Provider</div>
   <Board :usePointerEvent="true" />
+  <div>Sortable Native</div>
+  <Board2 />
+  <div>Pointer Event Provider</div>
+  <Board2 :usePointerEvent="true" />
   <div>Sortable Native</div>
   <SortableList />
   <div>Sortable Pointer Event</div>
