@@ -42,9 +42,9 @@ hook that provides pointer event-based dnd experience
 ### useDraggable
 
 ```ts
-function useDraggable (
-  type,
-  data,
+function useDraggable<T> (
+  type: Type<T>,
+  data: T,
   options?
 ): {
   propsItem: ComputedRef<Record<string, any>>
@@ -61,33 +61,34 @@ function useDraggable (
     - Type: `T`
   - options
     - Type: object
+    - optional
     - properties
       - ref
         - Description: ref container to contain target dom element
           if you also need ref of it
         - Type: `Ref<HtmlElement>`
-        - required: false
+        - optional
       - preview:
         - Type: `() => VNode<any, any, any>`
-        - required: false
+        - optional
       - onDragStart
         - Type: [`DndDragHandlerWithData<T>`](#dnddraghandlerwithdata-t)
-        - required: false
+        - optional
       - startDirection
         - Description: the available start direction of dragging, only works
           with `usePointerEventProvider`
         - Type: [`StartDirection | Ref<StartDirection>`](#startdirection)
-        - required: false
+        - optional
       - disabled
         - Description: disable this hook like it never applied
         - Type: `boolean` | `Ref<boolean>`
-        - required: false
+        - optional
 
 - Return
   - type: object
   - properties
     - propsItem
-      - Description: item properties that need to be applied to elements
+      - Description: item properties that need to be applied to the element
       - Type:  `ComputedRef<Record<string, any>>`
     - state
       - Description: state of the current drag target
@@ -98,6 +99,70 @@ function useDraggable (
           - Type: `ComputedRef<boolean>`
 
 ### useDroppable
+
+```ts
+
+function useDroppable <T>(
+  type: Type<T>,
+  options
+) : {
+  propsItem: ComputedRef<Record<string, any>>,
+  hoverState: {
+    hover: boolean,
+    accepted: boolean,
+    dragging: boolean,
+  }
+}
+```
+
+- Arguments
+  - type
+    - Type: [`Type<T>`](#type-t-name-unnamed)
+  - options
+    - Type: object
+    - properties
+      - ref
+        - Description: ref container to contain target dom element
+          if you also need ref of it
+        - Type: `Ref<HtmlElement>`
+        - optional
+      - onDrop
+        - Type: [`DndDragHandlerWithData<T>`](#dnddraghandlerwithdata-t)
+        - optional
+      - onDragOver
+        - Type: [`DndDragHandlerWithData<T>`](#dnddraghandlerwithdata-t)
+        - optional
+      - onDragEnter
+        - Type: [`DndDragHandlerWithData<T>`](#dnddraghandlerwithdata-t)
+        - optional
+      - onDragLeave
+        - Type: [`DndDragHandlerWithData<T>`](#dnddraghandlerwithdata-t)
+        - optional
+      - disabled
+        - Description: disable this hook like it never applied
+        - Type: `boolean` | `Ref<boolean>`
+        - optional
+
+- Return
+  - type: object
+  - properties
+    - propsItem
+      - Description: item properties that need to be applied to the element
+      - Type:  `ComputedRef<Record<string, any>>`
+    - state
+      - Current state of a dnd provider and this drop zone
+      - Type: object
+      - properties
+        - dragging
+          - Description: Is there any item being dragged
+          - Type: boolean
+        - hover
+          - Description: Whether this drop zone is being hovered
+          - Type: boolean
+        - accepted
+          - Description: Whether this drop zone wishes to accept the dragging item
+          - Type: boolean
+
 
 ## Components
 
