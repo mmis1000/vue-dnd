@@ -39,8 +39,8 @@ export default {
         link: '/guide/',
       },
       {
-        text: 'Config',
-        link: '/config/'
+        text: 'API Reference',
+        link: '/api/'
       },
       {
         text: 'Examples',
