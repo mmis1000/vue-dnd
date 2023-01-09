@@ -6,8 +6,11 @@ import { Type } from "./types"
 type Unwrap<T> = T extends Type<string, infer U> ? U : never
 export type DndDragHandlerWithData<T extends DropType<any>> =
   Unwrap<UnwrapArray<UnwrapRef<T>>> extends infer U
-  ? (ev: DragEvent | PointerEvent, data: U) => void
-  : (ev: DragEvent, data: undefined) => void
+    ? [U] extends [never]
+      ? (ev: DragEvent, data: undefined) => void
+      : (ev: DragEvent | PointerEvent, data: U) => void
+    : never
+  
 
 export type DragDropTargetIdentifier = number
 
