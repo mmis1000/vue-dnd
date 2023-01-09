@@ -14,7 +14,7 @@
           :dark="(i + j) % 2 === 1"
           :index="[i, j]"
           :type="slot"
-          >{{ i }} {{ j }}</MyDrag
+          >{{ i }} {{ j }} {{ slot }}</MyDrag
         >
         <span v-else>{{ i }} {{ j }}</span>
       </MyDrop>
