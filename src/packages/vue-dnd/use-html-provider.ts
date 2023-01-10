@@ -1,6 +1,6 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode, watch } from "vue";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
-import { DragType, DropType, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
+import { DragType, DropType, hasNativeRule, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
 import { Default } from "./types";
 
 let instanceId = 0
@@ -217,8 +217,8 @@ class HtmlProvider implements DndProvider {
 
         if (id == null && execution == null) {
           // probably a native event?
-          const matched = matchAccept(options.accept, ev, undefined)
-          if (matched) {
+          const nativeRuleExisted = hasNativeRule(options.accept)
+          if (nativeRuleExisted) {
             let currentExecution = this.executions.find(i => i.id === nativeDragExecutionId)
             if (currentExecution == null) {
               currentExecution = new HtmlExecutionImpl(
@@ -235,6 +235,7 @@ class HtmlProvider implements DndProvider {
               )
               this.executions.push(currentExecution)
             }
+
             if (currentExecution.targetStatus.find(i => i.id === dropTargetId) == null) {
               currentExecution.targetStatus.push({ id: dropTargetId, elements: [] })
             }
@@ -269,13 +270,11 @@ class HtmlProvider implements DndProvider {
 
         if (id == null && execution == null) {
           // probably a native event?
-          const matched = matchAccept(options.accept, ev, undefined)
-          if (matched) {
+          const nativeRuleExisted = hasNativeRule(options.accept)
+          if (nativeRuleExisted) {
             const currentExecution = this.executions.find(i => i.id === nativeDragExecutionId)
             if (currentExecution != null) {
-
               const targetStatus = currentExecution.targetStatus.find(i => i.id === dropTargetId)
-
               if (targetStatus != null) {
                 findAndRemove(targetStatus.elements, i => i === ev.target)
 
