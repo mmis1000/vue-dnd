@@ -22,7 +22,9 @@ You just use this type like a regular `Type`, and handle the native event.
 ```ts
 const image = ref('')
 const { propsItem, hoverState } = useDroppable(
-    NativeFile,
+    NativeFile.withFilter(ev => {
+        return (ev.dataTransfer?.types.indexOf('Files') ?? -1) >= 0
+    }),
     {
         onDrop(ev: DragEvent) {
             if (ev.dataTransfer?.files.length ?? 0 > 0) {
@@ -56,7 +58,7 @@ const { propsItem, hoverState } = useDroppable(
 
 ## Note
 
-This type does not support `withFilter` because you can't get the content of
-native drop events before `ondrop` happens.
+This type does supports `withFilter` that accept a argument of `DragEvent`,
+but you can't get the file content of native drop events before `ondrop` happens.
 
 This is a native limit and there is no way to workaround it.
