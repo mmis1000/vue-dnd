@@ -163,7 +163,6 @@ function useDroppable <T>(
           - Description: Whether this drop zone wishes to accept the dragging item
           - Type: boolean
 
-
 ## Components
 
 ### DragLayer

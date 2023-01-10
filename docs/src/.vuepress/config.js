@@ -60,6 +60,7 @@ export default {
             'dragging-state',
             'dropping-state',
             'custom-preview',
+            'multi-type-drop-zone',
             'native-file'
           ]
         }

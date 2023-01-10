@@ -1,6 +1,7 @@
 # Dragging state
 
-In the previous example, our ball is always solid regardless of whether it is being dragged.
+In the previous example, our ball is always solid
+regardless of whether it is being dragged.
 
 But you may want to hint to the user which item he is currently dragging.
 
