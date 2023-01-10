@@ -59,7 +59,8 @@ export default {
             'drop-zone-limit',
             'dragging-state',
             'dropping-state',
-            'custom-preview'
+            'custom-preview',
+            'native-file'
           ]
         }
       ],
