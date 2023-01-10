@@ -141,7 +141,7 @@ class PointerEventProvider implements DndProvider {
         findAndRemove(this.executions, i => i.initialEvent.pointerId === ev.pointerId)
         this.stagedExecutions.push(
           new PointerExecutionImpl(
-            type,
+            unref(type),
             id,
             unref(data),
             dragTargetId,

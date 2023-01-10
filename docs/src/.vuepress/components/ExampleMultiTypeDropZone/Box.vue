@@ -44,10 +44,10 @@ const emit = defineEmits<{
 
 const types = computed(() => props.accepts.map((i) => {
     if (i === 'ball') {
-        return BallType.withFilter((s) => s[1] !== props.index)
+        return BallType.withFilter(([item, type, source]) => source !== props.index)
     }
     if (i === 'paper') {
-        return PaperType.withFilter((s) => s[1] !== props.index)
+        return PaperType.withFilter(([item, type, source]) => source !== props.index)
     }
     throw new Error(`unknown type ${i}`)
 }))

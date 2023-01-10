@@ -61,6 +61,7 @@ export default {
             'dropping-state',
             'custom-preview',
             'multi-type-drop-zone',
+            'dynamic-toggle',
             'native-file'
           ]
         }

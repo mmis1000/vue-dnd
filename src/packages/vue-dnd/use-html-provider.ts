@@ -1,7 +1,7 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode, watch } from "vue";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
 import { DragType, DropType, hasNativeRule, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
-import { Default } from "./types";
+import { Default, NativeFile } from "./types";
 
 let instanceId = 0
 
@@ -145,7 +145,7 @@ class HtmlProvider implements DndProvider {
         const mouseOffset = [pos[0] - elPos.left, pos[1] - elPos.top] as const
         // console.log(elementRef.value, pos, elPos, mouseOffset)
         this.executions.push(new HtmlExecutionImpl(
-          type,
+          unref(type),
           id,
           unref(data),
           dragTargetId,
