@@ -198,6 +198,18 @@ Magic type that represents a data type
 
 Can only be created by [createType\<T, Name = 'Unnamed'\>()](#createtype-t-name-unnamed)
 
+- properties
+  - `withFilter(fn: (value: T) => boolean) => Type<T, Name = 'Unnamed'>`
+    - create a new drop zone type with filter applied
+
+### NativeFile
+
+A special type constant that catches all native drop events
+
+- properties
+  - `withFilter(fn: (value: DragEvent) => boolean) => NativeFile`
+    - create a new drop zone type with filter applied
+
 ### DndDragHandlerWithData\<T\>
 
 type: `(ev: DragEvent | PointerEvent, data: T) => void`
