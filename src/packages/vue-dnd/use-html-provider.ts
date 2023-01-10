@@ -207,6 +207,14 @@ class HtmlProvider implements DndProvider {
           findAndRemove(this.executions, item => item.id === (id ?? nativeDragExecutionId))
           options.onDrop?.(ev, execution ? unref(execution.data) as any : undefined)
         }
+
+        const nativeRuleExisted = hasNativeRule(options.accept)
+
+        if (nativeRuleExisted) {
+          // accept it anyway, but don't trigger the events
+          ev.preventDefault()
+          findAndRemove(this.executions, item => item.id === (id ?? nativeDragExecutionId))
+        }
       },
       onDragenter: (ev: DragEvent) => {
         if (unref(options.disabled ?? false)) {
@@ -242,7 +250,9 @@ class HtmlProvider implements DndProvider {
 
             currentExecution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
 
-            options.onDragEnter?.(ev, unref(currentExecution.data) as any)
+            if (matchAccept(options.accept, ev, execution)) {
+              options.onDragEnter?.(ev, unref(currentExecution.data) as any)
+            }
             return
           }
         }
@@ -258,7 +268,9 @@ class HtmlProvider implements DndProvider {
 
         execution.targetStatus.find(i => i.id === dropTargetId)!.elements.push(ev.target as Element)
 
-        options.onDragEnter?.(ev, unref(execution.data) as any)
+        if (matchAccept(options.accept, ev, execution)) {
+          options.onDragEnter?.(ev, unref(execution.data) as any)
+        }
       },
       onDragleave: (ev: DragEvent) => {
         if (unref(options.disabled ?? false)) {
@@ -289,7 +301,9 @@ class HtmlProvider implements DndProvider {
                 findAndRemove(this.executions, i => i.id === nativeDragExecutionId)
               }
 
-              options.onDragLeave?.(ev, unref(currentExecution.data) as any)
+              if (matchAccept(options.accept, ev, execution)) {
+                options.onDragLeave?.(ev, unref(currentExecution.data) as any)
+              }
 
               return
             }
@@ -313,7 +327,9 @@ class HtmlProvider implements DndProvider {
         }
 
 
-        options.onDragLeave?.(ev, unref(execution.data) as any)
+        if (matchAccept(options.accept, ev, execution)) {
+          options.onDragLeave?.(ev, unref(execution.data) as any)
+        }
       },
       onDragover: (ev: DragEvent) => {
         if (unref(options.disabled ?? false)) {
@@ -330,6 +346,13 @@ class HtmlProvider implements DndProvider {
         if (matchAccept(options.accept, ev, execution)) {
           ev.preventDefault()
           options.onDragOver?.(ev, execution ? unref(execution.data) as any : undefined)
+        }
+
+        const nativeRuleExisted = hasNativeRule(options.accept)
+
+        if (nativeRuleExisted) {
+          // accept it anyway
+          ev.preventDefault()
         }
       }
     }

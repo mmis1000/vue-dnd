@@ -5,7 +5,16 @@ import { NativeFileRule, Type } from "./types";
 export const PROVIDER_INJECTOR_KEY = (import.meta.env.DEV ? 'VUE_DND_KEY' : Symbol('VUE_DND_KEY')) as InjectionKey<DndProvider>
 export const nuzz = () => { }
 type Data = { [x: string]: unknown }
-
+export const hasNativeRule = <T extends DropType<unknown>>(rule: T) => {
+  const typeOrListOfType = unref(rule)
+  const typeList = Array.isArray(typeOrListOfType) ? typeOrListOfType : [typeOrListOfType]
+  
+  for (const type of typeList) {
+    if (isNativeFileRule(type)) {
+      return true
+    }
+  }
+}
 export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent | undefined, execution: Execution<DragType<any>> | undefined) => {
   const typeOrListOfType = unref(rule)
   const typeList = Array.isArray(typeOrListOfType) ? typeOrListOfType : [typeOrListOfType]
@@ -21,8 +30,7 @@ export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent 
 
   for (const type of typeList) {
     if (isNativeFileRule(type)) {
-      // must 'not' have a execution associated
-      if (ev != null && execution == null) {
+      if (ev != null) {
         if (matchNativeFile(ev, type)) {
           return true
         }
