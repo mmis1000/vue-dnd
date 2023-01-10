@@ -118,7 +118,7 @@ As the result, you are now not allowed to drop a ball into its own box.
 
 <example-wrapper
     title="example"
-    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDropZoneLimit"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleDropZoneLimit/App.vue"
     :options="[
         {
             name: 'provider',

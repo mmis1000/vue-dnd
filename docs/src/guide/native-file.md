@@ -49,7 +49,7 @@ const { propsItem, hoverState } = useDroppable(
 
 <example-wrapper
     title="example"
-    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleNativeFile"
+    source="https://github.com/mmis1000/vue-dnd/blob/master/docs/src/.vuepress/components/ExampleNativeFile/App.vue"
 >
 <template v-slot:default>
 <example-native-file-app></example-native-file-app>
