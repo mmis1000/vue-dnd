@@ -8,7 +8,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PropType, computed, onRenderTriggered, onRenderTracked, onUpdated } from "vue";
+import { PropType, computed } from "vue";
 import { useDroppable } from "../../packages/vue-dnd/use-droppable";
 import { RootType, KnightType, Piece } from "./type";
 
@@ -24,34 +24,9 @@ const props = defineProps({
   dark: Boolean,
 });
 
-const t = [
-  KnightType.withFilter(([p, x, y]) => {
-    if (
-      (Math.abs(x - props.index[0]) === 1 &&
-        Math.abs(y - props.index[1]) === 2) ||
-      (Math.abs(x - props.index[0]) === 2 &&
-        Math.abs(y - props.index[1]) === 1)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }),
-  RootType.withFilter(([p, x, y]) => {
-    if (
-      (x ===  props.index[0] || y ===  props.index[1]) &&
-      (x !== props.index[0] || y === props.index[1])
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  })
-]
-
 const { propsItem, hoverState } = useDroppable(
   [
-    KnightType.withFilter(([p, x, y]) => {
+    KnightType.withFilter(([, x, y]) => {
       if (
         (Math.abs(x - props.index[0]) === 1 &&
           Math.abs(y - props.index[1]) === 2) ||
@@ -63,7 +38,7 @@ const { propsItem, hoverState } = useDroppable(
         return false;
       }
     }),
-    RootType.withFilter(([p, x, y]) => {
+    RootType.withFilter(([, x, y]) => {
       if (
         (x ===  props.index[0] || y ===  props.index[1]) &&
         (x !== props.index[0] || y !== props.index[1])
@@ -75,10 +50,10 @@ const { propsItem, hoverState } = useDroppable(
     })
   ],
   {
-    onDrop: (ev, data) => {
+    onDrop: (_ev, data) => {
       emit("drop", { from: [data[1], data[2]], to: props.index, type: data[0] });
     },
-    onDragOver(ev, data) {},
+    onDragOver(__) {},
   }
 );
 
