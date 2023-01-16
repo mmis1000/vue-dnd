@@ -1,20 +1,25 @@
 <template>
   <div class="wrap">
-    <div class="row" v-for="i of all" :key="i">
+    <div
+      v-for="i of all"
+      :key="i"
+      class="row"
+    >
       <MyDrop
+        v-for="j of all"
+        :key="j"
         class="drop"
         :dark="(i + j) % 2 === 0"
-        v-for="j of all"
         :index="[i, j]"
-        :key="j"
         @drop="current = [i, j]"
       >
         <MyDrag
           v-if="current[0] === i && current[1] === j"
           :dark="(i + j) % 2 === 1"
           :index="current"
-          >{{ i }} {{ j }}</MyDrag
         >
+          {{ i }} {{ j }}
+        </MyDrag>
         <span v-else>{{ i }} {{ j }}</span>
       </MyDrop>
     </div>

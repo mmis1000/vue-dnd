@@ -4,10 +4,11 @@
     :style="computedState"
     v-bind="propsItem"
   >
-    <slot></slot>
+    <slot />
   </div>
 </template>
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PropType, computed } from "vue";
 import { useDroppable } from "../../packages/vue-dnd/use-droppable";
 import { BoardType } from "./type";

@@ -52,7 +52,7 @@ export const matchAccept = <T extends DropType<unknown>>(rule: T, ev: DragEvent 
 export const mergePropsWithRef = (...args: (Data & VNodeProps)[]): Data => {
   const refs: (Ref<unknown> | ((arg: any) => void))[] = []
   const current = ref<unknown>(null)
-  for (let item of args) {
+  for (const item of args) {
     if (isRef(item.ref) || typeof item.ref === 'function') {
       refs.push(item.ref as any)
     } else if (item.ref != null) {
@@ -68,7 +68,7 @@ export const mergePropsWithRef = (...args: (Data & VNodeProps)[]): Data => {
         current.value = v
         refs.forEach(r => typeof r === 'function' ? r(v) : r.value = v)
       },
-      get(v) {
+      get() {
         return current.value
       }
     })

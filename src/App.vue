@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ExampleSimple from './components/ExampleSimple.vue';
 import ExampleHandle from './components/ExampleHandle.vue';
-import Board from './components/Board.vue';
-import Board2 from './components/Board2.vue';
+import Board from './components/ChessBoard.vue';
+import Board2 from './components/ChessBoard2.vue';
 import SortableList from './components/SortableList.vue';
 import StartDirection from './components/StartDirection.vue';
 import DropNative from './components/DropNative.vue';
@@ -13,33 +13,42 @@ import DropNative from './components/DropNative.vue';
   <div>Simple Example</div>
   <ExampleSimple />
   <div>Simple Example (use pointer event)</div>
-  <ExampleSimple :usePointerEvent="true" />
+  <ExampleSimple :use-pointer-event="true" />
   <div>Simple Example with handle (use pointer event)</div>
   <ExampleHandle />
   <div>Simple Example with handle</div>
-  <ExampleHandle :usePointerEvent="true" />
+  <ExampleHandle :use-pointer-event="true" />
   <div>Native Provider</div>
   <Board />
   <div>Pointer Event Provider</div>
-  <Board :usePointerEvent="true" />
+  <Board :use-pointer-event="true" />
   <div>Sortable Native</div>
   <Board2 />
   <div>Pointer Event Provider</div>
-  <Board2 :usePointerEvent="true" />
+  <Board2 :use-pointer-event="true" />
   <div>Sortable Native</div>
   <SortableList />
   <div>Sortable Pointer Event</div>
-  <SortableList :usePointerEvent="true" />
+  <SortableList :use-pointer-event="true" />
   <div>All</div>
-  <StartDirection usePointerEvent startDirection="all" />
+  <StartDirection
+    use-pointer-event
+    start-direction="all"
+  />
   <div>X</div>
-  <StartDirection usePointerEvent startDirection="x" />
+  <StartDirection
+    use-pointer-event
+    start-direction="x"
+  />
   <div>Y</div>
-  <StartDirection usePointerEvent startDirection="y" />
+  <StartDirection
+    use-pointer-event
+    start-direction="y"
+  />
   <div>DropNative</div>
   <DropNative />
   <div class="broken">
-    <SortableList :usePointerEvent="true" />
+    <SortableList :use-pointer-event="true" />
   </div>
 </template>
 

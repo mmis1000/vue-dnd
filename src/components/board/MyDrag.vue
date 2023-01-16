@@ -8,9 +8,11 @@
     }"
     v-bind="propsItem"
   >
-    <template v-if="state.isDragging"> "moving..." </template>
+    <template v-if="state.isDragging">
+      "moving..."
+    </template>
     <template v-else>
-      <slot></slot>
+      <slot />
     </template>
   </div>
 </template>

@@ -1,8 +1,16 @@
 <template>
   <List>
     <transition-group name="list">
-      <Item v-for="(item, index) of list" :key="item.id" :id="item.id" v-model="item.value" :index="index"
-        @drop="handleDrop" :class="{ moving: item.id === transitioning }" @transitionend="transitioning = -1" />
+      <Item
+        v-for="(item, index) of list"
+        :id="item.id"
+        :key="item.id"
+        v-model="item.value"
+        :index="index"
+        :class="{ moving: item.id === transitioning }"
+        @drop="handleDrop"
+        @transitionend="transitioning = -1"
+      />
     </transition-group>
   </List>
   <DragLayer />
@@ -12,8 +20,8 @@
 import { reactive, ref } from 'vue';
 import { useHtmlProvider } from '../packages/vue-dnd';
 import { usePointerEventProvider } from "../packages/vue-dnd/use-pointer-event-provider";
-import Item from './sortable/Item.vue'
-import List from './sortable/List.vue'
+import Item from './sortable/SortableItem.vue'
+import List from './sortable/SortableList.vue'
 import { DragLayer } from "../packages/vue-dnd/DragLayer";
 
 const props = defineProps({
@@ -29,10 +37,10 @@ if (props.usePointerEvent) {
   useHtmlProvider();
 }
 
-const list = reactive(<{
+const list = reactive<Array<{
   id: number,
   value: string
-}[]>[]);
+}>>([]);
 
 for (let i = 0; i < 10; i++) {
   list.push({

@@ -1,7 +1,7 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref, Ref, shallowReactive, shallowReadonly, unref, VNode, watch } from "vue";
 import { DndProvider, DragDropTargetIdentifier, DraggableDecoratorOptions, DroppableDecoratorOptions, Execution, GetProps } from "./interfaces";
 import { DragType, DropType, hasNativeRule, matchAccept, nativeDragExecutionId, nativeDragSourceId, PROVIDER_INJECTOR_KEY, UnwrapDragDropType } from "./internal";
-import { Default, NativeFile } from "./types";
+import { Default } from "./types";
 
 let instanceId = 0
 
@@ -111,13 +111,13 @@ class HtmlProvider implements DndProvider {
     })
   }
 
-  useDraggableDecorator<ItemType extends DragType<unknown>, T, U, V>(
+  useDraggableDecorator<ItemType extends DragType<unknown>>(
     {
       data,
       type = Default as any,
       onDragStart,
       preview,
-      startDirection = 'all',
+      // startDirection = 'all',
       disabled = false
     } = {} as DraggableDecoratorOptions<ItemType>
   ): [
@@ -185,7 +185,7 @@ class HtmlProvider implements DndProvider {
       () => handleMixin
     ]
   }
-  useDroppableDecorator<ItemType extends DropType<unknown>, T, U, V>(
+  useDroppableDecorator<ItemType extends DropType<unknown>>(
     options: DroppableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++

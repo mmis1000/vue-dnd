@@ -4,10 +4,11 @@
     :style="computedState"
     v-bind="propsItem"
   >
-    <slot></slot>
+    <slot />
   </div>
 </template>
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PropType, computed } from "vue";
 import { useDroppable } from "../../packages/vue-dnd/use-droppable";
 import { RootType, KnightType, Piece } from "./type";
@@ -53,7 +54,7 @@ const { propsItem, hoverState } = useDroppable(
     onDrop: (_ev, data) => {
       emit("drop", { from: [data[1], data[2]], to: props.index, type: data[0] });
     },
-    onDragOver(__) {},
+    onDragOver(ev, data) {},
   }
 );
 

@@ -1,7 +1,11 @@
 <template>
-    <div class="ball" :style="{ 'opacity': state.isDragging ? '0.5' : '1' }" v-bind="propsItem">
-      {{startDirection}}
-    </div>
+  <div
+    class="ball"
+    :style="{ 'opacity': state.isDragging ? '0.5' : '1' }"
+    v-bind="propsItem"
+  >
+    {{ startDirection }}
+  </div>
 </template>
 
 <script setup lang="ts">

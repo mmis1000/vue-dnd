@@ -6,6 +6,7 @@
 </template>
 
 <script setup lang="tsx">
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { computed, defineAsyncComponent, markRaw } from 'vue'
 import { useDraggable, useDroppable, mergePropsWithRef } from '../../packages/vue-dnd';
 import { ItemType } from './types';
@@ -40,7 +41,7 @@ const value = computed({
   }
 })
 
-const Item = defineAsyncComponent(async () => (await import('./Item.vue')).default)
+const Item = defineAsyncComponent(async () => (await import('./SortableItem.vue')).default)
 
 const { propsItem, state } = useDraggable(
   ItemType,

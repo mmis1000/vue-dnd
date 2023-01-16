@@ -91,7 +91,7 @@ class PointerEventProvider implements DndProvider {
     this.options = Object.assign({}, DEFAULT_OPTIONS, opts ?? {})
   }
 
-  useDraggableDecorator<ItemType extends DragType<unknown>, T, U, V>(
+  useDraggableDecorator<ItemType extends DragType<unknown>>(
     {
       data,
       type = Default as any,
@@ -244,7 +244,7 @@ class PointerEventProvider implements DndProvider {
           const elementToIds = new Map([... this.droppableElements].map(i => i.reverse() as unknown as [Element, DragDropTargetIdentifier]))
           const containers = new Set(elementToIds.keys())
 
-          let targetAreas: DragDropTargetIdentifier[] = []
+          const targetAreas: DragDropTargetIdentifier[] = []
 
           if (inner) {
             for (let current: Element | null = inner; current != null; current = current.parentElement) {
@@ -270,7 +270,7 @@ class PointerEventProvider implements DndProvider {
 
           exe.targets = [...unchanged, ...entered];
 
-          for (let id of unchanged) {
+          for (const id of unchanged) {
             const decl = this.droppableDeclarations.get(id);
             const el = this.droppableElements.get(id);
             const sourceEl = this.draggableElements.get(exe.source);
@@ -281,7 +281,7 @@ class PointerEventProvider implements DndProvider {
             }
           }
 
-          for (let id of leaved) {
+          for (const id of leaved) {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
@@ -290,7 +290,7 @@ class PointerEventProvider implements DndProvider {
             }
           }
 
-          for (let id of entered) {
+          for (const id of entered) {
             const decl = this.droppableDeclarations.get(id);
 
             if (decl) {
@@ -410,7 +410,7 @@ class PointerEventProvider implements DndProvider {
         let accepted = false;
 
         if (execution != null && execution.targets.length > 0) {
-          for (let target of execution.targets) {
+          for (const target of execution.targets) {
             const def = this.droppableDeclarations.get(target);
 
             if (def && matchAccept(def.accept, undefined, execution)) {
@@ -436,7 +436,7 @@ class PointerEventProvider implements DndProvider {
       },
     ];
   }
-  useDroppableDecorator<ItemType extends DropType<unknown>, T, U, V>(
+  useDroppableDecorator<ItemType extends DropType<unknown>>(
     options: DroppableDecoratorOptions<ItemType>
   ): [DragDropTargetIdentifier, GetProps] {
     const dropTargetId = this.dropTargetId++;

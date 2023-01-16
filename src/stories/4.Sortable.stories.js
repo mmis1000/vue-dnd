@@ -1,7 +1,7 @@
 import List from '../components/SortableList.vue';
 import listSource from '!../components/SortableList.vue?raw';
-import myDragSource from '!../components/sortable/Item.vue?raw';
-import myDropSource from '!../components/sortable/List.vue?raw';
+import myDragSource from '!../components/sortable/SortableItem.vue?raw';
+import myDropSource from '!../components/sortable/SortableList.vue?raw';
 export default {
   title: 'VueDnd/SortableList',
   component: List,

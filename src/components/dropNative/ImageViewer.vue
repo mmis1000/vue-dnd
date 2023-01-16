@@ -3,7 +3,7 @@ import { defineComponent, ref } from "vue";
 import { useDroppable, NativeFile } from "../../packages/vue-dnd";
 
 export default defineComponent({
-  setup(props, { slots }) {
+  setup() {
     const image = ref('')
 
     const { propsItem, hoverState } = useDroppable(

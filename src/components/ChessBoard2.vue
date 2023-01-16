@@ -1,12 +1,16 @@
 <template>
   <div class="wrap">
-    <div class="row" v-for="(row, i) in board" :key="i">
+    <div
+      v-for="(row, i) in board"
+      :key="i"
+      class="row"
+    >
       <MyDrop
-        class="drop"
         v-for="(slot, j) in row"
+        :key="i + ',' + j"
+        class="drop"
         :dark="(i + j) % 2 === 0"
         :index="memorize([i, j])"
-        :key="i + ',' + j"
         @drop="update"
       >
         <MyDrag
@@ -14,15 +18,16 @@
           :dark="(i + j) % 2 === 1"
           :index="[i, j]"
           :type="slot"
-          >{{ i }} {{ j }} {{ slot }}</MyDrag
         >
+          {{ i }} {{ j }} {{ slot }}
+        </MyDrag>
         <span v-else>{{ i }} {{ j }}</span>
       </MyDrop>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import MyDrag from "./board2/MyDrag.vue";
 import MyDrop from "./board2/MyDrop.vue";
 import { useHtmlProvider } from "../packages/vue-dnd/use-html-provider";

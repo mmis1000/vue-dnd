@@ -1,5 +1,5 @@
-import Board from '../components/Board.vue';
-import boardSource from '!../components/Board.vue?raw';
+import Board from '../components/ChessBoard.vue';
+import boardSource from '!../components/ChessBoard.vue?raw';
 import myDragSource from '!../components/board/MyDrag.vue?raw';
 import myDropSource from '!../components/board/MyDrop.vue?raw';
 export default {

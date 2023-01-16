@@ -1,12 +1,18 @@
 <template>
-  <div style="color: red" :class="{
-    a: true,
-    dark: props.dark,
-    dragging: state.isDragging,
-  }" v-bind="propsItem">
-    <template v-if="state.isDragging"> "moving..." </template>
+  <div
+    style="color: red"
+    :class="{
+      a: true,
+      dark: props.dark,
+      dragging: state.isDragging,
+    }"
+    v-bind="propsItem"
+  >
+    <template v-if="state.isDragging">
+      "moving..."
+    </template>
     <template v-else>
-      <slot></slot>
+      <slot />
     </template>
   </div>
 </template>

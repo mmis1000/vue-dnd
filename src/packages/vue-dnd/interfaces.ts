@@ -52,7 +52,7 @@ export interface DroppableDecoratorOptions<ItemType extends DropType<any>> {
 export interface DndProvider {
   readonly readonlyExecutions: Readonly<Execution<DragType<any>>[]>
 
-  useDraggableDecorator<ItemType extends DragType<any>, RendererNode, RendererElement, ExtraProps>(
+  useDraggableDecorator<ItemType extends DragType<any>>(
     options: DraggableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
@@ -60,7 +60,7 @@ export interface DndProvider {
       getHandleProps: GetProps
     ]
 
-  useDroppableDecorator<ItemType extends DropType<any>, RendererNode, RendererElement, ExtraProps>(
+  useDroppableDecorator<ItemType extends DropType<any>>(
     options: DroppableDecoratorOptions<ItemType>
   ): [
       id: DragDropTargetIdentifier,
