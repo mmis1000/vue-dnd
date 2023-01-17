@@ -17,7 +17,7 @@
     "paths": {
       "@mmis1000/vue-dnd": ["src/packages/vue-dnd"],
       "@mmis1000/vue-dnd/*": ["src/packages/vue-dnd/*"]
-    },
+    }
   },
   "include": [
     "src/**/*.ts", 
