@@ -155,8 +155,6 @@ class PointerEventProvider implements DndProvider {
             offset
           )
         );
-        // (ev.target as Element).setPointerCapture(ev.pointerId);
-        // events.onDragStart?.(ev, unref<IData>(dataOrRef));
       },
       onContextmenu: (ev: Event) => {
         if (unref(disabled)) {
@@ -205,7 +203,11 @@ class PointerEventProvider implements DndProvider {
           if (dist > this.options.minDragDistance! && (unref(startDirection) === 'all' || unref(startDirection) === direction)) {
             findAndRemove(this.stagedExecutions, i => i.initialEvent.pointerId === ev.pointerId)
             this.executions.push(stagedExe);
-            handleRef.value!.setPointerCapture(ev.pointerId);
+            try {
+              handleRef.value!.setPointerCapture(ev.pointerId);
+            } catch (err) {
+              console.warn(err)
+            }
             // these didn't work due to how type works
             onDragStart?.(ev as any, unref(data) as any);
             getSelection()?.empty()
@@ -317,7 +319,11 @@ class PointerEventProvider implements DndProvider {
           (exe) => exe.initialEvent.pointerId === ev.pointerId
         );
         if (exe) {
-          handleRef.value!.releasePointerCapture(ev.pointerId);
+          try {
+            handleRef.value!.releasePointerCapture(ev.pointerId);
+          } catch (err) {
+            console.warn(err)
+          }
           findAndRemove(
             this.executions,
             (exe) => exe.initialEvent.pointerId === ev.pointerId
@@ -342,7 +348,11 @@ class PointerEventProvider implements DndProvider {
         );
 
         if (exe) {
-          handleRef.value!.releasePointerCapture(ev.pointerId);
+          try{
+            handleRef.value!.releasePointerCapture(ev.pointerId);
+          } catch (err) {
+            console.warn(err)
+          }
 
           findAndRemove(
             this.executions,
