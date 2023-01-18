@@ -135,8 +135,6 @@ describe('there is a server', () => {
             }
         })
 
-        console.log(res)
-
         const bucket = await page.evaluate(async function () {
             return document.getElementById('ball-0')?.parentElement?.id
         })
