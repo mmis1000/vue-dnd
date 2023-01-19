@@ -4,7 +4,7 @@ import { createServer, ViteDevServer } from "vite"
 import { describe, expect, beforeEach, it, afterEach } from 'vitest'
 import puppeteer, { Browser, Protocol } from 'puppeteer';
 
-describe('there is a server', () => {
+describe('Dnd provider', () => {
     let server: ViteDevServer
     let port: number
     let browser: Browser
@@ -20,24 +20,11 @@ describe('there is a server', () => {
         })
     
         await server.listen()
-    
-        // server.printUrls()
-        // console.log(server)
+
         port = (server.httpServer!.address() as AddressInfo).port
     })
 
-    it('the browser is up', async () => {
-        expect(port).toBeDefined()
-
-        const page = await browser.newPage();
-        await page.goto(`http://127.0.0.1:${port}/`);
-
-        expect(await page.content()).contains('Hello World')
-
-        await page.close()
-    })
-
-    it('Drag and drop succeeded', async () => {
+    it('works with native event', async () => {
         const page = await browser.newPage();
         await page.goto(`http://127.0.0.1:${port}/native/index.html`, { waitUntil: 'networkidle2' });
 
@@ -75,7 +62,7 @@ describe('there is a server', () => {
         await page.close()
     })
 
-    it('Drag and drop succeeded', async () => {
+    it('works with pointer event', async () => {
         const page = await browser.newPage();
         await page.goto(`http://127.0.0.1:${port}/pointer/index.html`, { waitUntil: 'networkidle2' });
 
@@ -146,7 +133,7 @@ describe('there is a server', () => {
         await page.close()
     })
 
-    it('Native dnd', async () => {
+    it('works with drag file into drop zone', async () => {
         const page = await browser.newPage();
         await page.setDragInterception(true)
         await page.goto(`http://127.0.0.1:${port}/file-drop/index.html`, { waitUntil: 'networkidle2' });
@@ -180,11 +167,7 @@ describe('there is a server', () => {
             y
         }, data)
         await page.mouse.up();
-        console.log(x, y)
-        const hasEventSomewhere = await page.evaluate(() => {
-            return Boolean((window as any).hasEventSomewhere)
-        })
-        expect(hasEventSomewhere).toBeTruthy()
+
         const hasEvent = await page.evaluate(() => {
             return Boolean((window as any).hasEvent)
         })

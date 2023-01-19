@@ -9,9 +9,6 @@ export default defineComponent({
     const { propsItem, hoverState } = useDroppable(
       NativeFile,
       {
-        onDragEnter(ev, data) {
-            // debugger
-        },
         onDrop(ev) {
           (window as any).hasEvent = true
           if (ev.dataTransfer?.files.length ?? 0 > 0) {
