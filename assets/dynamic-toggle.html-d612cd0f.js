@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-5c9e25ea","path":"/guide/dynamic-toggle.html","title":"Dynamic toggle","lang":"en-US","frontmatter":{},"headers":[],"git":{"updatedTime":1674139923000,"contributors":[{"name":"Mmis1000","email":"mmis1000@yahoo.com.tw","commits":1}]},"filePathRelative":"guide/dynamic-toggle.md"}');export{e as data};

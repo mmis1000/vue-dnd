@@ -1,0 +1,1 @@
+import{c as t,p as _,q as a,v as s,_ as l}from"./framework-9002dd78.js";const n={class:"ball"},r=t({__name:"BallPreview",props:{index:{type:String,required:!0}},setup(e){return(o,i)=>(_(),a("div",n," p "+s(e.index),1))}});const p=l(r,[["__scopeId","data-v-4ba2e51e"],["__file","BallPreview.vue"]]);export{p as default};
