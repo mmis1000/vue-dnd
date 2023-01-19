@@ -1,11 +1,11 @@
 <script lang="tsx">
 import { defineComponent, reactive } from "vue";
-import { useHtmlProvider } from "../../../../packages/vue-dnd/use-html-provider";
-import { usePointerEventProvider } from "../../../../packages/vue-dnd/use-pointer-event-provider";
+import { useHtmlProvider } from "../../../../../packages/vue-dnd/use-html-provider";
+import { usePointerEventProvider } from "../../../../../packages/vue-dnd/use-pointer-event-provider";
 import ExampleBallVue from "./ExampleBall.vue";
 import ExampleBucketVue from "./ExampleBucket.vue";
 import ExampleBoardVue from "./ExampleBoard.vue";
-import { DragLayer } from "../../../../packages/vue-dnd/DragLayer";
+import { DragLayer } from "../../../../../packages/vue-dnd/DragLayer";
 
 const Ball =  ExampleBallVue
 const Bucket = ExampleBucketVue

@@ -1,8 +1,8 @@
 import { AddressInfo } from "net"
-import path from "path"
+import path, { resolve } from "path"
 import { createServer, ViteDevServer } from "vite"
 import { describe, expect, beforeEach, it, afterEach } from 'vitest'
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer, { Browser, Protocol } from 'puppeteer';
 
 describe('there is a server', () => {
     let server: ViteDevServer
@@ -129,11 +129,13 @@ describe('there is a server', () => {
                 }))
 
                 await new Promise(r => setTimeout(r, 0))
-                return { tag: 'succeed', mouseX,  mouseY, targetMouseX, targetMouseY}
+                return 'succeed'
             } catch (err) {
                 return 'failed'
             }
         })
+
+        expect(res).toBe('succeed')
 
         const bucket = await page.evaluate(async function () {
             return document.getElementById('ball-0')?.parentElement?.id
@@ -144,6 +146,54 @@ describe('there is a server', () => {
         await page.close()
     })
 
+    it('Native dnd', async () => {
+        const page = await browser.newPage();
+        await page.setDragInterception(true)
+        await page.goto(`http://127.0.0.1:${port}/file-drop/index.html`, { waitUntil: 'networkidle2' });
+        page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+        const [x, y] = await page.evaluate(() => {
+            const pos = document.getElementById('drop-area')!.getBoundingClientRect()
+            return [
+                pos.x + pos.width / 2,
+                pos.y + pos.height / 2
+            ]
+        })
+
+        const data: Protocol.Input.DragData = {
+            items: [],
+            files: [
+                resolve(__dirname, './fixture/basic/text.txt')
+            ],
+            dragOperationsMask: 19
+        }
+
+        await page.mouse.dragEnter({
+            x,
+            y
+        }, data)
+        await page.mouse.dragOver({
+            x,
+            y
+        }, data)
+        await page.mouse.drop({
+            x,
+            y
+        }, data)
+        await page.mouse.up();
+        console.log(x, y)
+        const hasEventSomewhere = await page.evaluate(() => {
+            return Boolean((window as any).hasEventSomewhere)
+        })
+        expect(hasEventSomewhere).toBeTruthy()
+        const hasEvent = await page.evaluate(() => {
+            return Boolean((window as any).hasEvent)
+        })
+        expect(hasEvent).toBeTruthy()
+        const finished = await page.evaluate(() => {
+            return Boolean((window as any).fileDropped)
+        })
+        expect(finished).toBeTruthy()
+    })
 
     afterEach(async () => {
         await server.close()

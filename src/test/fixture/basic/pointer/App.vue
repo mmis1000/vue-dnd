@@ -5,7 +5,7 @@
 </template>
     
 <script setup lang='ts'>
-import ExampleSimple from '../example/ExampleSimple.vue'
+import ExampleSimple from '../apps/example/ExampleSimple.vue'
 </script>
     
 <style>

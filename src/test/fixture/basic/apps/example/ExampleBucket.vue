@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { MessageType } from "./exampleType";
 import { defineComponent, PropType, ref } from "vue";
-import { useDroppable } from "../../../../packages/vue-dnd";
+import { useDroppable } from "../../../../../packages/vue-dnd";
 export default defineComponent({
   props: {
     id: {

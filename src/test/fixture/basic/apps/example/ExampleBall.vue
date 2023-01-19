@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MessageType } from "./exampleType";
 import { defineComponent, computed } from "vue";
-import { useDraggable } from "../../../../packages/vue-dnd";
+import { useDraggable } from "../../../../../packages/vue-dnd";
 const ExampleBall = defineComponent({
   props: {
     currentBucket: {

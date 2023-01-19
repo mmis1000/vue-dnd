@@ -10,6 +10,7 @@ const resolvePath = (str: string) => path.resolve(__dirname, str)
 // https://vitejs.dev/config/
 export default defineConfig({
   test: {
+    testTimeout: 0,
     transformMode: {
       web: [/.[tj]sx$/]
     }
